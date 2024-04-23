@@ -4,6 +4,7 @@
 # Eventually classes should probably be changed to named tuples
 
 import random
+from typing import List, Optional, Tuple
 
 #add some validation to this class
 class GreatOldOne:
@@ -73,22 +74,8 @@ class Character:
             self.health = 0
     
     def roll_dice(self) -> None:
-        self.current_roll = [green_die.roll() for _ in range(self.dice)]
-        """
-        Assigns die in current_roll at position index to a slot in the task.
-        Note: the range for index is 1-len(self.current_roll).
-        """
-        # validate index
-        index = index-1
-        die = self.current_roll.pop(index)
-        try:
-            task.add_die(die)
-        except ValueError as e:
-            print(e)
-            self.current_roll.append(die)
-            print("Select a different die.")
-        return task
-
+        self.current_roll = [Die.green.roll() for _ in range(self.dice)]
+        
     # advances clock, check alive and resets number of die
     def end_turn(self):
         # clock.advance()
@@ -101,16 +88,10 @@ class Character:
     
 # needs validation
 # needs overflow check method maybe?
+
 class Task:
-    """
-    Create task object. The pattern is what is necessary to succeed at a task. The reward is what happens when you succeed, the penalty is what happens when you fail.
-    """
-    # reward/penalty are currently strings, but should be changed to something else.
-    def __init__(self, name: str, pattern: dict, reward: str, penalty: str) -> None:
-        self.name = name
+    def __init__(self, pattern):
         self.pattern = pattern
-        self.reward = reward
-        self.penalty = penalty
         self.slots = {key:0 for key in pattern.keys()}
 
     def __contains__(self, current_roll) -> bool:
@@ -120,16 +101,12 @@ class Task:
                 return True
         return False
 
+    #should this be different?
     def __str__(self):
-        string = f"pattern: {self.pattern}\n"
-        string += f"remaining: {self.remaining}\n"
-        string += f"reward: {self.reward}\n"
-        string += f"penalty: {self.penalty}\n"
-        return string
+        return f"remaining: {task.remaining}"
 
     def assign_die(self, die_face:str) -> None:
-        number, symbol = die_face.split(' x ')
-        number = int(number)
+        
         if symbol in self.pattern.keys():
             self.slots[symbol] += number
         else:
@@ -138,7 +115,7 @@ class Task:
             contained in the pattern for this task.""")
         # what should I do about exceeding the maximum error?
         # maybe that is a separate method
-
+    
     @property
     def remaining(self) -> dict:
         return {key:self.pattern[key]-self.slots[key] for key in self.pattern.keys()}
@@ -150,19 +127,59 @@ class Task:
             if self.pattern[key]> self.slots[key]:
                 return False
         return True
+
+
+
+class TaskCard:
+    """
+    Create task object. The pattern is what is necessary to succeed at a task. The reward is what happens when you succeed, the penalty is what happens when you fail.
+    """
+    # reward/penalty are currently strings, but should be changed to something else.
+    def __init__(self, name: str, tasks: List['Task'], reward: str, penalty: str) -> None:
+        self.name = name
+        self.tasks = tasks
+        self.reward = reward
+        self.penalty = penalty
+
+    def __contains__(self, current_roll) -> bool:
+        # needs to be fixed
+        symbols = {die.split(' x ')[1] for die in current_roll}
+        for symbol in symbols:
+            if symbol in self.pattern.keys():
+                return True
+        return False
+
+    # needs to be fixed
+    def __str__(self):
+        string = f"name: {self.name}\n"
+        for task in self.tasks:
+            string += f"task: {task.pattern}\n"
+        string += f"reward: {self.reward}\n"
+        string += f"penalty: {self.penalty}\n"
+        return string
+
+    @property
+    def complete(self) -> bool:
+        for task in tasks:
+            if not task.complete:
+                return False
+        return True
     
     @property
     def status(self):
         if self.complete:
-            print(f"Task {self.name} is complete!")
+            print(f"{self.name} is complete!")
         else:
-            print(f"The task is not yet complete.")
-            print("You still need the following:")
-            for key, val in self.remaining.items():
-                print(f"{key}: {val}")
+            print(f"{self.name} is not yet complete.")
+            print("You still need to complete the following:")
+            for index, task in enumerate(self.tasks):
+                if not task.complete:
+                    print(f"Task {index}: {task.pattern}")
 
 class Die:
     SYMBOLS = {'1 x Investigate','2 x Investigate','3 x Investigate','4 x Investigate','1 x Scroll','2 x Scroll', '1 x Skull', '1 x Tentacles'}
+    green = Die(('1 x Investigate','2 x Investigate','3 x Investigate','1 x Scroll', '1 x Skull', '1 x Tentacles'))
+
     def __init__(self, faces:tuple)-> None:
         for face in faces:
             if face in Die.SYMBOLS:
@@ -173,11 +190,15 @@ class Die:
             raise ValueError(f"{faces} has too many sides to be a die.")
         self.faces = faces # tuple of elements of Symbols
     
+    @classmethod
+    def parse(cls, die_face):
+        number, symbol = die_face.split(' x ')
+        number = int(number)
+        return number, symbol
+
     def roll(self) -> str:
         return random.choice(self.faces)
 
-green_die = Die(('1 x Investigate','2 x Investigate','3 x Investigate','1 x Scroll', '1 x Skull', '1 x Tentacles'))
-    
 
 def assign_dice_to_task(current_roll, task):
     """
@@ -268,4 +289,3 @@ def start_game():
 old_one, joe = create_generic()
 c1, c2 = old_one.tasks
 joe.current_roll = ['1 x Skull', '1 x Skull', '1 x Investigate', '1 x Tentacles', '2 x Investigate', '1 x Scroll']
-
