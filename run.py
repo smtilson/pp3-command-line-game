@@ -55,6 +55,9 @@ class Character:
         self.dice = 6 # this val will be modified, reset it at the beginning of each turn or at the end of each turn.
         self.current_roll = ['' for _ in range(self.dice)]
 
+    def __str__(self):
+        return f"{self.name} has {self.health} left."
+        
     # Current loss condition
     @property
     def alive(self) -> bool:
@@ -71,9 +74,6 @@ class Character:
     
     def roll_dice(self) -> None:
         self.current_roll = [green_die.roll() for _ in range(self.dice)]
-
-    # should there be an undo feature?
-    def assign_die_to_task(self, index:int, task):
         """
         Assigns die in current_roll at position index to a slot in the task.
         Note: the range for index is 1-len(self.current_roll).
@@ -89,17 +89,15 @@ class Character:
             print("Select a different die.")
         return task
 
-    # check alive and resets number of die
+    # advances clock, check alive and resets number of die
     def end_turn(self):
+        # clock.advance()
+        # print(f"Advancing clock. It is now {clock.time}")
         if self.alive:
             self.dice = 6
             self.current_roll = ['' for _ in range(self.dice)]
         else:
             print(f"{self.name} has died a gruesome death, you have lost. The world has ended.")
-        
-
-
-
     
 # needs validation
 # needs overflow check method maybe?
@@ -115,6 +113,20 @@ class Task:
         self.penalty = penalty
         self.slots = {key:0 for key in pattern.keys()}
 
+    def __contains__(self, current_roll) -> bool:
+        symbols = {die.split(' x ')[1] for die in current_roll}
+        for symbol in symbols:
+            if symbol in self.pattern.keys():
+                return True
+        return False
+
+    def __str__(self):
+        string = f"pattern: {self.pattern}\n"
+        string += f"remaining: {self.remaining}\n"
+        string += f"reward: {self.reward}\n"
+        string += f"penalty: {self.penalty}\n"
+        return string
+
     def assign_die(self, die_face:str) -> None:
         number, symbol = die_face.split(' x ')
         number = int(number)
@@ -126,13 +138,6 @@ class Task:
             contained in the pattern for this task.""")
         # what should I do about exceeding the maximum error?
         # maybe that is a separate method
-
-    def __contains__(self, current_roll) -> bool:
-        symbols = {die.split(' x ')[1] for die in current_roll}
-        for symbol in symbols:
-            if symbol in self.pattern.keys():
-                return True
-        return False
 
     @property
     def remaining(self) -> dict:
