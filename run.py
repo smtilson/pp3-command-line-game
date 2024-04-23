@@ -25,6 +25,7 @@ class GreatOldOne:
         if self.health<=0:
             return False
         else:
+            print(f"You have defeated the terrifying {self.name}. The world is forever in your debt.")
             return True
     
     # Adjust health accordingly
@@ -72,7 +73,13 @@ class Character:
         self.current_roll = [green_die.roll() for _ in range(self.dice)]
 
     # should there be an undo feature?
-    def attempt_task(self, index:int, task) -> None:
+    def assign_die_to_task(self, index:int, task):
+        """
+        Assigns die in current_roll at position index to a slot in the task.
+        Note: the range for index is 1-len(self.current_roll).
+        """
+        # validate index
+        index = index-1
         die = self.current_roll.pop(index)
         try:
             task.add_die(die)
@@ -80,10 +87,23 @@ class Character:
             print(e)
             self.current_roll.append(die)
             print("Select a different die.")
+        return task
+
+    # check alive and resets number of die
+    def end_turn():
+        if self.alive:
+            self.dice = 6
+            self.current_roll = ['' for _ in range(self.dice)]
+        else:
+            print(f"{self.name} has died a gruesome death, you have lost. The world has ended.")
+        
+
+
+
     
 # needs validation
 # needs overflow check method maybe?
-class task:
+class Task:
     """
     Create task object. The pattern is what is necessary to succeed at a task. The reward is what happens when you succeed, the penalty is what happens when you fail.
     """
@@ -95,7 +115,7 @@ class task:
         self.penalty = penalty
         self.slots = {key:0 for key in pattern.keys()}
 
-    def add_die(self, die_face:str) -> None:
+    def assign_die(self, die_face:str) -> None:
         number, symbol = die_face.split(' x ')
         number = int(number)
         if symbol in self.pattern.keys():
@@ -108,7 +128,7 @@ class task:
         # maybe that is a separate method
 
     def __contains__(self, current_roll) -> bool:
-        symbols = {die.split(' x ') for die in current_roll}
+        symbols = {die.split(' x ')[1] for die in current_roll}
         for symbol in symbols:
             if symbol in self.pattern.keys():
                 return True
@@ -124,9 +144,7 @@ class task:
         for key in self.pattern.keys():
             if self.pattern[key]> self.slots[key]:
                 print(f"The task is not yet complete, you still need {self.pattern[key] - self.slots[key]} {key}'s.")
-                return false
-        print(f'You have completed the task: {self.name}!')
-        print(f"You get a {self.reward}.")
+                return False
         return True
 
 class Die:
@@ -145,8 +163,9 @@ class Die:
         return random.choice(self.faces)
 
 green_die = Die(('1 x Investigate','2 x Investigate','3 x Investigate','1 x Scroll', '1 x Skull', '1 x Tentacles'))
+    
 
-def add_to_task(current_roll, task):
+def assign_dice_to_task(current_roll, task):
     """
     Assigns dice from current roll to fixed task as long as it is possible.
     Returns task. Should it also return the remaining dice? Yes.
@@ -159,16 +178,36 @@ def add_to_task(current_roll, task):
         print(current_roll)
         print(task.remaining)
         index = get_die_choice(len(current_roll))
-        task.add_die(current_roll.pop(index-1))
-    return current_roll, task
+        task.assign_die(current_roll.pop(index-1))
+    if task.complete:
+        return [], task
+    else:
+        print("There are no longer any symbols you can use in this roll for this task.")
+        return current_roll, task
+
+def attempt_task(character, task):
+    character.roll_dice()
+    while character.dice > 0 and not task.complete:
+        character.current_roll, task = assign_dice_to_task(character.current_roll, task)
+        character.dice = len(character.current_roll)-1
+        character.roll_dice()
+   
+    if task.complete:
+        print(f'You have completed the task: {task.name}!')
+        print(f"You get a {task.reward}.")
+        return task
+    else:
+        print(f"You have failed, you suffer the penalty of {task.penalty}.")
+    
+    
 
 def get_die_choice(num_dice: int): #return value for this is a bit complex
     # what about when num_dice = 0 or 1?
     index = ""
-    valid_input = [str(num+1) for num in range(num_dice)]
+    valid_input = [str(num) for num in range(1,num_dice+1)]
     valid_input.append("pass")
     while index not in valid_input:
-        index = input(f"""Please input numbers 1-{len(character.current_roll)} to select which die to assign to the task.\n
+        index = input(f"""Please input numbers 1-{num_dice} to select which die to assign to the task.\n
                     If none of your dice will work, enter pass.\n""")
     if index.lower() == "pass":
         return -1
@@ -180,8 +219,8 @@ def create_generic():
     """
     This function creates basic instances of the above classes for the purpose of development.
     """
-    basic_task1 = task(name='basic_attack',pattern={'Investigate':2, 'Skull':1}, reward="+1 damage", penalty="-1 health")
-    basic_task2 = task(name='basic_heal',pattern={'Investigate':1, 'Scroll':2}, reward="+2 health", penalty="-1 health")
+    basic_task1 = Task(name='basic_attack',pattern={'Investigate':2, 'Skull':1}, reward="+1 damage", penalty="-1 health")
+    basic_task2 = Task(name='basic_heal',pattern={'Investigate':1, 'Scroll':2}, reward="+2 health", penalty="-1 health")
     basic_old_one = GreatOldOne("basic old one", 10, (basic_task1, basic_task2), "+2 damage")
     basic_character = Character("joe shmoe",6)
     return basic_old_one, basic_character
@@ -199,4 +238,4 @@ def start_game():
 # current_progress
 old_one, joe = create_generic()
 c1, c2 = old_one.tasks
-joe.roll_dice()
+
