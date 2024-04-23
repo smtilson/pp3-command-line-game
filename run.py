@@ -90,7 +90,7 @@ class Character:
         return task
 
     # check alive and resets number of die
-    def end_turn():
+    def end_turn(self):
         if self.alive:
             self.dice = 6
             self.current_roll = ['' for _ in range(self.dice)]
@@ -143,9 +143,18 @@ class Task:
     def complete(self):
         for key in self.pattern.keys():
             if self.pattern[key]> self.slots[key]:
-                print(f"The task is not yet complete, you still need {self.pattern[key] - self.slots[key]} {key}'s.")
                 return False
         return True
+    
+    @property
+    def status(self):
+        if self.complete:
+            print(f"Task {self.name} is complete!")
+        else:
+            print(f"The task is not yet complete.")
+            print("You still need the following:")
+            for key, val in self.remaining.items():
+                print(f"{key}: {val}")
 
 class Die:
     SYMBOLS = {'1 x Investigate','2 x Investigate','3 x Investigate','4 x Investigate','1 x Scroll','2 x Scroll', '1 x Skull', '1 x Tentacles'}
@@ -175,10 +184,24 @@ def assign_dice_to_task(current_roll, task):
         print("None of the symbols of this role are in this task.")
         return current_roll, task
     while not task.complete and current_roll in task:
+        print()
         print(current_roll)
         print(task.remaining)
         index = get_die_choice(len(current_roll))
-        task.assign_die(current_roll.pop(index-1))
+        if index == "pass":
+            print("Not attempting to assign any dice from this roll.")
+            return current_roll, task
+        die = current_roll[index-1]
+        print(f"{index=} and {die=}.")
+        try:
+            print(f"attempting to assign {die} to {task.remaining}.")
+            task.assign_die(die)
+        except ValueError as e:
+            print(e)
+            continue
+        else:
+            current_roll.pop(index-1)
+            print(f"{die} was successfully assigned.")
     if task.complete:
         return [], task
     else:
@@ -186,7 +209,7 @@ def assign_dice_to_task(current_roll, task):
         return current_roll, task
 
 def attempt_task(character, task):
-    character.roll_dice()
+    #character.roll_dice()
     while character.dice > 0 and not task.complete:
         character.current_roll, task = assign_dice_to_task(character.current_roll, task)
         character.dice = len(character.current_roll)-1
@@ -198,19 +221,20 @@ def attempt_task(character, task):
         return task
     else:
         print(f"You have failed, you suffer the penalty of {task.penalty}.")
-    
-    
 
 def get_die_choice(num_dice: int): #return value for this is a bit complex
     # what about when num_dice = 0 or 1?
     index = ""
     valid_input = [str(num) for num in range(1,num_dice+1)]
     valid_input.append("pass")
-    while index not in valid_input:
-        index = input(f"""Please input numbers 1-{num_dice} to select which die to assign to the task.\n
-                    If none of your dice will work, enter pass.\n""")
+    while not index:
+        index = input(f"\nPlease input numbers 1-{num_dice} to select which die to assign to the task.\n"
+        f"If none of your dice will work, enter pass.\n")
+        if index not in valid_input:
+            print(f"\n\n{index} is invalid.\n")
+            index = ""
     if index.lower() == "pass":
-        return -1
+        return index.lower()
     else:
         return int(index)
         
@@ -238,4 +262,5 @@ def start_game():
 # current_progress
 old_one, joe = create_generic()
 c1, c2 = old_one.tasks
+joe.current_roll = ['1 x Skull', '1 x Skull', '1 x Investigate', '1 x Tentacles', '2 x Investigate', '1 x Scroll']
 
