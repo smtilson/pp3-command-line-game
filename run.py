@@ -95,7 +95,7 @@ class Task:
         self.slots = {key:0 for key in pattern.keys()}
 
     def __contains__(self, current_roll) -> bool:
-        symbols = {die.split(' x ')[1] for die in current_roll}
+        symbols = {Die.parse(die_face)[1] for die_face in current_roll}
         for symbol in symbols:
             if symbol in self.pattern.keys():
                 return True
@@ -106,7 +106,7 @@ class Task:
         return f"remaining: {task.remaining}"
 
     def assign_die(self, die_face:str) -> None:
-        
+        number, symbol = Die.parse(die_face)
         if symbol in self.pattern.keys():
             self.slots[symbol] += number
         else:
@@ -118,17 +118,14 @@ class Task:
     
     @property
     def remaining(self) -> dict:
-        return {key:self.pattern[key]-self.slots[key] for key in self.pattern.keys()}
-
-    # add __str__ method for task
+        return {key:max(0,self.pattern[key]-self.slots[key]) for key in self.pattern.keys()}
+    
     @property
     def complete(self):
         for key in self.pattern.keys():
             if self.pattern[key]> self.slots[key]:
                 return False
         return True
-
-
 
 class TaskCard:
     """
