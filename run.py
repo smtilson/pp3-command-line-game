@@ -58,7 +58,13 @@ def attempt_task_card(character:'Character',task_card:'TaskCard'):
         print(task)
     while not task_card.complete and len(dice_pool) > 0:
         task_index = get_task_choice(len(task_card.tasks))
+        # Is this technically in the spirit of the game?
         if task_index == 'pass':
+            dice_pool = pass_move(dice_pool)
+            print(dice_pool)
+            for task in task_card:
+                print(task)
+            continue
         task = task_card[task_index-1]
         # should this part of the validation be done elsewhere?
         if task.valid(dice_pool):
@@ -76,11 +82,12 @@ def attempt_task_card(character:'Character',task_card:'TaskCard'):
 # I don't like the reroll being part of this move, but I guess it is fine.
 def pass_move(dice_pool) -> 'DicePool':
     print("Sacrificing a die.")
-            dice_pool.pop()
-            print("Rerolling your remaining dice.")
-            # will roll throw an exception if there are no dice?
-            dice_pool.roll()
-            return dice_pool
+    dice_pool.pop()
+    print("Rerolling your remaining dice.")
+    # will roll throw an exception if there are no dice?
+    dice_pool.roll()
+    return dice_pool
+    
 # write valid input function.
 def get_task_choice(num_tasks: int):
     index = ""
