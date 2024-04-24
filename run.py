@@ -273,33 +273,33 @@ class DicePool:
 def pause() -> None:
     input("Hit enter to continue.")
 
-def assign_dice_from_pool_to_task(pool, task):
+def assign_dice_from_dice_pool_to_task(dice_pool, task):
     """
-    Assigns dice from pool to fixed task as long as it is possible.
+    Assigns dice from dice pool to fixed task as long as it is possible.
     Returns task. Should it also return the remaining dice? Yes.
     """
-    # current pool is fixed
-    if not pool in task:
-        print(pool)
+    # current dice_pool is fixed, it may lose a die
+    if not dice_pool in task:
+        print(dice_pool)
         print(task)
         print("None of the symbols of this roll are in this task.")
         pause()
-        pool.pop()
-        return pool, task
-    while not task.complete and pool in task:
+        dice_pool.pop()
+        return dice_pool, task
+    while not task.complete and dice_pool in task:
         print()
-        print(pool)
+        print(dice_pool)
         print(task.remaining)
-        index = get_die_choice(len(pool))
+        index = get_die_choice(len(dice_pool))
         #maybe eventually replace this with something automated that checks for containment?
         #but then again, we shouldn't force a player to like assign a 1 investigate die to a task that  
         # has 8 investiagte symbols.
         if index == "pass":
             print("Not attempting to assign any dice from this roll.")
-            print("Removing one die form the beginning of your dice pool.")
-            pool.pop(0)
-            return pool, task
-        die = pool[index-1]
+            print("Removing one die form the beginning of your dice dice_pool.")
+            dice_pool.pop()
+            return dice_pool, task
+        die = dice_pool[index-1]
         print(f"{index=} and {die=}.")
         try:
             print(f"attempting to assign {die} to {task.remaining}.")
@@ -309,17 +309,17 @@ def assign_dice_from_pool_to_task(pool, task):
             pause
             continue
         else:
-            pool.pop(index-1)
+            dice_pool.pop(index-1)
             print(f"{die} was successfully assigned.")
     if task.complete:
-        return pool, task
+        return dice_pool, task
     else:
         print("There are no longer any symbols you can use in this roll for this task.")
-        print(pool)
+        print(dice_pool)
         print("Removing one die form the beginning of your dice pool.")
-        if len(pool)>0:
-            pool.pop(0)
-        return pool, task
+        if len(dice_pool)>0:
+            dice_pool.pop()
+        return dice_pool, task
 
 def attempt_task(dice_pool, task):
     print(f"Attempting: {task}")
