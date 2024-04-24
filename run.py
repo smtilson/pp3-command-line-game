@@ -253,10 +253,12 @@ class DicePool:
         return self.dice[index]
     
     def __str__(self) -> str:
-        return str(self.dice)
+        dice_strs = [die.__str__() for die in self.dice]
+        return ', '.join(dice_strs)
 
     def __repr__(self) -> str:
         dice_reprs = [die.__repr__() for die in self.dice]
+        print(dice_reprs)
         return ', '.join(dice_reprs)
     
     def __len__(self) -> int:
@@ -332,7 +334,7 @@ def assign_dice_to_task(dice_pool, task):
 
 def attempt_task(dice_pool, task):
     print(f"Attempting: {task.pattern}")
-    print(f"with {dice_pool}")
+    print(f"with {str(dice_pool)}")
     pause()
     #print("starting while loop in attempt task")
     while len(dice_pool) > 0 and not task.complete:
