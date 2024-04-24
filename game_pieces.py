@@ -1,4 +1,6 @@
 # This file contains the game pieces that need to be loaded to play the game
+from random import choice
+from typing import List, Optional, Tuple
 
 #add some validation to this class
 class GreatOldOne:
@@ -33,7 +35,6 @@ class GreatOldOne:
             # should there be a message here
             return False
     
-
 class Character:
     def __init__(self, name:str, health: int, items: list=None) -> None:
         # maybe these will be added to or removed
@@ -93,7 +94,7 @@ class Character:
             print(f"{self.name} has died a gruesome death, you have lost. The world has ended.")
     
 # needs validation
-# needs overflow check method maybe?
+# needs overflow check method maybe? <- wtf does this mean
 
 class Task:
     def __init__(self, pattern:dict) -> None:
@@ -101,10 +102,12 @@ class Task:
         self.pattern = pattern
         self.slots = {key:0 for key in pattern.keys()}
 
-    def __contains__(self, dice_pool) -> bool:
-        symbols = {die.parse()[1] for die in dice_pool}
-        for symbol in symbols:
-            if symbol in self.pattern.keys():
+    def __contains__(self, die) -> bool:
+        return die.parse()[1] in self.pattern.keys()
+
+    def valid(self, dice_pool) -> bool:
+        for die in dice_pool:
+            if die in self:
                 return True
         return False
 
@@ -115,12 +118,10 @@ class Task:
     def assign_die(self, die_face:str) -> None:
         number, symbol = Die.parse(die_face)
         if symbol in self.pattern.keys():
-            self.slots[symbol] += number
+            self.slots[symbol] +=number
         else:
             # should this be an error
             raise ValueError(f"{symbol} is not contained in the pattern for this task.")
-        # what should I do about exceeding the maximum error?
-        # maybe that is a separate method
     
     # resets task for next attempt, if at all
     # eventually this will be removed
@@ -139,9 +140,6 @@ class Task:
                 return False
         return True
     
-    @property
-    def remaining(self) -> list:
-        return [task in self if not task.complete]
 
 class TaskCard:
     """
@@ -153,14 +151,6 @@ class TaskCard:
         self.tasks = tasks
         self.reward = reward
         self.penalty = penalty
-
-    def __contains__(self, dice_pool) -> bool:
-        symbols = {die.parse()[1] for die in dice_pool}
-        for symbol in symbols:
-            for task in self.tasks:
-                if symbol in task:
-                    return True
-        return False
 
     def __str__(self):
         string = f"name: {self.name}\n"
@@ -176,12 +166,23 @@ class TaskCard:
     def __getitem__(self, index) -> 'Task':
         return self.tasks[index]
 
+    def valid(self, dice_pool) -> bool:
+        for task in self:
+            if task.valid(dice_pool):
+                return True
+        return False
+
     @property
     def complete(self) -> bool:
         for task in self.tasks:
             if not task.complete:
                 return False
         return True
+
+    @property
+    def remaining(self) -> list:
+        return [task for task in self if not task.complete]
+
     
     @property
     def status(self):
@@ -196,7 +197,6 @@ class TaskCard:
     def reset(self) -> None:
         for task in self:
             task.reset()
-
 
 # add color for this and then change the repn methodto show color and die face
 class Die:
@@ -235,7 +235,8 @@ class Die:
         return number, symbol
 
     def roll(self) -> None:
-        self.face = random.choice(self.faces)
+        # having a weird error where
+        self.face = choice(self.faces)
     
     @classmethod
     def green(cls):
