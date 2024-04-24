@@ -122,8 +122,8 @@ class Task:
     
     @property
     def complete(self):
-        for key in self.pattern.keys():
-            if self.pattern[key]> self.slots[key]:
+        for val in self.remaining.values():
+            if val > 0:
                 return False
         return True
 
