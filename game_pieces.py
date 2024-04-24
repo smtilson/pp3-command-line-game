@@ -100,10 +100,10 @@ class Task:
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable
         self.pattern = pattern
-        self.slots = {key:0 for key in pattern.keys()}
+        self.remaining = pattern
 
     def __contains__(self, die) -> bool:
-        return die.parse()[1] in self.pattern.keys()
+        return die.parse()[1] in self.remaining.keys()
 
     def valid(self, dice_pool) -> bool:
         for die in dice_pool:
@@ -111,27 +111,25 @@ class Task:
                 return True
         return False
 
-    #should this be different?
-    def __str__(self):
-        return f"remaining: {self.remaining}"
-
-    def assign_die(self, die_face:str) -> None:
-        number, symbol = Die.parse(die_face)
-        if symbol in self.pattern.keys():
-            self.slots[symbol] +=number
-        else:
-            # should this be an error
-            raise ValueError(f"{symbol} is not contained in the pattern for this task.")
     
+    def __str__(self):
+        return f"Remaining: {self.remaining}"
+    
+    #should this be different?
+    def __repr__(self):
+        return self.__str__()
+
+    def assign_die(self, die:'Die') -> None:
+        print(f"Assigning die with {str(die)} to {self.remaining}.")
+        number, symbol = Die.parse(die)
+        self.remaining[symbol] -= number
+        if self.remaining[symbol] <= 0:
+            del self.remaining[symbol]
+       
     # resets task for next attempt, if at all
     # eventually this will be removed
     def reset(self) -> None:
-        self.slots = {key:0 for key in self.pattern.keys()}
-
-
-    @property
-    def remaining(self) -> dict:
-        return {key:max(0,self.pattern[key]-self.slots[key]) for key in self.pattern.keys()}
+        self.remaining = self.pattern 
     
     @property
     def complete(self):
