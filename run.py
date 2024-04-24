@@ -75,7 +75,13 @@ class Character:
     
     def roll_dice(self) -> None:
         self.dice_pool.roll()
-    
+
+    def add_green(self) -> None:
+        self.dice_pool.add_green()
+
+    def add_yellow(self) -> None:
+        self.dice_pool.add_yellow()
+
     @property
     def dice(self) -> int:
         return len(self.dice_pool)
@@ -186,10 +192,14 @@ class TaskCard:
                 if not task.complete:
                     print(f"Task {index}: {task.pattern}")
 
+# add color for this and then change the repn methodto show color and die face
 class Die:
     SYMBOLS = {'1 x Investigate','2 x Investigate','3 x Investigate','4 x Investigate','1 x Scroll','2 x Scroll', '1 x Skull', '1 x Tentacles'}
-    
-    def __init__(self, *faces:str)-> None:
+    COLORS = {'green', 'yellow'}
+    def __init__(self, color, *faces:str)-> None:
+        # this should be put into a validate color method
+        self.color = color 
+        # this should be put into a validate faces method
         for face in faces:
             if face in Die.SYMBOLS:
                 continue
@@ -204,9 +214,8 @@ class Die:
     def __str__(self) -> str:
         return self.face
     
-    # this is not ideal, but it addresses the printing dice_pool issue.
     def __repr__(self) -> str:
-        return self.face
+        return self.color+': '+self.face
 
     def parse(self):
         """
@@ -224,24 +233,40 @@ class Die:
     
     @classmethod
     def green(cls):
-        return cls('1 x Investigate','2 x Investigate','3 x Investigate','1 x Scroll', '1 x Skull', '1 x Tentacles')
+        return cls('Green','1 x Investigate','2 x Investigate','3 x Investigate','1 x Scroll', '1 x Skull', '1 x Tentacles')
 
+    @classmethod
+    def yellow(cls):
+        return cls('Yellow','1 x Investigate','2 x Investigate','3 x Investigate', '4 x Investigate','1 x Scroll', '1 x Skull')
+
+# maybe add sorting function and ordering as well as color 
+#to order the dice and then only pop from the front will be more appropriate
 class DicePool:
     def __init__(self) -> None:
-        # implement the dunder method for this later
-        #for die in dice:
-        #    if type(die) != Die:
-        #        raise ValueError(f"Can not make a dice pool containing {die} since it is not a Die.")
         self.dice = [Die.green() for _ in range(6)]
     
-    # is this the correct thing
+    # is this the correct thing? Anthony said it was fine
     def __iter__(self) -> 'iterator':
         return iter(self.dice)
 
-    #def __next__(self) -> 'Die':
-
     def __getitem__(self,index) -> 'Die':
         return self.dice[index]
+    
+    def __str__(self) -> str:
+        return str(self.dice)
+
+    def __repr__(self) -> str:
+        dice_reprs = [die.__repr__() for die in self.dice]
+        return ', '.join(dice_reprs)
+    
+    def __len__(self) -> int:
+        return len(self.dice)
+
+    def add_green(self) -> None:
+        self.dice.append(Die.green())
+
+    def add_yellow(self) -> None:
+        self.dice.append(Die.yellow())
 
     def roll(self) -> None:
         for die in self.dice:
@@ -253,39 +278,22 @@ class DicePool:
         # probably don't want to remove those by default
         return self.dice.pop(index)
     
-    def __str__(self) -> str:
-        return str(self.dice)
-
-    def __repr__(self) -> str:
-        return self.__str__()
-    
-    def __len__(self) -> int:
-        return len(self.dice)
 
     def reset(self) -> None:
         self.dice = [Die.green() for _ in range(6)]
-
     
-
-    
-    # need methods for adding yellow and red dice
+    # adding red dice
+    # this requires figuring out wild first.
 
 def pause() -> None:
     input("Hit enter to continue.")
 
-def assign_dice_from_dice_pool_to_task(dice_pool, task):
+def assign_dice_to_task(dice_pool, task):
     """
     Assigns dice from dice pool to fixed task as long as it is possible.
-    Returns task. Should it also return the remaining dice? Yes.
+    Returns task and remaining dice.
     """
     # current dice_pool is fixed, it may lose a die
-    if not dice_pool in task:
-        print(dice_pool)
-        print(task)
-        print("None of the symbols of this roll are in this task.")
-        pause()
-        dice_pool.pop()
-        return dice_pool, task
     while not task.complete and dice_pool in task:
         print()
         print(dice_pool)
@@ -316,19 +324,20 @@ def assign_dice_from_dice_pool_to_task(dice_pool, task):
     else:
         print("There are no longer any symbols you can use in this roll for this task.")
         print(dice_pool)
-        print("Removing one die form the beginning of your dice pool.")
+        print("Removing one die form your dice pool.")
+        pause()
         if len(dice_pool)>0:
             dice_pool.pop()
         return dice_pool, task
 
 def attempt_task(dice_pool, task):
-    print(f"Attempting: {task}")
+    print(f"Attempting: {task.pattern}")
     print(f"with {dice_pool}")
-    
+    pause()
     #print("starting while loop in attempt task")
     while len(dice_pool) > 0 and not task.complete:
         print("calling assign dice from pool to task function")
-        dice_pool, task = assign_dice_from_pool_to_task(dice_pool, task)
+        dice_pool, task = assign_dice_to_task(dice_pool, task)
         if not task.complete:
             print("rerolling dice in pool")
             dice_pool.roll()
@@ -337,19 +346,43 @@ def attempt_task(dice_pool, task):
     if task.complete:
         print(f'You have completed this task!')
         #print(f"You get a {task.reward}.")
-        return task
+        return dice_pool, task
     else:
-        print(f"You have failed, you die a tragic death")# the penalty of {task.penalty}.")
-        task.reset()
+        return dice_pool, task
+
+def valid_attempt(dice_pool, task) -> bool:
+    if dice_pool in task:
+        return True
+    else:
+        print(dice_pool)
+        print(task)
+        print("None of the symbols of this roll are in this task.")
+        pause()
+        return False
 
 def attempt_task_card(character:'Character',task_card:'TaskCard'):
     # do we roll here? I think so.
     character.roll_dice()
-    pool = character.dice_pool
+    dice_pool = character.dice_pool
     print(pool)
     for task in task_card:
         print(task)
-    task_index = get_task_choice(len(task_card.tasks))
+    while not task_card.complete and len(dice_pool) > 0:
+        task_index = get_task_choice(len(task_card.tasks))
+        task = task_card[task_index-1]
+        # should this part of the validation be done elsewhere?
+        if valid_attempt(dice_pool, task):
+            dice_pool, task = attempt_task(dice_pool, task)
+        else:
+            continue
+        if task.complete:
+            continue
+        else:
+            print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
+
+        
+    # should there be a pass option here as well?
+
 
 
 def get_task_choice(num_tasks: int):
