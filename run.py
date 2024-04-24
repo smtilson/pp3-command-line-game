@@ -54,7 +54,7 @@ class Character:
         else:
             self.items = []
         # self.dice = 6 # this val will be modified, reset it at the beginning of each turn or at the end of each turn.
-        self.dice_pool = [Die.green for _ in range(6)]
+        self.dice_pool = [Die.green() for _ in range(6)]
 
     def __str__(self):
         return f"{self.name} has {self.health} left."
@@ -76,13 +76,23 @@ class Character:
     def roll_dice(self) -> None:
         for die in self.dice_pool:
             die.roll()
-        
+
+    # this now seems irrelevant with the __repr__ method of Die now in place.
+    @property    
+    def current_roll(self) -> list:
+        return [die.face for die in self.dice_pool]
+    
+    @property
+    def dice(self) -> int:
+        return len(self.dice_pool)
+
     # advances clock, check alive and resets number of die
     def end_turn(self):
         # clock.advance()
         # print(f"Advancing clock. It is now {clock.time}")
         if self.alive:
-            self.dice_pool = [Die.green for _ in range(6)]
+            # This resets the dice pool and the face of each die to initial face
+            self.dice_pool = [Die.green() for _ in range(6)]
         else:
             print(f"{self.name} has died a gruesome death, you have lost. The world has ended.")
     
@@ -94,8 +104,8 @@ class Task:
         self.pattern = pattern
         self.slots = {key:0 for key in pattern.keys()}
 
-    def __contains__(self, current_roll) -> bool:
-        symbols = {Die.parse(die_face)[1] for die_face in current_roll}
+    def __contains__(self, dice_pool) -> bool:
+        symbols = {die.parse()[1] for die in dice_pool}
         for symbol in symbols:
             if symbol in self.pattern.keys():
                 return True
@@ -103,7 +113,7 @@ class Task:
 
     #should this be different?
     def __str__(self):
-        return f"remaining: {task.remaining}"
+        return f"remaining: {self.remaining}"
 
     def assign_die(self, die_face:str) -> None:
         number, symbol = Die.parse(die_face)
@@ -138,15 +148,14 @@ class TaskCard:
         self.reward = reward
         self.penalty = penalty
 
-    def __contains__(self, current_roll) -> bool:
-        # needs to be fixed
-        symbols = {die.split(' x ')[1] for die in current_roll}
+    def __contains__(self, dice_pool) -> bool:
+        symbols = {die.parse()[1] for die in dice_pool}
         for symbol in symbols:
-            if symbol in self.pattern.keys():
-                return True
+            for task in self.tasks:
+                if symbol in task:
+                    return True
         return False
 
-    # needs to be fixed
     def __str__(self):
         string = f"name: {self.name}\n"
         for task in self.tasks:
@@ -175,9 +184,8 @@ class TaskCard:
 
 class Die:
     SYMBOLS = {'1 x Investigate','2 x Investigate','3 x Investigate','4 x Investigate','1 x Scroll','2 x Scroll', '1 x Skull', '1 x Tentacles'}
-    green = Die(('1 x Investigate','2 x Investigate','3 x Investigate','1 x Scroll', '1 x Skull', '1 x Tentacles'))
-
-    def __init__(self, faces:tuple)-> None:
+    
+    def __init__(self, *faces:str)-> None:
         for face in faces:
             if face in Die.SYMBOLS:
                 continue
@@ -186,13 +194,21 @@ class Die:
         if len(faces) != 6: # maybe this should also be relaxed
             raise ValueError(f"{faces} does not have the correct number of sides to be a die (in this game).")
         self.faces = faces # tuple of elements of Die.SYMBOLS
+        # Current face showing of die
         self.face = ''
     
+    def __str__(self) -> str:
+        return self.face
+    
+    # this is not ideal, but it addresses the printing dice_pool issue.
+    def __repr__(self) -> str:
+        return self.face
+
     def parse(self):
         """
         Parses the face of the die. Returns number of symbols as int and symbol as string.
         """
-        #should this automatically roll the die if it hasn't been rolled yet?
+        # should this automatically roll the die if it hasn't been rolled yet?
         if not self.face:
             raise ValueError("This die has not yet been rolled.")
         number, symbol = self.face.split(' x ')
@@ -201,26 +217,32 @@ class Die:
 
     def roll(self) -> None:
         self.face = random.choice(self.faces)
+    
+    @classmethod
+    def green(cls):
+        return cls('1 x Investigate','2 x Investigate','3 x Investigate','1 x Scroll', '1 x Skull', '1 x Tentacles')
 
-
-def assign_dice_from_roll_to_task(roll, task):
+def assign_dice_from_pool_to_task(pool, task):
     """
-    Assigns dice from roll to fixed task as long as it is possible.
+    Assigns dice from pool to fixed task as long as it is possible.
     Returns task. Should it also return the remaining dice? Yes.
     """
-    # current roll is fixed
-    if not roll in task:
-        print("None of the symbols of this role are in this task.")
-        return roll, task
-    while not task.complete and roll in task:
+    # current pool is fixed
+    if not pool in task:
+        print("None of the symbols of this roll are in this task.")
+        return pool, task
+    while not task.complete and pool in task:
         print()
-        print(roll)
+        print(pool)
         print(task.remaining)
-        index = get_die_choice(len(roll))
+        index = get_die_choice(len(pool))
+        #maybe eventually replace this with something automated that checks for containment?
+        #but then again, we shouldn't force a player to like assign a 1 investigate die to a task that  
+        # has 8 investiagte symbols.
         if index == "pass":
             print("Not attempting to assign any dice from this roll.")
-            return current_roll, task
-        die = roll[index-1]
+            return pool, task
+        die = pool[index-1]
         print(f"{index=} and {die=}.")
         try:
             print(f"attempting to assign {die} to {task.remaining}.")
@@ -229,27 +251,31 @@ def assign_dice_from_roll_to_task(roll, task):
             print(e)
             continue
         else:
-            roll.pop(index-1)
+            pool.pop(index-1)
             print(f"{die} was successfully assigned.")
     if task.complete:
-        return [], task
+        return pool, task
     else:
         print("There are no longer any symbols you can use in this roll for this task.")
-        return roll, task
+        return pool.pop(0), task
 
 def attempt_task(character, task):
     #character.roll_dice()
     while character.dice > 0 and not task.complete:
-        character.current_roll, task = assign_dice_to_task(character.current_roll, task)
-        character.dice = len(character.current_roll)-1
+        print("starting while loop in attempt task")
+        print(character.dice_pool)
+        print(task)
+        print("calling assign dice from pool to task function")
+        character.dice_pool, task = assign_dice_from_pool_to_task(character.dice_pool, task)
+        print("rerolling dice in pool")
         character.roll_dice()
    
     if task.complete:
         print(f'You have completed the task: {task.name}!')
-        print(f"You get a {task.reward}.")
+        #print(f"You get a {task.reward}.")
         return task
     else:
-        print(f"You have failed, you suffer the penalty of {task.penalty}.")
+        print(f"You have failed, you die a tragic death")# the penalty of {task.penalty}.")
 
 def get_die_choice(num_dice: int): #return value for this is a bit complex
     # what about when num_dice = 0 or 1?
@@ -272,8 +298,8 @@ def create_generic():
     """
     This function creates basic instances of the above classes for the purpose of development.
     """
-    basic_task1 = Task(name='basic_attack',pattern={'Investigate':2, 'Skull':1}, reward="+1 damage", penalty="-1 health")
-    basic_task2 = Task(name='basic_heal',pattern={'Investigate':1, 'Scroll':2}, reward="+2 health", penalty="-1 health")
+    basic_task1 = Task(pattern={'Investigate':2, 'Skull':1})#, reward="+1 damage", penalty="-1 health")
+    basic_task2 = Task(pattern={'Investigate':1, 'Scroll':2})#, reward="+2 health", penalty="-1 health")
     basic_old_one = GreatOldOne("basic old one", 10, (basic_task1, basic_task2), "+2 damage")
     basic_character = Character("joe shmoe",6)
     return basic_old_one, basic_character
@@ -291,4 +317,3 @@ def start_game():
 # current_progress
 old_one, joe = create_generic()
 c1, c2 = old_one.tasks
-joe.current_roll = ['1 x Skull', '1 x Skull', '1 x Investigate', '1 x Tentacles', '2 x Investigate', '1 x Scroll']
