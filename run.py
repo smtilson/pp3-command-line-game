@@ -21,8 +21,8 @@ def assign_dice_to_task(dice_pool, task):
     #I am removing the control flow which checks for the thing being valid.
     # I will just include it in the message for get 
     #This is still a bit messy with where the rolling and print statements happen being logically correct but slightly convoluted.
-    while not task.complete:
-        if len(dice_pool) == 0:
+    while len(dice_pool) > 0:
+        if task.complete:
             return dice_pool, task
         print(f"Your roll: {dice_pool}.")
         print(f"Remaining: {task.remaining}")
@@ -41,22 +41,25 @@ def assign_dice_to_task(dice_pool, task):
         
 def attempt_task(dice_pool, task):
     # move this validation elsewhere
-    while not task.complete:
+    while len(dice_pool) > 0:
         dice_pool, task = assign_dice_to_task(dice_pool, task)
-        if len(dice_pool) == 0:
-            print("You are out of dice.")
+        if task.complete:
+            print('You have completed this task!')
             return dice_pool, task
-    print('You have completed this task!')
-    return dice_pool, task    
+    print("You are out of dice.")
+    return dice_pool, task
 
 def attempt_task_card(character:'Character',task_card:'TaskCard'):
     # do we roll here? I think so.
     character.roll_dice()
     dice_pool = character.dice_pool
-    print(dice_pool)
-    for task in task_card:
-        print(task)
+    #print(dice_pool)
+    #for task in task_card:
+     #   print(task)
     while not task_card.complete and len(dice_pool) > 0:
+        print(dice_pool)
+        for index, task in enumerate(task_card):
+            print(f"{index} = {str(task)}")
         task_index = get_task_choice(len(task_card.tasks))
         # Is this technically in the spirit of the game?
         if task_index == 'pass':
@@ -72,7 +75,9 @@ def attempt_task_card(character:'Character',task_card:'TaskCard'):
         else:
             continue
         if task.complete:
-            if task.card.complete:
+            # is this where I want to do this rerolling?
+            dice_pool.roll()
+            if task_card.complete:
                 print(f"You have completed {task_card.name}!")
                 print(f"You receive {task_card.reward}")
         else:
@@ -81,6 +86,9 @@ def attempt_task_card(character:'Character',task_card:'TaskCard'):
         
 # I don't like the reroll being part of this move, but I guess it is fine.
 def pass_move(dice_pool) -> 'DicePool':
+    """
+    Removes a die from the dice pool and rerolls remaining dice.
+    """
     print("Sacrificing a die.")
     dice_pool.pop()
     print("Rerolling your remaining dice.")
@@ -126,7 +134,7 @@ def create_generic():
     This function creates basic instances of the above classes for the purpose of development.
     """
     bt1 = Task({'Investigate':2, 'Skull':1})
-    bt2 = Task({'Investigate':1, 'Scroll':2})
+    bt2 = Task({'Investigate':1, 'Lore':2})
     basic_old_one = GreatOldOne("basic old one", 10, 10, "+2 damage")
     basic_character = Character("joe shmoe",6)
     basic_card = TaskCard("basic task card", [bt1,bt2], "+1 damage", "-1 health")
@@ -145,4 +153,9 @@ def start_game():
 # current_progress
 old_one, joe, sample_task_card= create_generic()
 c3 = Task({"Investigate":9})
+joe.add_green()
+joe.add_green()
+joe.add_yellow()
+joe.add_yellow()
+joe.add_yellow()
 joe.roll_dice()

@@ -198,7 +198,7 @@ class TaskCard:
 
 # add color for this and then change the repn methodto show color and die face
 class Die:
-    SYMBOLS = {'1 x Investigate','2 x Investigate','3 x Investigate','4 x Investigate','1 x Scroll','2 x Scroll', '1 x Skull', '1 x Tentacles'}
+    SYMBOLS = {'1 x Investigate','2 x Investigate','3 x Investigate','4 x Investigate','1 x Lore','2 x Lore', '1 x Skull', '1 x Tentacles'}
     COLORS = {'green', 'yellow'}
     def __init__(self, color, *faces:str)-> None:
         # this should be put into a validate color method
@@ -238,11 +238,11 @@ class Die:
     
     @classmethod
     def green(cls):
-        return cls('Green','1 x Investigate','2 x Investigate','3 x Investigate','1 x Scroll', '1 x Skull', '1 x Tentacles')
+        return cls('Green','1 x Investigate','2 x Investigate','3 x Investigate','1 x Lore', '1 x Skull', '1 x Tentacles')
 
     @classmethod
     def yellow(cls):
-        return cls('Yellow','1 x Investigate','2 x Investigate','3 x Investigate', '4 x Investigate','1 x Scroll', '1 x Skull')
+        return cls('Yellow','1 x Investigate','2 x Investigate','3 x Investigate', '4 x Investigate','1 x Lore', '1 x Skull')
 
 # maybe add sorting function and ordering as well as color 
 #to order the dice and then only pop from the front will be more appropriate
@@ -258,8 +258,9 @@ class DicePool:
         return self.dice[index]
     
     def __str__(self) -> str:
-        dice_strs = [die.__str__() for die in self.dice]
-        return ', '.join(dice_strs)
+        # something other than : and , should be used, things blend in
+        dice_strs = [f"{index+1} = {str(die)}" for index, die in enumerate(self.dice)]
+        return '; '.join(dice_strs)
 
     def __repr__(self) -> str:
         dice_reprs = [die.__repr__() for die in self.dice]
