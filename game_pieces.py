@@ -1,43 +1,38 @@
-# Your code goes here.
-# You can delete these comments, but do not change the name of this file
-# Write your code to expect a terminal of 80 characters wide and 24 rows high
-# Eventually classes should probably be changed to named tuples
-
-import random
-from typing import List, Optional, Tuple
+# This file contains the game pieces that need to be loaded to play the game
 
 #add some validation to this class
 class GreatOldOne:
     """
     Creates Great Old One enemy.
     """
-    def __init__(self, name:str, health:int, tasks:tuple, attack:str) -> None:
+    def __init__(self, name:str, doom:int, elder_signs:int,attack:str) -> None:
         self.name = name
-        if health <=0:
-            raise ValueError(f"{health} is not a valid starting health value.")
-        self.starting_health = health
-        self.health = health
-        self.tasks = tasks
-        self.attack = attack # this should be replaced by something later
+        self.doom_threshold = doom
+        self.current_doom = 0
+        self.elder_sign_threshold = elder_signs
+        self.current_elder_signs = 0
+        self.attack = attack # this should be replaced by something later, I now, a custom function will be stored here.
     
-    # Current win condition
+    # Win condition
     @property
-    def alive(self) -> bool:
-        if self.health<=0:
-            return False
-        else:
+    def banished(self) -> bool:
+        if self.current_elder_signs >= self.elder_sign_threshold:
             print(f"You have defeated the terrifying {self.name}. The world is forever in your debt.")
             return True
+        else:
+            # should there be a message here
+            return False
     
-    # Adjust health accordingly
-    def take_damage(self, damage: int) -> None:
-        self.health -= damage
-        if self.health < 0:
-            self.health = 0
+    # Loss condition
+    @property
+    def summoned(self) -> bool:
+        if self.current_doom >= self.doom_threshold:
+            print(f"The terrifying {self.name} has been summoned and devours the world.")
+            return True
+        else:
+            # should there be a message here
+            return False
     
-    # should this be check tasks?
-    def check_task(self, task, die_sequence):
-        pass
 
 class Character:
     def __init__(self, name:str, health: int, items: list=None) -> None:
@@ -59,7 +54,7 @@ class Character:
     def __str__(self):
         return f"{self.name} has {self.health} left."
         
-    # Current loss condition
+    # Loss condition
     @property
     def alive(self) -> bool:
         if self.health<=0:
@@ -297,164 +292,3 @@ class DicePool:
     
     # adding red dice
     # this requires figuring out wild first.
-
-def pause() -> None:
-    input("Hit enter to continue.")
-
-def assign_dice_to_task(dice_pool, task):
-    """
-    Assigns dice from dice pool to fixed task as long as it is possible.
-    Returns task and remaining dice.
-    """
-    # current dice_pool is fixed, it may lose a die
-    while not task.complete and dice_pool in task and len(dice_pool) > 0:
-        print()
-        print(dice_pool)
-        print(task.remaining)
-        index = get_die_choice(len(dice_pool))
-        if index == "pass":
-            print("Not attempting to assign any dice from this roll.")
-            print("Removing one die form the beginning of your dice pool.")
-            dice_pool.pop()
-            return dice_pool, task
-        die = dice_pool[index-1]
-        print(f"attempting to assign die {index} with {die} to {task.remaining}.")
-        try:
-            task.assign_die(die)
-        except ValueError as e:
-            print(e)
-            pause
-            continue
-        else:
-            dice_pool.pop(index-1)
-            #print(f"{die} was successfully assigned.")
-    if task.complete:
-        return dice_pool, task
-    #should I add something to catch an empty dice pool here
-    elif len(dice_pool) == 0:
-        print("You are out of dice.")
-        return dice_pool, task
-    else:
-        print("There are no longer any symbols you can use in this roll for this task.")
-        print(dice_pool)
-        print("Removing one die form your dice pool.")
-        pause()
-        if len(dice_pool)>0:
-            dice_pool.pop()
-        return dice_pool, task
-
-def attempt_task(dice_pool, task):
-    if not valid_attempt(dice_pool, task):
-        return dice_pool, task
-    print(f"Attempting: {task.pattern}")
-    print(f"with {str(dice_pool)}")
-    pause()
-    #print("starting while loop in attempt task")
-    while len(dice_pool) > 0 and not task.complete:
-        print("calling assign dice from pool to task function")
-        dice_pool, task = assign_dice_to_task(dice_pool, task)
-        if not task.complete:
-            print("rerolling dice in pool")
-            dice_pool.roll()
-            print(f"You rolled {dice_pool}")
-            print(f"{task.remaining} is still remaining.")
-    if task.complete:
-        print(f'You have completed this task!')
-        #print(f"You get a {task.reward}.")
-        return dice_pool, task
-    else:
-        return dice_pool, task
-
-def valid_attempt(dice_pool, task) -> bool:
-    if dice_pool in task:
-        return True
-    else:
-        print(dice_pool)
-        print(task)
-        print("None of the symbols of this roll are in this task.")
-        pause()
-        return False
-
-def attempt_task_card(character:'Character',task_card:'TaskCard'):
-    # do we roll here? I think so.
-    character.roll_dice()
-    dice_pool = character.dice_pool
-    print(dice_pool)
-    for task in task_card:
-        print(task)
-    while not task_card.complete and len(dice_pool) > 0:
-        task_index = get_task_choice(len(task_card.tasks))
-        task = task_card[task_index-1]
-        # should this part of the validation be done elsewhere?
-        if valid_attempt(dice_pool, task):
-            dice_pool, task = attempt_task(dice_pool, task)
-        else:
-            continue
-        if task.complete:
-            continue
-        else:
-            print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
-
-        
-    # should there be a pass option here as well?
-
-
-# write valid input function.
-def get_task_choice(num_tasks: int):
-    index = ""
-    valid_input = [str(num) for num in range(1,num_tasks+1)]
-    valid_input.append("pass")
-    while not index:
-        index = input(f"\nPlease input numbers 1-{num_tasks} to select which task to attempt.\n")
-        if index not in valid_input:
-            print(f"\n\n{index} is invalid.\n")
-            index = ""
-    if index.lower() == "pass":
-        return index.lower()
-    else:
-        return int(index)
-    
-
-def get_die_choice(num_dice: int): #return value for this is a bit complex
-    # what about when num_dice = 0 or 1?
-    index = ""
-    valid_input = [str(num) for num in range(1,num_dice+1)]
-    valid_input.append("pass")
-    while not index:
-        index = input(f"\nPlease input numbers 1-{num_dice} to select which die to assign to the task.\n"
-        f"If none of your dice will work, enter pass.\n")
-        if index not in valid_input:
-            print(f"\n\n{index} is invalid.\n")
-            index = ""
-    if index.lower() == "pass":
-        return index.lower()
-    else:
-        return int(index)
-        
-
-def create_generic():
-    """
-    This function creates basic instances of the above classes for the purpose of development.
-    """
-    basic_task1 = Task(pattern={'Investigate':2, 'Skull':1})#, reward="+1 damage", penalty="-1 health")
-    basic_task2 = Task(pattern={'Investigate':1, 'Scroll':2})#, reward="+2 health", penalty="-1 health")
-    basic_old_one = GreatOldOne("basic old one", 10, (basic_task1, basic_task2), "+2 damage")
-    basic_character = Character("joe shmoe",6)
-    basic_card = TaskCard("basic task card", [basic_task1,basic_task2], "+1 damage", "-1 health")
-    return basic_old_one, basic_character, basic_card
-
-
-def start_game():
-    """
-    Initializes game state:
-        - Creates Great Old One
-        - Creates Die
-        - Creates player
-    """
-    pass
-
-# current_progress
-old_one, joe, sample_task_card= create_generic()
-c1, c2 = old_one.tasks
-c3 = Task({"Investigate":9})
-joe.roll_dice()
