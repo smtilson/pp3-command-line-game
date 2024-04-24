@@ -53,8 +53,8 @@ class Character:
             self.items = items
         else:
             self.items = []
-        self.dice = 6 # this val will be modified, reset it at the beginning of each turn or at the end of each turn.
-        self.current_roll = ['' for _ in range(self.dice)]
+        # self.dice = 6 # this val will be modified, reset it at the beginning of each turn or at the end of each turn.
+        self.dice_pool = [Die.green for _ in range(6)]
 
     def __str__(self):
         return f"{self.name} has {self.health} left."
@@ -74,15 +74,15 @@ class Character:
             self.health = 0
     
     def roll_dice(self) -> None:
-        self.current_roll = [Die.green.roll() for _ in range(self.dice)]
+        for die in self.dice_pool:
+            die.roll()
         
     # advances clock, check alive and resets number of die
     def end_turn(self):
         # clock.advance()
         # print(f"Advancing clock. It is now {clock.time}")
         if self.alive:
-            self.dice = 6
-            self.current_roll = ['' for _ in range(self.dice)]
+            self.dice_pool = [Die.green for _ in range(6)]
         else:
             print(f"{self.name} has died a gruesome death, you have lost. The world has ended.")
     
@@ -184,37 +184,43 @@ class Die:
             else:
                 raise ValueError(f"{face} is not a valid symbol. We can not create this die.")
         if len(faces) != 6: # maybe this should also be relaxed
-            raise ValueError(f"{faces} has too many sides to be a die.")
-        self.faces = faces # tuple of elements of Symbols
+            raise ValueError(f"{faces} does not have the correct number of sides to be a die (in this game).")
+        self.faces = faces # tuple of elements of Die.SYMBOLS
+        self.face = ''
     
-    @classmethod
-    def parse(cls, die_face):
-        number, symbol = die_face.split(' x ')
+    def parse(self):
+        """
+        Parses the face of the die. Returns number of symbols as int and symbol as string.
+        """
+        #should this automatically roll the die if it hasn't been rolled yet?
+        if not self.face:
+            raise ValueError("This die has not yet been rolled.")
+        number, symbol = self.face.split(' x ')
         number = int(number)
         return number, symbol
 
-    def roll(self) -> str:
-        return random.choice(self.faces)
+    def roll(self) -> None:
+        self.face = random.choice(self.faces)
 
 
-def assign_dice_to_task(current_roll, task):
+def assign_dice_from_roll_to_task(roll, task):
     """
-    Assigns dice from current roll to fixed task as long as it is possible.
+    Assigns dice from roll to fixed task as long as it is possible.
     Returns task. Should it also return the remaining dice? Yes.
     """
     # current roll is fixed
-    if not current_roll in task:
+    if not roll in task:
         print("None of the symbols of this role are in this task.")
-        return current_roll, task
-    while not task.complete and current_roll in task:
+        return roll, task
+    while not task.complete and roll in task:
         print()
-        print(current_roll)
+        print(roll)
         print(task.remaining)
-        index = get_die_choice(len(current_roll))
+        index = get_die_choice(len(roll))
         if index == "pass":
             print("Not attempting to assign any dice from this roll.")
             return current_roll, task
-        die = current_roll[index-1]
+        die = roll[index-1]
         print(f"{index=} and {die=}.")
         try:
             print(f"attempting to assign {die} to {task.remaining}.")
@@ -223,13 +229,13 @@ def assign_dice_to_task(current_roll, task):
             print(e)
             continue
         else:
-            current_roll.pop(index-1)
+            roll.pop(index-1)
             print(f"{die} was successfully assigned.")
     if task.complete:
         return [], task
     else:
         print("There are no longer any symbols you can use in this roll for this task.")
-        return current_roll, task
+        return roll, task
 
 def attempt_task(character, task):
     #character.roll_dice()
