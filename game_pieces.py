@@ -84,17 +84,44 @@ class Character:
 
     # advances clock, check alive and resets number of die
     def end_turn(self):
-        # clock.advance()
-        # print(f"Advancing clock. It is now {clock.time}")
-        if self.alive:
-            # This resets the dice pool and the face of each die to initial face
-            print(f"{self.name} is still alive, dice pool is being reset.")
-            self.dice_pool.reset()
-        else:
-            print(f"{self.name} has died a gruesome death, you have lost. The world has ended.")
-    
+        # This resets the dice pool and the face of each die to initial face
+        print(f"{self.name} is still alive, dice pool is being reset.")
+        self.dice_pool.reset()
+        
 # needs validation
 # needs overflow check method maybe? <- wtf does this mean
+
+class Game:
+    def __init__(self, character, great_old_one) -> None:
+        self.character = character
+        self.great_old_one = great_old_one
+        # not yet implimented
+        # self.clock = Clock()
+        # self.task_card_deck = TaskCard.create_deck()
+    # def end_turn
+    
+    @property
+    def end_condition(self):
+        pass
+
+class Clock:
+    #This is where the difficulty setting could be, the number of turns in a day.
+    def __init__(self):
+        self.time = 0
+    
+    #how many hours are in the day
+    def advance_clock(self) -> None:
+        self.time += 3
+        if self.time == 12:
+            print("It is midnight!")
+        elif self.time == 15:
+            self.time = 3
+            
+    def check_clock(self) -> None:
+        print(f"It is currently {self.time} o'clock.")
+        print(f"You have {(12-self.time)//3} turns until doom advances.")
+
+
 
 class Task:
     def __init__(self, pattern:dict) -> None:

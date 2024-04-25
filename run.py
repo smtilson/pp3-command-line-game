@@ -157,7 +157,7 @@ def start_game():
     """
     pass
 
-def main_gameplay_loop(character, great_old_one):
+def main_gameplay_loop(character, great_old_one) -> None:
     """
     Main gameplay loop which runs the game.
     """
@@ -168,12 +168,29 @@ def main_gameplay_loop(character, great_old_one):
         outcome = attempt_task_card(character, task_card)
         apply_outcome(outcome, character, great_old_one)
         end_condition = end_turn()
-    if end_condition == "Win":
+    if end_condition == "Banished":
         print(f"Congratulations! {character.name} has defeated {great_old_one.name} and successfully banished them to the dimension from which they came.")
-    elif end_condition == "Death":
+    elif end_condition == "Died":
         print(f"Oh no! {character.name} has been defeated. Now nothing stands in the way of {great_old_one.name}.")
     elif end_condition == "Summoned":
         print(f"{character.name} was unable to prevent the inevitable. {great_old_one.name} has been summoned. The end of humanity is at hand.")
+
+def end_turn(character, great_old_one) -> str:
+    pass
+    # this can be refactored into an end_condition function
+    if great_old_one.summoned:
+        return "Summoned"
+    elif great_old_one.banished:
+        return "Banished"
+    elif not character.alive:
+        return "Died"
+    else:
+        # how will this work? make game object that has a clock, a player, maybe a deck of cards.
+        advance_clock()
+        apply_doom(great_old_one)
+        character.reset()
+        return ""
+    
 # current_progress
 old_one, joe, sample_task_card= create_generic()
 c3 = Task({"Investigate":9})
