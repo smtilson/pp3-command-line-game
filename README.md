@@ -7,6 +7,7 @@
 4. Click on "select a project" and choose "New Project".
 5. Enter a project name and click "Create", and select this new project to go to the project page.
 6. Select "APIs & Services" from the menu on the left, and then select Library. We will be enabling the Google Drive API and the Google Sheets API.
+
 #### Google Drive API
 If necessary, navigate back to the Dashboard for the current project, click on "APIs & Services" then Library in the menu on the left.
 
@@ -17,8 +18,13 @@ If necessary, navigate back to the Dashboard for the current project, click on "
 5. On the "Grant users access to this service account" section, leave it blank and click "Done".
 6. Once back at the starting Google Drive API page, scroll down to service accounts and click on the account you have just created.
 7. Click on "Keys" in the menu at the top. Click on the "Add Key" dropdown menu and select "Create new Key". In the pop-up menu, select JSON and click "Create".
-8. Find the downloaded key in your on your machine (usually in your Downloads folder), its name will begin with the name of the service account it is associated with.
+8. Find the downloaded key in your on your machine (usually in your Downloads folder), its name will begin with the name of the service account it is associated with. 
+9. Add it to your local repository, change its name (to creds for example), and then add it to your .gitignore file.
 
+#### Connect to Google Sheets account
+1. Go to the credentials file in your local repository. Find the client email and copy it without the quotes.
+2. Go to the Google Sheets account and open the Sheet you want to grant access to and click the share button.
+3. Paste in the copied email address, make sure editor is selected, untick notify people, and click share.
 
 #### Google Sheets API
 If necessary, navigate back to the Dashboard for the current project, click on "APIs & Services" then Library in the menu on the left.
