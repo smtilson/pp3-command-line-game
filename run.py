@@ -103,10 +103,10 @@ def attempt_task_card(character:'Character',task_card:'TaskCard') -> str:
     if task_card.complete:
             print(f"You have completed {task_card.name}!")
             print(f"You receive {task_card.reward}")
-            return task_card.reward
+            return task_card.reward, task_card
     elif len(dice_pool) == 0:
         print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
-        return task_card.penalty
+        return task_card.penalty, task_card
         
 # I don't like the reroll being part of this move, but I guess it is fine.
 def pass_move(dice_pool) -> 'DicePool':
@@ -152,7 +152,8 @@ def get_die_choice(num_dice: int): #return value for this is a bit complex
         
 def apply_outcome(outcome, game):
     outcome_type, amount = outcome.split(': ')
-    OUTCOMES[outcome_type](amount, game)
+    print(f"Applying outcome {outcome}.")
+    OUTCOMES[outcome_type](int(amount), game)
 
 def start_game():
     """
@@ -181,46 +182,52 @@ def main_gameplay_loop(game) -> None:
     end_condition = False
     while not end_condition:
         task_card = select_task_card(game)
-        outcome = attempt_task_card(game.character, task_card)
+        print("card selected")
+        print(task_card)
+        outcome, task_card = attempt_task_card(game.character, task_card)
+        game.discard_completed_task_card(task_card)
+        print(f"{outcome} received from card")
         apply_outcome(outcome, game)
+        pause()
+        print("End of turn.")
         end_condition = game.end_turn()
     # these messages could be refactored into a dict maybe?
     # or a method of the game object, like a property?
     if end_condition == "Banished":
-        print(f"Congratulations! {character.name} has defeated {great_old_one.name} and successfully banished them to the dimension from which they came.")
+        print(f"Congratulations! {game.character.name} has defeated {game.great_old_one.name} and successfully banished them to the dimension from which they came.")
     elif end_condition == "Died":
-        print(f"Oh no! {character.name} has been defeated. Now nothing stands in the way of {great_old_one.name}.")
+        print(f"Oh no! {game.character.name} has been defeated. Now nothing stands in the way of {game.great_old_one.name}.")
     elif end_condition == "Summoned":
-        print(f"{character.name} was unable to prevent the inevitable. {great_old_one.name} has been summoned. The end of humanity is at hand.")
+        print(f"{game.character.name} was unable to prevent the inevitable. {game.great_old_one.name} has been summoned. The end of humanity is at hand.")
 
-def create_generic():
+def create_generic(doom, elder_signs, sanity, stamina, start_time):
     """
     This function creates basic instances of the above classes for the purpose of development.
     """
     bt1 = Task({'Investigate':2, 'Skull':1})
     bt2 = Task({'Investigate':1, 'Lore':2})
     ht3 = Task({"Investigate":8})
-    basic_old_one = GreatOldOne("basic old one", 10, 10, "+1 damage")
-    basic_character = Character("joe shmoe",6, 6)
-    basic_card = TaskCard("basic task card", [bt1,bt2], "Elder Sign: +1", "Sanity: -1")
+    basic_old_one = GreatOldOne("basic old one", doom, elder_signs, "+1 damage")
+    basic_character = Character("joe shmoe",sanity, stamina)
+    basic_card1 = TaskCard("basic task card", [bt1], "Stamina: +1", "Stamina: -1")
+    basic_card2 = TaskCard("basic task card", [bt1,bt2], "Elder Sign: +1", "Sanity: -1")
     hard_card1 = TaskCard("hard task card 1", [bt1,ht3], "Elder Sign: +2", "Stamina: -1")
     hard_card2 = TaskCard("hard task card 2", [bt2,ht3], "Elder Sign: +2", "Sanity: -1")
     task_deck = []
     for _ in range(3):
-        task_deck.append(basic_card)
+        task_deck.append(basic_card1)
+        task_deck.append(basic_card2)
         task_deck.append(hard_card1)
         task_deck.append(hard_card2)
-    game = Game( basic_character,basic_old_one, task_deck)
+    game = Game(basic_character,basic_old_one,start_time,task_deck)
     game.shuffle()
     return game
 
     
 # current_progress
-game = create_generic()
+game = create_generic(2,7,3,3,0)
 joe = game.character
-joe.add_die('green')
-joe.add_die('green')
-joe.add_die('yellow')
-joe.add_die('yellow')
-joe.add_die('yellow')
 joe.roll_dice()
+bt1 = Task({'Investigate':2, 'Skull':1})
+bt2 = Task({'Investigate':1, 'Lore':2})
+ht3 = Task({"Investigate":8})

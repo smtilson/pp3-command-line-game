@@ -15,6 +15,11 @@ class GreatOldOne:
         self.current_elder_signs = 0
         self.attack = attack # this should be replaced by something later, I now, a custom function will be stored here.
     
+    def __str__(self):
+        string = f"{self.great_old_one.name} has {self.great_old_one.current_doom}/{self,great_old_one.doom_threshold} Doom."
+        string += f"You have {self.great_old_one.current_elder_signs}/{self.great_old_one.elder_sign_threshold} Elder Signs."
+        return string
+
     # Win condition
     @property
     def banished(self) -> bool:
@@ -55,12 +60,12 @@ class Character:
         self.dice_pool = DicePool()
 
     def __str__(self):
-        return f"{self.name} has {self.health} left."
+        return f"{self.name} has {self.sanity} Sanity and {self.stamina} Stamina left."
         
     # Loss condition
     @property
     def alive(self) -> bool:
-        if self.health<=0:
+        if self.sanity <= 0 or self.stamina <= 0:
             return False
         else:
             return True
@@ -88,7 +93,7 @@ class Character:
         return len(self.dice_pool)
 
     # advances clock, check alive and resets number of die
-    def end_turn(self):
+    def reset(self):
         # This resets the dice pool and the face of each die to initial face
         print(f"{self.name} is still alive, dice pool is being reset.")
         self.dice_pool.reset()
@@ -97,19 +102,23 @@ class Character:
 # needs overflow check method maybe? <- wtf does this mean
 
 class Game:
-    def __init__(self, character, great_old_one, task_card_deck) -> None:
+    def __init__(self, character, great_old_one, start_time, task_card_deck) -> None:
         self.character = character
         self.great_old_one = great_old_one
-        self.clock = Clock()
+        self.clock = Clock(start_time)
         # not yet fully implimented
         self.task_card_deck = task_card_deck #TaskCard.create_deck()
         self.current_task_cards = []
         self.refill_task_cards()
     
     def end_turn(self) -> str:
+        print("advancing clock")
         self.clock.advance()
+        print("applying doom")
         self.apply_doom()
+        print("character being reset")
         self.character.reset()
+        print("refilling task cards")
         self.refill_task_cards()
         return self.end_condition
     
@@ -117,7 +126,7 @@ class Game:
         if self.clock.time == 12:
             print("Applying doom.")
             self.great_old_one.current_doom += 1
-            print(f"There is {self.great_old_one.current_doom} out of {self.great_old_one.doom_threshold}.")
+            print(f"There is {self.great_old_one.current_doom}/{self.great_old_one.doom_threshold} Doom.")
 
     @property
     def end_condition(self) -> str:
@@ -133,23 +142,33 @@ class Game:
 #    commented out until the TaskCard.create_deck() function is written
     def refill_task_cards(self) -> None:
         # the number of active cards is also a parameter that can be messed with
+        print("refill called")
+        print(len(self.current_task_cards))
         while len(self.current_task_cards) < 3:
             self.draw_task_card()
+        print("refill finished")
+        print(len(self.current_task_cards))
+        
     
     def draw_task_card(self) -> None:
         task_card = self.task_card_deck.pop(0)
         self.current_task_cards.append(task_card)
    
     def discard_completed_task_card(self, task_card) -> None:
+        task_card.reset()
         self.task_card_deck.append(task_card)
     
     def shuffle(self) -> None:
         shuffle(self.task_card_deck)
 
+    def status(self)-> str:
+        print(self.great_old_one)
+        print(self.character)
+        print(f"The time is {self.clock} o'clock.")
 class Clock:
     #This is where the difficulty setting could be, the number of turns in a day.
-    def __init__(self):
-        self.time = 0
+    def __init__(self, start_time):
+        self.time = start_time
     
     #how many hours are in the day
     def advance(self) -> None:
@@ -166,22 +185,25 @@ class Clock:
 
 def elder_sign(num:int, game:'Game') -> None:
     game.great_old_one.current_elder_signs += num
+    print(f"{game.character.name} now has {game.great_old_one.current_elder_signs} Elder Signs.")
     
-def damage_sanity(num:int, game:'Game') -> None:
-    game.character.sanity -= num
-    
-def damage_stamina(num:int, game:'Game') -> None:
-    game.character.stamina -= num
+def change_sanity(num:int, game:'Game') -> None:
+    game.character.sanity += num
+    print(f"{game.character.name} now has {game.character.sanity} Sanity.")
+
+def change_stamina(num:int, game:'Game') -> None:
+    game.character.stamina += num
+    print(f"{game.character.name} now has {game.character.stamina} Stamina.")
 
 OUTCOMES = {"Elder Sign":elder_sign,
-            "Sanity":damage_sanity,
-            "Stamina":damage_stamina}
+            "Sanity":change_sanity,
+            "Stamina":change_stamina}
 
 class Task:
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable
         self.pattern = pattern
-        self.remaining = pattern
+        self.remaining = {key:value for key,value in pattern.items()}
 
     def __contains__(self, die) -> bool:
         return die.parse()[1] in self.remaining.keys()
@@ -215,7 +237,9 @@ class Task:
     # resets task for next attempt, if at all
     # eventually this will be removed
     def reset(self) -> None:
-        self.remaining = self.pattern 
+        print("task is being reset")
+        self.remaining = {key:value for key,value in self.pattern.items()} 
+        print(f"Complete: {self.complete}")
     
     @property
     def complete(self):
@@ -279,8 +303,10 @@ class TaskCard:
                 print(f"Task {index}: {task.pattern}")
 
     def reset(self) -> None:
+        print(f"{self.name} is being reset.")
         for task in self:
             task.reset()
+        print(f"status: {self.complete}")
 
 # add color for this and then change the repn methodto show color and die face
 class Die:
@@ -324,7 +350,7 @@ class Die:
         self.face = choice(self.faces)
     
     @classmethod
-    def create_die_by_color(cls,color):
+    def create_die(cls,color:str):
         if color not in cls.COLORS.keys():
             raise ValueError(f"{color} is not a valid color of die")
         return cls(color.capitalize(),*cls.COLORS[color])
@@ -332,7 +358,7 @@ class Die:
 #to order the dice and then only pop from the front will be more appropriate
 class DicePool:
     def __init__(self) -> None:
-        self.dice = [Die.create_die_by_color('green') for _ in range(6)]
+        self.dice = [Die.create_die('green') for _ in range(6)]
     
     # is this the correct thing? Anthony said it was fine
     def __iter__(self) -> 'iterator':
@@ -355,7 +381,7 @@ class DicePool:
         return len(self.dice)
 
     def add_die(self, color:str) -> None:
-        die = Die.create_die_by_color(color)
+        die = Die.create_die(color)
         self.dice.append(die)
 
     def roll(self) -> None:
@@ -370,7 +396,8 @@ class DicePool:
     
 
     def reset(self) -> None:
-        self.dice = [Die.green() for _ in range(6)]
+        print("Dice pool is being reset")
+        self.dice = [Die.create_die('green') for _ in range(6)]
     
     # adding red dice
     # this requires figuring out wild first.
