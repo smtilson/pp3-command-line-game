@@ -125,15 +125,15 @@ def get_task_choice(num_tasks: int):
 
 def get_die_choice(num_dice: int): #return value for this is a bit complex
     # what about when num_dice = 0 or 1?
-    index = ""
+    # maybe refactor these get_choice functions into one function.
     valid_input = [str(num) for num in range(1,num_dice+1)]
     valid_input.append("pass")
-    while not index:
+    index = input(f"\nPlease input an selection from {num_dice} to select which die to assign to the task.\n"
+        f"Enter pass to sacrifice a die and reroll.\n")
+    while index not in valid_input:
+        print(f"\n{index} is invalid.\n")
         index = input(f"\nPlease input numbers 1-{num_dice} to select which die to assign to the task.\n"
         f"Enter pass to sacrifice a die and reroll.\n")
-        if index not in valid_input:
-            print(f"\n{index} is invalid.\n")
-            index = ""
     if index.lower() == "pass":
         return index.lower()
     else:
@@ -146,9 +146,9 @@ def create_generic():
     """
     bt1 = Task({'Investigate':2, 'Skull':1})
     bt2 = Task({'Investigate':1, 'Lore':2})
-    basic_old_one = GreatOldOne("basic old one", 10, 10, "+2 damage")
+    basic_old_one = GreatOldOne("basic old one", 10, 10, "+1 damage")
     basic_character = Character("joe shmoe",6)
-    basic_card = TaskCard("basic task card", [bt1,bt2], "+1 damage", "-1 health")
+    basic_card = TaskCard("basic task card", [bt1,bt2], "+1 elder sign", "-1 health")
     return basic_old_one, basic_character, basic_card
 
 
