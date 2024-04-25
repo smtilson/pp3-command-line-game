@@ -1,32 +1,27 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+## Deployment
 
-Welcome,
+### Setting up APIs
+1. Go to <a href="https://console.cloud.google.com/">Google Cloud Platform</a>.
+2.  Make sure you are logged into the Google account that you want to associate with this project (as opposed to a work account).
+3. Open side navigation bar by clicking on the "burger" icon in the upper left.
+4. Click on "select a project" and choose "New Project".
+5. Enter a project name and click "Create", and select this new project to go to the project page.
+6. Select "APIs & Services" from the menu on the left, and then select Library. We will be enabling the Google Drive API and the Google Sheets API.
+#### Google Drive API
+If necessary, navigate back to the Dashboard for the current project, click on "APIs & Services" then Library in the menu on the left.
 
-This is the Code Institute student template for deploying your third portfolio project, the Python command-line project. The last update to this file was: **March 14, 2023**
+1. Search for the Google Drive API in the search bar. Select it, and then enable it.
+2. Click "Create Credentials" in the upper right. Once at the form, select Google Drive API in the "Which API are you using?" dropdown menu. Select Application Data, then click "Next".
+3. Choose a name for the Service Account. Specify a Service Account ID if one is not generated from the name. Provide a description for the service, such as "Allow for communication between the app and Google Drive." Then click "Create and Continue".
+4. Select Role of Editor and click "Continue".
+5. On the "Grant users access to this service account" section, leave it blank and click "Done".
+6. Once back at the starting Google Drive API page, scroll down to service accounts and click on the account you have just created.
+7. Click on "Keys" in the menu at the top. Click on the "Add Key" dropdown menu and select "Create new Key". In the pop-up menu, select JSON and click "Create".
+8. Find the downloaded key in your on your machine (usually in your Downloads folder), its name will begin with the name of the service account it is associated with.
 
-## Reminders
 
-- Your code must be placed in the `run.py` file
-- Your dependencies must be placed in the `requirements.txt` file
-- Do not edit any of the other files or your code may not deploy properly
-
-## Creating the Heroku app
-
-When you create the app, you will need to add two buildpacks from the _Settings_ tab. The ordering is as follows:
-
-1. `heroku/python`
-2. `heroku/nodejs`
-
-You must then create a _Config Var_ called `PORT`. Set this to `8000`
-
-If you have credentials, such as in the Love Sandwiches project, you must create another _Config Var_ called `CREDS` and paste the JSON into the value field.
-
-Connect your GitHub repository and deploy as normal.
-
-## Constraints
-
-The deployment terminal is set to 80 columns by 24 rows. That means that each line of text needs to be 80 characters or less otherwise it will be wrapped onto a second line.
-
----
-
-Happy coding!
+#### Google Sheets API
+If necessary, navigate back to the Dashboard for the current project, click on "APIs & Services" then Library in the menu on the left.
+1. Search for the Google Sheets API and select it.
+2. Click "Enable".
+Note: This API does not require credentials.
