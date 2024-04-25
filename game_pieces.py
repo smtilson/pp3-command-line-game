@@ -36,15 +36,17 @@ class GreatOldOne:
             return False
     
 class Character:
-    def __init__(self, name:str, health: int, items: list=None) -> None:
+    def __init__(self, name:str, sanity: int, stamina: int, items: list=None) -> None:
         # maybe these will be added to or removed
         # could have special dice
         # start with no items in example
         self.name = name
-        if health <= 0:
-            raise ValueError(f"{health} is not a valid starting health value.")
-        self.starting_health = health
-        self.health = health
+        if sanity <= 0 or stamina <= 0:
+            raise ValueError(f"{sanity=} and {stamina=} are not a starting values.")
+        self.starting_sanity = sanity
+        self.sanity = sanity
+        self.starting_stamina = stamina
+        self.stamina = stamina
         if items:
             self.items = items
         else:
@@ -64,19 +66,22 @@ class Character:
             return True
 
     # Adjust health accordingly
-    def take_damage(self, damage: int) -> None:
-        self.health -= damage
-        if self.health < 0:
-            self.health = 0
+    def lose_sanity(self, damage: int) -> None:
+        self.sanity -= damage
+        if self.sanity < 0:
+            self.sanity = 0
+    
+    def lose_stamina(self, damage: int) -> None:
+        self.stamina -= damage
+        if self.stamina < 0:
+            self.stamina = 0
+    
     
     def roll_dice(self) -> None:
         self.dice_pool.roll()
 
-    def add_green(self) -> None:
-        self.dice_pool.add_green()
-
-    def add_yellow(self) -> None:
-        self.dice_pool.add_yellow()
+    def add_die(self, color: str) -> None:
+        self.dice_pool.add_die(color)
 
     @property
     def dice(self) -> int:
@@ -159,7 +164,13 @@ class Clock:
         print(f"It is currently {self.time} o'clock.")
         print(f"You have {(12-self.time)//3} turns until doom advances.")
 
-
+class Outcome:
+    @classmethod
+    def elder_sign(cls, num:int, game:'Game') -> None:
+        game.great_old_one.elder_signs += num
+    @classmethod
+    def damage_sanity(cls, num:int, game:'Game') -> None:
+        game.character.sanity -= num
 
 class Task:
     def __init__(self, pattern:dict) -> None:
@@ -192,6 +203,9 @@ class Task:
         self.remaining[symbol] -= number
         if self.remaining[symbol] <= 0:
             del self.remaining[symbol]
+    
+    # def assign_die_from_pool(self, dice_pool) -> 'DicePool':
+
        
     # resets task for next attempt, if at all
     # eventually this will be removed
@@ -266,7 +280,8 @@ class TaskCard:
 # add color for this and then change the repn methodto show color and die face
 class Die:
     SYMBOLS = {'1 x Investigate','2 x Investigate','3 x Investigate','4 x Investigate','1 x Lore','2 x Lore', '1 x Skull', '1 x Tentacles'}
-    COLORS = {'green', 'yellow'}
+    COLORS = {'green':['1 x Investigate','2 x Investigate','3 x Investigate','1 x Lore', '1 x Skull', '1 x Tentacles'], 
+                'yellow':['1 x Investigate','2 x Investigate','3 x Investigate', '4 x Investigate','1 x Lore', '1 x Skull']}
     def __init__(self, color, *faces:str)-> None:
         # this should be put into a validate color method
         self.color = color 
@@ -304,18 +319,15 @@ class Die:
         self.face = choice(self.faces)
     
     @classmethod
-    def green(cls):
-        return cls('Green','1 x Investigate','2 x Investigate','3 x Investigate','1 x Lore', '1 x Skull', '1 x Tentacles')
-
-    @classmethod
-    def yellow(cls):
-        return cls('Yellow','1 x Investigate','2 x Investigate','3 x Investigate', '4 x Investigate','1 x Lore', '1 x Skull')
-
+    def create_die_by_color(cls,color):
+        if color not in cls.COLORS.keys():
+            raise ValueError(f"{color} is not a valid color of die")
+        return cls(color.capitalize(),*cls.COLORS[color])
 # maybe add sorting function and ordering as well as color 
 #to order the dice and then only pop from the front will be more appropriate
 class DicePool:
     def __init__(self) -> None:
-        self.dice = [Die.green() for _ in range(6)]
+        self.dice = [Die.create_die_by_color('green') for _ in range(6)]
     
     # is this the correct thing? Anthony said it was fine
     def __iter__(self) -> 'iterator':
@@ -337,11 +349,9 @@ class DicePool:
     def __len__(self) -> int:
         return len(self.dice)
 
-    def add_green(self) -> None:
-        self.dice.append(Die.green())
-
-    def add_yellow(self) -> None:
-        self.dice.append(Die.yellow())
+    def add_die(self, color:str) -> None:
+        die = Die.create_die_by_color(color)
+        self.dice.append(die)
 
     def roll(self) -> None:
         for die in self.dice:
