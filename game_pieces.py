@@ -1,5 +1,5 @@
 # This file contains the game pieces that need to be loaded to play the game
-from random import choice
+from random import choice, shuffle
 from typing import List, Optional, Tuple
 
 #add some validation to this class
@@ -96,21 +96,59 @@ class Game:
         self.character = character
         self.great_old_one = great_old_one
         # not yet implimented
-        # self.clock = Clock()
+        self.clock = Clock()
         # self.task_card_deck = TaskCard.create_deck()
+        # self.current_task_cards = []
+        # self.refill_task_cards()
     # def end_turn
     
-    @property
-    def end_condition(self):
-        pass
+    def end_turn(self) -> str:
+        self.clock.advance()
+        self.apply_doom()
+        self.character.reset()
+        # self.refill_task_cards()
+        return self.end_condition
+    
+    def apply_doom(self) -> None:
+        if self.clock.time == 12:
+            print("Applying doom.")
+            self.great_old_one.current_doom += 1
+            print(f"There is {self.great_old_one.current_doom} out of {self.great_old_one.doom_threshold}.")
 
+    @property
+    def end_condition(self) -> str:
+        if self.great_old_one.summoned:
+            return "Summoned"
+        elif self.great_old_one.banished:
+            return "Banished"
+        elif not self.character.alive:
+            return "Died"
+        else:
+            return ""
+'''
+    commented out until the TaskCard.create_deck() function is written
+    def refill_task_cards(self) -> None:
+        # the number of active cards is also a parameter that can be messed with
+        while len(self.current_task_cards) < 3:
+            self.draw_task_card()
+    
+    def draw_task_card(self) -> None:
+        task_card = self.task_card_deck.pop(0)
+        self.current_task_cards.append(task_card)
+   
+    def discard_completed_task_card(self, task_card) -> None:
+        self.task_card_deck.append(task_card)
+    
+    def shuffle(self) -> None:
+        shuffle(self.task_card_deck)
+'''
 class Clock:
     #This is where the difficulty setting could be, the number of turns in a day.
     def __init__(self):
         self.time = 0
     
     #how many hours are in the day
-    def advance_clock(self) -> None:
+    def advance(self) -> None:
         self.time += 3
         if self.time == 12:
             print("It is midnight!")
