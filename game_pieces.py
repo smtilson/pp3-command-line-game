@@ -97,21 +97,20 @@ class Character:
 # needs overflow check method maybe? <- wtf does this mean
 
 class Game:
-    def __init__(self, character, great_old_one) -> None:
+    def __init__(self, character, great_old_one, task_card_deck) -> None:
         self.character = character
         self.great_old_one = great_old_one
-        # not yet implimented
         self.clock = Clock()
-        # self.task_card_deck = TaskCard.create_deck()
-        # self.current_task_cards = []
-        # self.refill_task_cards()
-    # def end_turn
+        # not yet fully implimented
+        self.task_card_deck = task_card_deck #TaskCard.create_deck()
+        self.current_task_cards = []
+        self.refill_task_cards()
     
     def end_turn(self) -> str:
         self.clock.advance()
         self.apply_doom()
         self.character.reset()
-        # self.refill_task_cards()
+        self.refill_task_cards()
         return self.end_condition
     
     def apply_doom(self) -> None:
@@ -130,8 +129,8 @@ class Game:
             return "Died"
         else:
             return ""
-'''
-    commented out until the TaskCard.create_deck() function is written
+
+#    commented out until the TaskCard.create_deck() function is written
     def refill_task_cards(self) -> None:
         # the number of active cards is also a parameter that can be messed with
         while len(self.current_task_cards) < 3:
@@ -146,7 +145,7 @@ class Game:
     
     def shuffle(self) -> None:
         shuffle(self.task_card_deck)
-'''
+
 class Clock:
     #This is where the difficulty setting could be, the number of turns in a day.
     def __init__(self):
@@ -164,13 +163,19 @@ class Clock:
         print(f"It is currently {self.time} o'clock.")
         print(f"You have {(12-self.time)//3} turns until doom advances.")
 
-class Outcome:
-    @classmethod
-    def elder_sign(cls, num:int, game:'Game') -> None:
-        game.great_old_one.elder_signs += num
-    @classmethod
-    def damage_sanity(cls, num:int, game:'Game') -> None:
-        game.character.sanity -= num
+
+def elder_sign(num:int, game:'Game') -> None:
+    game.great_old_one.current_elder_signs += num
+    
+def damage_sanity(num:int, game:'Game') -> None:
+    game.character.sanity -= num
+    
+def damage_stamina(num:int, game:'Game') -> None:
+    game.character.stamina -= num
+
+OUTCOMES = {"Elder Sign":elder_sign,
+            "Sanity":damage_sanity,
+            "Stamina":damage_stamina}
 
 class Task:
     def __init__(self, pattern:dict) -> None:
@@ -279,9 +284,9 @@ class TaskCard:
 
 # add color for this and then change the repn methodto show color and die face
 class Die:
-    SYMBOLS = {'1 x Investigate','2 x Investigate','3 x Investigate','4 x Investigate','1 x Lore','2 x Lore', '1 x Skull', '1 x Tentacles'}
-    COLORS = {'green':['1 x Investigate','2 x Investigate','3 x Investigate','1 x Lore', '1 x Skull', '1 x Tentacles'], 
-                'yellow':['1 x Investigate','2 x Investigate','3 x Investigate', '4 x Investigate','1 x Lore', '1 x Skull']}
+    SYMBOLS = {'Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1','Lore: 2', 'Skull: 1', 'Tentacles: 1'}
+    COLORS = {'green':['Investigate: 1','Investigate: 2','Investigate: 3','Lore: 1', 'Skull: 1', 'Tentacles: 1'], 
+                'yellow':['Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skull: 1']}
     def __init__(self, color, *faces:str)-> None:
         # this should be put into a validate color method
         self.color = color 
@@ -310,7 +315,7 @@ class Die:
         # should this automatically roll the die if it hasn't been rolled yet?
         if not self.face:
             raise ValueError("This die has not yet been rolled.")
-        number, symbol = self.face.split(' x ')
+        symbol, number = self.face.split(': ')
         number = int(number)
         return number, symbol
 

@@ -103,10 +103,10 @@ def attempt_task_card(character:'Character',task_card:'TaskCard') -> str:
     if task_card.complete:
             print(f"You have completed {task_card.name}!")
             print(f"You receive {task_card.reward}")
-            return f"Reward = {task_card.reward}"
+            return task_card.reward
     elif len(dice_pool) == 0:
         print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
-        return f"Penalty = {task_card.penalty}"
+        return task_card.penalty
         
 # I don't like the reroll being part of this move, but I guess it is fine.
 def pass_move(dice_pool) -> 'DicePool':
@@ -139,7 +139,7 @@ def get_die_choice(num_dice: int): #return value for this is a bit complex
     # maybe refactor these get_choice functions into one function.
     valid_input = [str(num) for num in range(1,num_dice+1)]
     valid_input.append("pass")
-    index = input(f"\nPlease input an selection from {num_dice} to select which die to assign to the task.\n"
+    index = input(f"\nPlease input a selection from 1-{num_dice} to select which die to assign to the task.\n"
         f"Enter pass to sacrifice a die and reroll.\n")
     while index not in valid_input:
         print(f"\n{index} is invalid.\n")
@@ -151,20 +151,8 @@ def get_die_choice(num_dice: int): #return value for this is a bit complex
         return int(index)
         
 def apply_outcome(outcome, game):
-    outcome_type, outcome = outcome.split(' = ')
-
-
-def create_generic():
-    """
-    This function creates basic instances of the above classes for the purpose of development.
-    """
-    bt1 = Task({'Investigate':2, 'Skull':1})
-    bt2 = Task({'Investigate':1, 'Lore':2})
-    basic_old_one = GreatOldOne("basic old one", 10, 10, "+1 damage")
-    basic_character = Character("joe shmoe",6, 6)
-    basic_card = TaskCard("basic task card", [bt1,bt2], "+1 elder sign", "-1 health")
-    return basic_old_one, basic_character, basic_card
-
+    outcome_type, amount = outcome.split(': ')
+    OUTCOMES[outcome_type](amount, game)
 
 def start_game():
     """
@@ -182,16 +170,19 @@ def start_game():
     """
     pass
 
+def select_task_card(game):
+    return game.current_task_cards.pop(0)
+
 def main_gameplay_loop(game) -> None:
     """
     Main gameplay loop which runs the game.
     """
     # this is all meta code essentially
-    pass
+    end_condition = False
     while not end_condition:
         task_card = select_task_card(game)
         outcome = attempt_task_card(game.character, task_card)
-        apply_outcome(outcome, game.character, game.great_old_one)
+        apply_outcome(outcome, game)
         end_condition = game.end_turn()
     # these messages could be refactored into a dict maybe?
     # or a method of the game object, like a property?
@@ -202,10 +193,31 @@ def main_gameplay_loop(game) -> None:
     elif end_condition == "Summoned":
         print(f"{character.name} was unable to prevent the inevitable. {great_old_one.name} has been summoned. The end of humanity is at hand.")
 
+def create_generic():
+    """
+    This function creates basic instances of the above classes for the purpose of development.
+    """
+    bt1 = Task({'Investigate':2, 'Skull':1})
+    bt2 = Task({'Investigate':1, 'Lore':2})
+    ht3 = Task({"Investigate":8})
+    basic_old_one = GreatOldOne("basic old one", 10, 10, "+1 damage")
+    basic_character = Character("joe shmoe",6, 6)
+    basic_card = TaskCard("basic task card", [bt1,bt2], "Elder Sign: +1", "Sanity: -1")
+    hard_card1 = TaskCard("hard task card 1", [bt1,ht3], "Elder Sign: +2", "Stamina: -1")
+    hard_card2 = TaskCard("hard task card 2", [bt2,ht3], "Elder Sign: +2", "Sanity: -1")
+    task_deck = []
+    for _ in range(3):
+        task_deck.append(basic_card)
+        task_deck.append(hard_card1)
+        task_deck.append(hard_card2)
+    game = Game( basic_character,basic_old_one, task_deck)
+    game.shuffle()
+    return game
+
     
 # current_progress
-old_one, joe, sample_task_card= create_generic()
-c3 = Task({"Investigate":9})
+game = create_generic()
+joe = game.character
 joe.add_die('green')
 joe.add_die('green')
 joe.add_die('yellow')
