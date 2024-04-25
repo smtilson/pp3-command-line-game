@@ -144,12 +144,36 @@ def create_generic():
 def start_game():
     """
     Initializes game state:
-        - Creates Great Old One
-        - Creates Die
-        - Creates player
+        - Create Great Old Ones
+        - Create Characters
+        - Create Task Cards
+        - Create Items
+    Select game state:
+        - Select Great Old One
+        - Select Character
+    Begin Game:
+        - Deal Task Cards
+        - Begin Game (call main_gameplay_loop)
     """
     pass
 
+def main_gameplay_loop(character, great_old_one):
+    """
+    Main gameplay loop which runs the game.
+    """
+    # this is all meta code essentially
+    pass
+    while not end_condition:
+        task_card = select_task_card()
+        outcome = attempt_task_card(character, task_card)
+        apply_outcome(outcome, character, great_old_one)
+        end_condition = end_turn()
+    if end_condition == "Win":
+        print(f"Congratulations! {character.name} has defeated {great_old_one.name} and successfully banished them to the dimension from which they came.")
+    elif end_condition == "Death":
+        print(f"Oh no! {character.name} has been defeated. Now nothing stands in the way of {great_old_one.name}.")
+    elif end_condition == "Summoned":
+        print(f"{character.name} was unable to prevent the inevitable. {great_old_one.name} has been summoned. The end of humanity is at hand.")
 # current_progress
 old_one, joe, sample_task_card= create_generic()
 c3 = Task({"Investigate":9})
