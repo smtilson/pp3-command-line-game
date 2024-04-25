@@ -170,19 +170,21 @@ class Task:
     def __contains__(self, die) -> bool:
         return die.parse()[1] in self.remaining.keys()
 
-    def valid(self, dice_pool) -> bool:
-        for die in dice_pool:
-            if die in self:
-                return True
-        return False
-
-    
     def __str__(self):
+        if self.complete:
+            return "This task is complete."
         return f"Remaining: {self.remaining}"
     
     #should this be different?
     def __repr__(self):
         return self.__str__()
+
+    # is this still necessary?    
+    def valid(self, dice_pool) -> bool:
+        for die in dice_pool:
+            if die in self:
+                return True
+        return False
 
     def assign_die(self, die:'Die') -> None:
         print(f"Assigning die with {str(die)} to {self.remaining}.")
@@ -325,7 +327,7 @@ class DicePool:
     def __str__(self) -> str:
         # something other than : and , should be used, things blend in
         dice_strs = [f"{index+1} = {str(die)}" for index, die in enumerate(self.dice)]
-        return '; '.join(dice_strs)
+        return 'Your roll: '+'; '.join(dice_strs)
 
     def __repr__(self) -> str:
         dice_reprs = [die.__repr__() for die in self.dice]

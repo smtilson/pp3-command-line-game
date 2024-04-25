@@ -18,14 +18,13 @@ def assign_dice_to_task(dice_pool, task):
     This pops a die from the dice pool and rerolls the dice.
     Then, we rReturn the task and remaining dice.
     """
-    #I am removing the control flow which checks for the thing being valid.
-    # I will just include it in the message for get 
-    #This is still a bit messy with where the rolling and print statements happen being logically correct but slightly convoluted.
+    # This is still a bit messy with where the rolling and print statements happen being logically correct but slightly convoluted.
+    # is the above still true?
     while len(dice_pool) > 0:
+        # should this catch be at the beginning?
         if task.complete:
             return dice_pool, task
-        print(f"Your roll: {dice_pool}.")
-        print(f"Remaining: {task.remaining}")
+        report_dice_n_task(dice_pool, task)
         index = get_die_choice(len(dice_pool))
         if index == "pass":
             dice_pool = pass_move(dice_pool)
@@ -49,6 +48,16 @@ def attempt_task(dice_pool, task):
     print("You are out of dice.")
     return dice_pool, task
 
+#I feel like this can be combined with the other report function to be more streamlined?
+def report_options(dice_pool, task_card):
+    print(dice_pool)
+    for index, task in enumerate(task_card):
+        print(f"{index+1} = {str(task)}")
+
+def report_dice_n_task(dice_pool, task):    
+    print(dice_pool)
+    print(task)    
+
 def attempt_task_card(character:'Character',task_card:'TaskCard'):
     # do we roll here? I think so.
     character.roll_dice()
@@ -56,32 +65,36 @@ def attempt_task_card(character:'Character',task_card:'TaskCard'):
     #print(dice_pool)
     #for task in task_card:
      #   print(task)
-    while not task_card.complete and len(dice_pool) > 0:
-        print(dice_pool)
-        for index, task in enumerate(task_card):
-            print(f"{index} = {str(task)}")
+    #I feel like I don't really need these conditions here
+    #while not task_card.complete and len(dice_pool) > 0:
+    while True:
+        report_options(dice_pool, task_card)
         task_index = get_task_choice(len(task_card.tasks))
         # Is this technically in the spirit of the game?
         if task_index == 'pass':
             dice_pool = pass_move(dice_pool)
-            print(dice_pool)
-            for task in task_card:
-                print(task)
+            # I think this print statement is irrelevant.
+            #print(dice_pool)
+            #for task in task_card:
+            #    print(task)
             continue
         task = task_card[task_index-1]
         # should this part of the validation be done elsewhere?
         if task.valid(dice_pool):
             dice_pool, task = attempt_task(dice_pool, task)
         else:
+            print("Your roll doesn't have any symbols for that task.")
             continue
-        if task.complete:
-            # is this where I want to do this rerolling?
-            dice_pool.roll()
-            if task_card.complete:
+        if len(dice_pool) == 0:
+            print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
+            return task_card.penalty
+        elif task_card.complete:
                 print(f"You have completed {task_card.name}!")
                 print(f"You receive {task_card.reward}")
+                return task_card.reward
         else:
-            print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
+            dice_pool.roll()
+            
 
         
 # I don't like the reroll being part of this move, but I guess it is fine.
@@ -98,19 +111,17 @@ def pass_move(dice_pool) -> 'DicePool':
     
 # write valid input function.
 def get_task_choice(num_tasks: int):
-    index = ""
+    condition = True
     valid_input = [str(num) for num in range(1,num_tasks+1)]
     valid_input.append("pass")
-    while not index:
-        index = input(f"\nPlease input numbers 1-{num_tasks} to select which task to attempt.\n")
-        if index not in valid_input:
-            print(f"\n\n{index} is invalid.\n")
-            index = ""
+    index = input(f"\nPlease input numbers 1-{num_tasks} to select which task to attempt.\n")
+    while index not in valid_input:
+        print(f"{index} is invalid.")
+        index = input(f"Please input numbers 1-{num_tasks} to select which task to attempt.\n")
     if index.lower() == "pass":
-        return index.lower()
+        return 'pass'
     else:
         return int(index)
-    
 
 def get_die_choice(num_dice: int): #return value for this is a bit complex
     # what about when num_dice = 0 or 1?
@@ -168,6 +179,8 @@ def main_gameplay_loop(game) -> None:
         outcome = attempt_task_card(game.character, task_card)
         apply_outcome(outcome, game.character, game.great_old_one)
         end_condition = game.end_turn()
+    # these messages could be refactored into a dict maybe?
+    # or a method of the game object, like a property?
     if end_condition == "Banished":
         print(f"Congratulations! {character.name} has defeated {great_old_one.name} and successfully banished them to the dimension from which they came.")
     elif end_condition == "Died":
