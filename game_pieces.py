@@ -240,6 +240,9 @@ class Task:
         self.remaining = {key:value for key,value in pattern.items()}
 
     def __contains__(self, die) -> bool:
+        symbol = die.parse()[1]
+        if symbol == 'Wild' and not self.complete:
+            return True
         return die.parse()[1] in self.remaining.keys()
 
     def __str__(self):
@@ -261,10 +264,20 @@ class Task:
     def assign_die(self, die:'Die') -> None:
         print(f"Assigning die with {str(die)} to {self.remaining}.")
         number, symbol = Die.parse(die)
+        if symbol == 'Wild':
+            symbol = self.assign_wild()
         self.remaining[symbol] -= number
         if self.remaining[symbol] <= 0:
             del self.remaining[symbol]
     
+    def assign_wild(self) -> None:
+        selection = {str(index):key for index, key in enumerate(self.remaining.keys())}
+        for index, key in selection.items():
+            print(f'{index} = {key}')
+        index = input("Please select a symbol to turn your Wild die into.")
+        while index not in selection.keys():
+            print(f"{index} is not a valid choice.")
+            index = input("Please select a symbol to turn your Wild die into.")
     # def assign_die_from_pool(self, dice_pool) -> 'DicePool':
 
        
@@ -346,9 +359,10 @@ class TaskCard:
         
 # add color for this and then change the repn methodto show color and die face
 class Die:
-    SYMBOLS = {'Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1','Lore: 2', 'Skulls: 1', 'Tentacles: 1'}
+    SYMBOLS = {'Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1','Lore: 2', 'Skulls: 1', 'Tentacles: 1', 'Wild: 1'}
     COLORS = {'green':['Investigate: 1','Investigate: 2','Investigate: 3','Lore: 1', 'Skulls: 1', 'Tentacles: 1'], 
-                'yellow':['Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skulls: 1']}
+                'yellow':['Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skulls: 1'],
+                'red':'yellow':['Wild: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skulls: 1']}}
     def __init__(self, color, *faces:str)-> None:
         # this should be put into a validate color method
         self.color = color 
@@ -393,8 +407,11 @@ class Die:
 # maybe add sorting function and ordering as well as color 
 #to order the dice and then only pop from the front will be more appropriate
 class DicePool:
-    def __init__(self) -> None:
-        self.dice = [Die.create_die('green') for _ in range(6)]
+    def __init__(self, color_count:dict={'green':5,'yellow':2,'red':2}) -> None:
+        self.dice = []
+        for color in color_count.keys():
+            for _ in range(color_count[color]):
+                self.dice.append(Die.create_die(color))
     
     # is this the correct thing? Anthony said it was fine
     def __iter__(self) -> 'iterator':

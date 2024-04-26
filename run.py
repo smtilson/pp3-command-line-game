@@ -147,7 +147,7 @@ def apply_outcomes(outcomes, game):
         print(f"Applying outcome {key}: {value}.")
         OUTCOMES[key](value, game)
 
-def start_game():
+def start_game(start_time=0):
     # Initialize game data
     task_card_deck = db.fetch_task_cards()
     great_old_ones = db.fetch_great_old_ones()
@@ -156,15 +156,15 @@ def start_game():
     for demon in great_old_ones:
         demon.selection()
     index = input("Choose a Great Old One to battle by entering its index.")
-    selection = [demon for demon in great_old_ones if demon.index == index]
-    print(selection[0])
+    great_old_one = [demon for demon in great_old_ones if demon.index == index][0]
     for investigator in investigators:
         print(investigator.index)
         print(investigator)
     index = input("Choose a Great Old One to battle by entering its index.")
-    selection = [demon for demon in investigators if investiga.index == index]
-    print(selection[0])
+    investigator = [inv for inv in investigators if investiga.index == index][0]
     
+    game = Game(investigator,great_old_one,start_time,task_card_deck)
+    main_gameplay_loop(game)
     """
     Initializes game state:
         - Create Great Old Ones
