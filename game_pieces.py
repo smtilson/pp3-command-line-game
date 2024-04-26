@@ -200,7 +200,7 @@ OUTCOMES = {"Elder Sign":elder_sign,
             "Stamina":change_stamina}
 
 class Task:
-    TRANSLATION = {'Inv.': 'Investigation', 'Lore':'Lore', 'Peril':"Skull", "Terror": "Tentacle"
+    TRANSLATION = {'Inv.': 'Investigation', 'Lore':'Lore', 'Peril':'Skull', 'Terror': 'Tentacle',
                     'Unique':'Unique Item', 'Common': 'Common Item', 'Elder':'Elder Sign'}
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable

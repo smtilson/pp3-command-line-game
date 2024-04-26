@@ -150,10 +150,10 @@ def get_die_choice(num_dice: int): #return value for this is a bit complex
     else:
         return int(index)
         
-def apply_outcome(outcome, game):
-    outcome_type, amount = outcome.split(': ')
-    print(f"Applying outcome {outcome}.")
-    OUTCOMES[outcome_type](int(amount), game)
+def apply_outcomes(outcomes, game):
+    for key, value in outcomes.items():
+        print(f"Applying outcome {key}: {value}.")
+        OUTCOMES[key](value, game)
 
 def start_game():
     """
@@ -184,10 +184,10 @@ def main_gameplay_loop(game) -> None:
         task_card = select_task_card(game)
         print("card selected")
         print(task_card)
-        outcome, task_card = attempt_task_card(game.character, task_card)
+        outcomes, task_card = attempt_task_card(game.character, task_card)
         game.discard_completed_task_card(task_card)
-        print(f"{outcome} received from card")
-        apply_outcome(outcome, game)
+        print(f"{outcomes} received from card")
+        apply_outcomes(outcomes, game)
         pause()
         print("End of turn.")
         end_condition = game.end_turn()
@@ -209,10 +209,10 @@ def create_generic(doom, elder_signs, sanity, stamina, start_time):
     ht3 = Task({"Investigate":8})
     basic_old_one = GreatOldOne("basic old one", doom, elder_signs, "+1 damage")
     basic_character = Character("joe shmoe",sanity, stamina)
-    basic_card1 = TaskCard("basic task card", [bt1], "Stamina: +1", "Stamina: -1")
-    basic_card2 = TaskCard("basic task card", [bt1,bt2], "Elder Sign: +1", "Sanity: -1")
-    hard_card1 = TaskCard("hard task card 1", [bt1,ht3], "Elder Sign: +2", "Stamina: -1")
-    hard_card2 = TaskCard("hard task card 2", [bt2,ht3], "Elder Sign: +2", "Sanity: -1")
+    basic_card1 = TaskCard("basic task card1","no flavor", [bt1, bt1], {'Stamina': 1}, {"Stamina": -1})
+    basic_card2 = TaskCard("basic task card2","no flavor", [bt1,bt2], {"Elder Sign": 1}, {"Sanity": -1})
+    hard_card1 = TaskCard("hard task card 1","no flavor", [bt1,ht3], {"Elder Sign": 2}, {"Stamina": -1})
+    hard_card2 = TaskCard("hard task card 2","no flavor", [bt2,ht3], {"Elder Sign": +2}, {"Sanity": -1})
     task_deck = []
     for _ in range(3):
         task_deck.append(basic_card1)

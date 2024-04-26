@@ -37,7 +37,7 @@ def task_dict_to_task_card(task_dict:dict) -> "TaskCard":
     task_data = [task_dict['Task 1'],task_dict['Task 2'],task_dict['Task 3']]
     tasks = create_task_list(task_data)
     reward = create_outcome(task_dict['Reward'])
-    penalty = reward = create_outcome(task_dict['Penalty'])
+    penalty = create_outcome(task_dict['Penalty'])
     return 
 
 def create_task_list(task_data:List[str])-> List['Task']:
@@ -48,7 +48,7 @@ def create_task_list(task_data:List[str])-> List['Task']:
         task.append(create_task(task_raw))
     return tasks
 
-def clean_raw(task_raw:str) -> str:
+def clean_raw(raw:str) -> str:
     remove_terms = [' (Total Monster Task)', ' -->', ' Token', ' Item', ' Sign'] 
     for term in remove_terms:
         raw = raw.replace(term, '')
@@ -67,7 +67,7 @@ def create_task(task_raw:str) -> 'Task':
         pattern[translate_term(part[1])] = int(part[0])
     return Task(pattern)
 
-def drop_outcome_terms(outcome_list:List[str]) -> List[str]:
+def clean_outcome_list(outcome_list:List[str]) -> List[str]:
     drop_terms = ['Other World', 'Monster', 'Spell', 'Ally']
     cleaned_outcome_list = []
     for item in outcome_list:
@@ -77,10 +77,14 @@ def drop_outcome_terms(outcome_list:List[str]) -> List[str]:
                 add =False
                 break
         if add:
-            cleaned_outcome_list.append(item)
+            cleaned_outcome_list.append(clean_raw(item))
     return cleaned_outcome_list
 
+#Outcomes should be refactored to work with a dictionary.
 def create_outcome(outcome_raw:str) -> List[str]:
     outcome_list = outcome_raw.split(', ')
-    outcome_list = cleaned_outcome_list(outcome_list)
-    pass
+    outcome_list = clean_outcome_list(outcome_list)
+    proper_outcomes = {}
+    for outcome in outcome_list:
+        proper_outcomes[Task.TRANSLATION[outcome.split()[1]]]=outcome.split()[0]
+    return proper_outcome
