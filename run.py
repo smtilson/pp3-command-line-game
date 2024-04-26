@@ -155,15 +155,19 @@ def start_game(start_time=0):
     investigators = db.fetch_investigators()
     for demon in great_old_ones:
         demon.selection()
-    index = input("Choose a Great Old One to battle by entering its index.")
+    index = '3' #input("Choose a Great Old One to battle by entering its index.")
     great_old_one = [demon for demon in great_old_ones if demon.index == index][0]
     for investigator in investigators:
         print(investigator.index)
         print(investigator)
-    index = input("Choose a Great Old One to battle by entering its index.")
-    investigator = [inv for inv in investigators if investiga.index == index][0]
+    index = '3' #input("Choose a Great Old One to battle by entering its index.")
+    investigator = [inv for inv in investigators if inv.index == index][0]
     
     game = Game(investigator,great_old_one,start_time,task_card_deck)
+    print(game)
+    print(great_old_one)
+    print(investigator)
+    pause()
     main_gameplay_loop(game)
     """
     Initializes game state:
