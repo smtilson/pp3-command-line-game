@@ -203,7 +203,8 @@ def main_gameplay_loop(game) -> None:
 
 def create_task_card_deck():
     task_card_data = db.fetch_task_card_data()
-    task_card_deck = [db.task_dict_to_task_card(card_dict) for card_dict in task_card_data if card_dict['Rewards']!={}]
+    task_card_deck = [db.task_dict_to_task_card(card_dict) for card_dict in task_card_data]
+    task_card_deck = [card for card in task_card_deck if card.reward]
     return task_card_deck
 
 

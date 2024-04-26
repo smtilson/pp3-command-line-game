@@ -95,7 +95,7 @@ class Character:
     # advances clock, check alive and resets number of die
     def reset(self):
         # This resets the dice pool and the face of each die to initial face
-        print(f"{self.name} is still alive, dice pool is being reset.")
+        print(f"{self.name} is still alive.")
         self.dice_pool.reset()
         
 # needs validation
@@ -112,7 +112,6 @@ class Game:
         self.refill_task_cards()
     
     def end_turn(self) -> str:
-        print("advancing clock")
         self.clock.advance()
         print("applying doom")
         self.apply_doom()
@@ -124,7 +123,6 @@ class Game:
     
     def apply_doom(self) -> None:
         if self.clock.time == 12:
-            print("Applying doom.")
             self.great_old_one.current_doom += 1
             print(f"There is {self.great_old_one.current_doom}/{self.great_old_one.doom_threshold} Doom.")
 
@@ -177,6 +175,7 @@ class Clock:
             print("It is midnight!")
         elif self.time == 15:
             self.time = 3
+        print(f'The time is now {self.time}.')
             
     def check_clock(self) -> None:
         print(f"It is currently {self.time} o'clock.")
@@ -201,7 +200,7 @@ OUTCOMES = {"Elder Sign":elder_sign,
 
 class Task:
     TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 'Lore':'Lore', 
-                    'Peril':'Skull', 'Terror': 'Tentacle','Unique':'Unique Item', 
+                    'Peril':'Skulls', 'Terror': 'Tentacles','Unique':'Unique Item', 
                     'Common': 'Common Item', 'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
                     'Sanity':'Sanity','Stamina':'Stamina', 'Doom':'Doom'}
     def __init__(self, pattern:dict) -> None:
@@ -240,10 +239,9 @@ class Task:
        
     # resets task for next attempt, if at all
     # eventually this will be removed
+    # why was I going to remove this?
     def reset(self) -> None:
-        print("task is being reset")
         self.remaining = {key:value for key,value in self.pattern.items()} 
-        print(f"Complete: {self.complete}")
     
     @property
     def complete(self):
@@ -312,16 +310,14 @@ class TaskCard:
                 print(f"Task {index}: {task.pattern}")
 
     def reset(self) -> None:
-        print(f"{self.name} is being reset.")
         for task in self:
             task.reset()
-        print(f"status: {self.complete}")
-
+        
 # add color for this and then change the repn methodto show color and die face
 class Die:
-    SYMBOLS = {'Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1','Lore: 2', 'Skull: 1', 'Tentacles: 1'}
-    COLORS = {'green':['Investigate: 1','Investigate: 2','Investigate: 3','Lore: 1', 'Skull: 1', 'Tentacles: 1'], 
-                'yellow':['Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skull: 1']}
+    SYMBOLS = {'Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1','Lore: 2', 'Skulls: 1', 'Tentacles: 1'}
+    COLORS = {'green':['Investigate: 1','Investigate: 2','Investigate: 3','Lore: 1', 'Skulls: 1', 'Tentacles: 1'], 
+                'yellow':['Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skulls: 1']}
     def __init__(self, color, *faces:str)-> None:
         # this should be put into a validate color method
         self.color = color 
@@ -405,7 +401,7 @@ class DicePool:
     
 
     def reset(self) -> None:
-        print("Dice pool is being reset")
+        #print("Dice pool is being reset.")
         self.dice = [Die.create_die('green') for _ in range(6)]
     
     # adding red dice

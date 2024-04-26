@@ -112,7 +112,7 @@ def create_outcome(outcome_raw:str) -> dict:
     proper_outcomes = {}
     for outcome in outcome_list:
         try:
-            proper_outcomes[translate_term(outcome.split()[1])]=outcome.split()[0]
+            proper_outcomes[translate_term(outcome.split()[1])]=int(outcome.split()[0])
         except (IndexError, KeyError) as e:
             print("Hit error in create_outcome")
             print(type(e))
