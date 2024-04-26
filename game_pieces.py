@@ -200,6 +200,8 @@ OUTCOMES = {"Elder Sign":elder_sign,
             "Stamina":change_stamina}
 
 class Task:
+    TRANSLATION = {'Inv.': 'Investigation', 'Lore':'Lore', 'Peril':"Skull", "Terror": "Tentacle"
+                    'Unique':'Unique Item', 'Common': 'Common Item', 'Elder':'Elder Sign'}
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable
         self.pattern = pattern
@@ -254,11 +256,16 @@ class TaskCard:
     Create task object. The pattern is what is necessary to succeed at a task. The reward is what happens when you succeed, the penalty is what happens when you fail.
     """
     # reward/penalty are currently strings, but should be changed to something else.
-    def __init__(self, name: str, tasks: List['Task'], reward: str, penalty: str) -> None:
+    def __init__(self, name: str, flavor_text:str, tasks: List['Task'], reward: str, penalty: str) -> None:
         self.name = name
+        self.flavor_text = flavor_text
         self.tasks = tasks
         self.reward = reward
         self.penalty = penalty
+
+    #this should only be called after selecting a task.
+    def display(self):
+        pass
 
     def __str__(self):
         string = f"name: {self.name}\n"
