@@ -38,18 +38,20 @@ class GreatOldOne:
         print(19*' '+lines[1].strip())
     
 class Investigator:
-    def __init__(self, index:str, name:str, profession: str, spirit: int, body: int, ability: str, items: list=None) -> None:
+    def __init__(self, index:str, name:str, profession: str, sanity: int, health: int, ability: str, items: list=None) -> None:
         # maybe these will be added to or removed
         # could have special dice
         # start with no items in example
         self.index = index
         self.name = name
-        if spirit <= 0 or body <= 0:
-            raise ValueError(f"{spirit=} and {body=} are not a starting values.")
-        self.starting_spirit = spirit
-        self.spirit = spirit
-        self.starting_body = body
-        self.body = body
+        if sanity <= 0 or health <= 0:
+            raise ValueError(f"{sanity=} and {health=} are not a starting values.")
+        self.starting_sanity = sanity
+        self.sanity = sanity
+        self.starting_health = health
+        self.health = health
+        #setting up the items for the character is maybe an issue.
+        # method of the game that is called at the end of init.
         if items:
             self.items = items
         else:
@@ -58,26 +60,26 @@ class Investigator:
         self.dice_pool = DicePool()
     # modify this later for selection etc
     def __str__(self):
-        return f"{self.name} has {self.spirit} Spirit and {self.body} Body left."
+        return f"{self.name} has {self.sanity} Sanity and {self.health} Health left."
         
     # Loss condition
     @property
     def alive(self) -> bool:
-        if self.spirit <= 0 or self.body <= 0:
+        if self.sanity <= 0 or self.health <= 0:
             return False
         else:
             return True
 
     # Adjust health accordingly
-    def lose_spirit(self, damage: int) -> None:
-        self.spirit -= damage
-        if self.spirit < 0:
-            self.spirit = 0
+    def lose_sanity(self, damage: int) -> None:
+        self.sanity -= damage
+        if self.sanity < 0:
+            self.sanity = 0
     
-    def lose_body(self, damage: int) -> None:
-        self.body -= damage
-        if self.body < 0:
-            self.body = 0
+    def lose_health(self, damage: int) -> None:
+        self.health -= damage
+        if self.health < 0:
+            self.health = 0
     
     
     def roll_dice(self) -> None:
@@ -100,7 +102,7 @@ class Investigator:
 # needs overflow check method maybe? <- wtf does this mean
 
 class Game:
-    def __init__(self, investigator, great_old_one, start_time, task_card_deck) -> None:
+    def __init__(self, investigator, great_old_one, start_time, task_card_deck, item_deck) -> None:
         self.investigator = investigator
         self.great_old_one = great_old_one
         self.current_doom = 0
@@ -112,6 +114,8 @@ class Game:
         self.task_card_deck = task_card_deck #TaskCard.create_deck()
         self.current_task_cards = []
         self.refill_task_cards()
+        self.item_deck = item_deck
+        self.starting_items()
     
     # should this be __str__?
     def status(self) -> str:
@@ -173,7 +177,6 @@ class Game:
             self.draw_task_card()
         print("Task cards replenished.")
         #print(len(self.current_task_cards))
-        
     
     def draw_task_card(self) -> None:
         task_card = self.task_card_deck.pop(0)
@@ -185,6 +188,23 @@ class Game:
     
     def shuffle(self) -> None:
         shuffle(self.task_card_deck)
+        shuffle(self.item_deck)
+    
+    def draw_item(self, rarity) -> None:
+        self.shuffle()
+        for item in self.item_deck:
+            if item.rarity == rarity:
+                break
+        self.investigator.items.append(item)
+    
+    def starting_items(self) -> None:
+        starting_list = [term for term in self.investigator.items]
+        self.investigator.items = []
+        for term in starting_list:
+            num, rarity = term.split()
+            for _ in range(int(num)):
+                self.draw_item(rarity)
+        pass
 
     def status(self)-> str:
         print(self.great_old_one)
@@ -208,6 +228,40 @@ class Clock:
         print(f"It is currently {self.time} o'clock.")
         print(f"You have {(12-self.time)//3} turns until doom advances.")
 
+def add_yellow(investigator:'Investigator') -> None:
+    investigator.add_die('yellow')
+
+def add_red(investigator:'Investigator') -> None:
+    investigator.add_die('red')
+
+def add_yellow_n_red(investigator:'Investigator') -> None:
+    investigator.add_die('yellow')
+    investigator.add_die('red')
+
+def gain_health(investigator:'Investigator') -> None:
+    investigator.health += 1
+
+def gain_sanity(investigator:'Investigator') -> None:
+    investigator.sanity += 1
+
+# a clue behaves like an item but it isn't in the item deck.
+# or just make clue a rarity
+#maybe same with spell, but make it assign a wild die.
+# I guess when I write the gain_clue reward function I will just make an item in that function and add it to the inventory.
+class Item:
+    ITEM_EFFECT = {'Adds yellow die':add_yellow, 'Adds red die':add_red, 'Gain 1 Health':gain_health,
+                    'Gain 1 Sanity':gain_sanity,#'Change 1 die to Skulls':change_to_skull, 
+                    'Adds yellow and red dice':add_yellow_n_red}
+    def __init__(self, name:str, effect:str, rarity:str) -> None:
+        self.name = name
+        self.effect = effect
+        self.rarity = rarity
+    
+    def __str__(self) -> str:
+        return f"The {self.name} is a {self.rarity} item.\nEffect: {self.effect}"
+
+    def use(self, investigator):
+        self.ITEM_EFFECT[self.effect](investigator)
 
 def gain_elder_sign(num:int, game:'Game') -> None:
     game.current_elder_signs += num
@@ -216,24 +270,25 @@ def gain_elder_sign(num:int, game:'Game') -> None:
 def increase_doom(num:int, game:'Game') -> None:
     game.apply_doom(num)
     
-def change_spirit(num:int, game:'Game') -> None:
-    game.investigator.spirit += num
-    print(f"{game.investigator.name} now has {game.investigator.spirit} Spirit .")
+def change_sanity(num:int, game:'Game') -> None:
+    game.investigator.sanity += num
+    print(f"{game.investigator.name} now has {game.investigator.sanity} Sanity .")
 
-def change_body(num:int, game:'Game') -> None:
-    game.investigator.body += num
-    print(f"{game.investigator.name} now has {game.investigator.body} Body.")
+def change_health(num:int, game:'Game') -> None:
+    game.investigator.health += num
+    print(f"{game.investigator.name} now has {game.investigator.health} Health.")
 
 OUTCOMES = {"Elder Sign": gain_elder_sign,
-            "Spirit": change_spirit,
-            "Body": change_body,
+            "Sanity": change_sanity,
+            "Health": change_health,
             "Doom": increase_doom}
 
 class Task:
     TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 'Lore':'Lore', 
                     'Peril':'Skulls', 'Terror': 'Tentacles','Unique':'Unique Item', 
                     'Common': 'Common Item', 'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
-                    'Sanity':'Spirit','Stamina':'Body', 'Doom':'Doom'}
+                    'Sanity':'Sanity','Stamina':'Health', 'Doom':'Doom', 'unique item': 'Unique',
+                    'common item': 'Common', 'spell':'Unique'}#spell can be changed to clue once clues are written.
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable
         self.pattern = pattern
@@ -272,7 +327,7 @@ class Task:
             del self.remaining[symbol]
     
     def assign_wild(self) -> str:
-        selection = {str(index):key for index, key in enumerate(self.remaining.keys())}
+        selection = {str(index+1):key for index, key in enumerate(self.remaining.keys())}
         for index, key in selection.items():
             print(f'{index} = {key}')
         index = input("Please select a symbol to turn your Wild die into.")

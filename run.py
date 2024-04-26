@@ -153,22 +153,26 @@ def start_game(start_time=0):
     great_old_ones = db.fetch_great_old_ones()
     # this should be a separate selection function
     investigators = db.fetch_investigators()
+    #print(investigators)
+    #pause()
+    item_deck = db.fetch_items()
     for demon in great_old_ones:
         demon.selection()
     index = '3' #input("Choose a Great Old One to battle by entering its index.")
     great_old_one = [demon for demon in great_old_ones if demon.index == index][0]
-    for investigator in investigators:
-        print(investigator.index)
-        print(investigator)
+    #for investigator in investigators:
+     #   print(investigator.index)
+      #  print(investigator)
     index = '3' #input("Choose a Great Old One to battle by entering its index.")
+    #pause()
     investigator = [inv for inv in investigators if inv.index == index][0]
     
-    game = Game(investigator,great_old_one,start_time,task_card_deck)
-    print(game)
+    game = Game(investigator,great_old_one,start_time,task_card_deck, item_deck)
+    #print(game)
     print(great_old_one)
     print(investigator)
     pause()
-    main_gameplay_loop(game)
+    #main_gameplay_loop(game)
     """
     Initializes game state:
         - Create Great Old Ones
@@ -182,7 +186,7 @@ def start_game(start_time=0):
         - Deal Task Cards
         - Begin Game (call main_gameplay_loop)
     """
-    pass
+    return game
 
 def select_task_card(game):
     return game.current_task_cards.pop(0)
@@ -241,8 +245,14 @@ def create_simple_hard(doom, elder_signs, sanity, stamina, start_time):
 
     
 # current_progress
-#game1, game2= create_simple_hard(2,2,5,5,0)
+game = start_game()
+darrell = game.investigator
+whiskey, dynamite = darrell.items
+pause()
+print(darrell.sanity)
+darrell.sanity -= 1
+print(darrell.sanity)
+whiskey.use(darrell)
+print(darrell.sanity)
 
-bt1 = Task({'Investigate':2, 'Skull':1})
-bt2 = Task({'Investigate':1, 'Lore':2})
-ht3 = Task({"Investigate":8})
+

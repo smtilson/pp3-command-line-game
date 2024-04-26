@@ -46,24 +46,43 @@ def fetch_investigators() -> List[dict]:
     raw = SHEET.worksheet("Investigators").get_all_values()
     keys = raw.pop(0)
     keys[0] = 'Name'
-    investigator_dicts = []
-    index = 1
+    inv_dicts = []
     for row in raw:
-        investigator_dicts.append({key:val for key, val in zip(keys,row)})
+        inv_dicts.append({key:val for key, val in zip(keys,row)})
         # storing as string since that is how input will convert it
-        investigator_dicts[-1]['index'] = str(index)
-        index += 1
-    return [inv_dict_to_inv(inv_dict) for inv_dict in investigator_dicts]
+    exclusions = ['Amanda Sharpe','"Ashcan" Pete']
+    inv_dicts = [inv_dict for inv_dict in inv_dicts if inv_dict['Name'] not in exclusions]
+    for index, inv_dict in enumerate(inv_dicts):    
+        inv_dict['index'] = str(index+1)
+    return [inv_dict_to_inv(inv_dict) for inv_dict in inv_dicts]
 
 def inv_dict_to_inv(inv:dict) -> 'Investigator':
     index = inv['index']
     name = inv['Name']
     profession = inv['Profession']
-    spirit = int(inv['Sanity'])
-    body = int(inv['Stamina'])
+    sanity = int(inv['Sanity'])
+    health = int(inv['Stamina'])
     ability = inv['Ability']
-    # passing an empty item list until items are implemented with respect to the db
-    return Investigator(index, name, profession, spirit, body, ability, [])
+    # items are added at the start of the game.
+    items = inv['Starting Items'].replace(' item','').split(', ')
+    return Investigator(index, name, profession, sanity, health, ability,items)
+
+# Item section
+def fetch_items() -> List[dict]:
+    raw = SHEET.worksheet("Items").get_all_values()
+    keys = raw.pop(0)
+    keys[0] = 'Name'
+    item_dicts = []
+    for row in raw:
+        item_dicts.append({key:val for key, val in zip(keys,row)})
+    exclusions = ['Flute of the Outer Gods','Shotgun','Blue Watcher of the Pyramid',]
+    return [item_dict_to_item(item_dict) for item_dict in item_dicts if item_dict['Name'] not in exclusions]
+
+def item_dict_to_item(item:dict) -> 'Item':
+    name = item['Name']
+    effect = item['Text/Effect']
+    rarity = item['Rarity']
+    return Item(name, effect, rarity)
 
 
 
