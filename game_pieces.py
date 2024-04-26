@@ -142,12 +142,12 @@ class Game:
 #    commented out until the TaskCard.create_deck() function is written
     def refill_task_cards(self) -> None:
         # the number of active cards is also a parameter that can be messed with
-        print("refill called")
-        print(len(self.current_task_cards))
+        #print("refill called")
+        #print(len(self.current_task_cards))
         while len(self.current_task_cards) < 3:
             self.draw_task_card()
-        print("refill finished")
-        print(len(self.current_task_cards))
+        #print("refill finished")
+        #print(len(self.current_task_cards))
         
     
     def draw_task_card(self) -> None:
@@ -200,8 +200,10 @@ OUTCOMES = {"Elder Sign":elder_sign,
             "Stamina":change_stamina}
 
 class Task:
-    TRANSLATION = {'Inv.': 'Investigation', 'Lore':'Lore', 'Peril':'Skull', 'Terror': 'Tentacle',
-                    'Unique':'Unique Item', 'Common': 'Common Item', 'Elder':'Elder Sign'}
+    TRANSLATION = {'Inv.': 'Investigation', 'Investigation':'Investigation', 'Lore':'Lore', 
+                    'Peril':'Skull', 'Terror': 'Tentacle','Unique':'Unique Item', 
+                    'Common': 'Common Item', 'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
+                    'Sanity':'Sanity','Stamina':'Stamina', 'Doom':'Doom'}
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable
         self.pattern = pattern

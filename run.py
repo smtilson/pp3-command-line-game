@@ -6,6 +6,7 @@
 from typing import List, Optional, Tuple
 # the below import statement should eventually be changed
 from game_pieces import *
+import db_utilities as db
 
 def pause() -> None:
     input("Hit enter to continue.")
@@ -200,18 +201,25 @@ def main_gameplay_loop(game) -> None:
     elif end_condition == "Summoned":
         print(f"{game.character.name} was unable to prevent the inevitable. {game.great_old_one.name} has been summoned. The end of humanity is at hand.")
 
-def create_generic(doom, elder_signs, sanity, stamina, start_time):
+def create_task_card_deck():
+    task_card_data = db.fetch_task_card_data()
+    task_card_deck = [db.task_dict_to_task_card(card_dict) for card_dict in task_card_data]
+    return task_card_deck
+
+
+def create_simple_hard(doom, elder_signs, sanity, stamina, start_time):
     """
     This function creates basic instances of the above classes for the purpose of development.
     """
-    bt1 = Task({'Investigate':2, 'Skull':1})
+    bt1a = Task({'Investigate':2, 'Skull':1})
+    bt1b = Task({'Investigate':2, 'Skull':1})
     bt2 = Task({'Investigate':1, 'Lore':2})
-    ht3 = Task({"Investigate":8})
+    ht3 = Task({"Investigate":6})
     basic_old_one = GreatOldOne("basic old one", doom, elder_signs, "+1 damage")
     basic_character = Character("joe shmoe",sanity, stamina)
-    basic_card1 = TaskCard("basic task card1","no flavor", [bt1, bt1], {'Stamina': 1}, {"Stamina": -1})
-    basic_card2 = TaskCard("basic task card2","no flavor", [bt1,bt2], {"Elder Sign": 1}, {"Sanity": -1})
-    hard_card1 = TaskCard("hard task card 1","no flavor", [bt1,ht3], {"Elder Sign": 2}, {"Stamina": -1})
+    basic_card1 = TaskCard("basic task card1","no flavor", [bt1a, bt1b], {'Stamina': 1}, {"Stamina": -1})
+    basic_card2 = TaskCard("basic task card2","no flavor", [bt1a,bt2], {"Elder Sign": 1}, {"Sanity": -1})
+    hard_card1 = TaskCard("hard task card 1","no flavor", [bt1a,ht3], {"Elder Sign": 2}, {"Stamina": -1})
     hard_card2 = TaskCard("hard task card 2","no flavor", [bt2,ht3], {"Elder Sign": +2}, {"Sanity": -1})
     task_deck = []
     for _ in range(3):
@@ -219,15 +227,15 @@ def create_generic(doom, elder_signs, sanity, stamina, start_time):
         task_deck.append(basic_card2)
         task_deck.append(hard_card1)
         task_deck.append(hard_card2)
-    game = Game(basic_character,basic_old_one,start_time,task_deck)
-    game.shuffle()
-    return game
+    game1 = Game(basic_character,basic_old_one,start_time,task_deck)
+    game2 = Game(basic_character,basic_old_one,start_time,create_task_card_deck())
+    game1.shuffle()
+    return game1, game2
 
     
 # current_progress
-game = create_generic(2,7,3,3,0)
-joe = game.character
-joe.roll_dice()
+game1= create_simple_hard(1,1,5,5,9)
+
 bt1 = Task({'Investigate':2, 'Skull':1})
 bt2 = Task({'Investigate':1, 'Lore':2})
 ht3 = Task({"Investigate":8})
