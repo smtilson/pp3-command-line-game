@@ -1,3 +1,13 @@
+## Introduction
+"Chtulu Schmtulu" is a yazhee style game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around completing task cards by rolling dice. Completing a card gives you a reward. Failing to complete a card gives you a penalty. The goal is to collect enough Elder Signs, through rewards on cards, to banish the Great Old One before they have been summoned. A Great Old One is summoned when they have accumulated a certain amount of doom. Doom acculumates through card effects and by the clock reaching 12 midnight.
+
+### Instructions
+The core of the game is completing task cards by completing each task on the given card. An individual task is completed by meeting all of the requirements. Most of these are symbols which are on the dice that you roll. You meet these requirements by assigning dice to the task whose symbol matches it. If no symbols match, we may pass. This results in us losing a die from our pool and rerolling our remaining dice. If we run out of dice before completing all of the tasks on a card we suffer the listed penalty.
+
+Example:
+
+As the game begins, 3 task cards will be dealt. Choose one to attempt by entering the corresponding number. Once a card is selected you will roll your dice pool. Then based on this roll, pick a task on the card to attempt by entering the appropriate number.
+
 ## Deployment
 
 ### Setting up APIs

@@ -1,6 +1,6 @@
 # Your code goes here.
 # You can delete these comments, but do not change the name of this file
-# Write your code to expect a terminal of 80 characters wide and 24 rows high
+# Write your code to expect a terminal of 80 investigators wide and 24 rows high
 # Eventually classes should probably be changed to named tuples
 
 from typing import List, Optional, Tuple
@@ -34,7 +34,7 @@ def assign_die_to_task(dice_pool, task): #'DicePool','Task':
     # would mean that you wouldn't see what the task is anymore...
     index = get_die_choice(len(dice_pool))
     if index == "pass":
-        dice_pool = pass_move(dice_pool)
+        dice_pool.pass_move()
         return dice_pool, task
     die = dice_pool[index-1]
     if die in task:
@@ -75,9 +75,9 @@ def attempt_task(dice_pool, task):
     print("You are out of dice.")
     return dice_pool, task
 
-def attempt_task_card(character:'Character',task_card:'TaskCard') -> str:
+def attempt_task_card(investigator:'Investigator',task_card:'TaskCard') -> str:
     # do we roll here? I think so.
-    dice_pool = character.dice_pool
+    dice_pool = investigator.dice_pool
     dice_pool.roll()
     #print(dice_pool)
     #for task in task_card:
@@ -90,7 +90,7 @@ def attempt_task_card(character:'Character',task_card:'TaskCard') -> str:
         task_index = get_task_choice(len(task_card.tasks))
         # Is this technically in the spirit of the game?
         if task_index == 'pass':
-            dice_pool = pass_move(dice_pool)
+            dice_pool.pass_move()
             continue
         task = task_card[task_index-1]
         # should this part of the validation be done elsewhere?
@@ -110,16 +110,7 @@ def attempt_task_card(character:'Character',task_card:'TaskCard') -> str:
         return task_card.penalty, task_card
         
 # I don't like the reroll being part of this move, but I guess it is fine.
-def pass_move(dice_pool) -> 'DicePool':
-    """
-    Removes a die from the dice pool and rerolls remaining dice.
-    """
-    print("Sacrificing a die.")
-    dice_pool.pop()
-    print("Rerolling your remaining dice.")
-    # will roll throw an exception if there are no dice?
-    dice_pool.roll()
-    return dice_pool
+
     
 # write valid input function.
 def get_task_choice(num_tasks: int):
@@ -157,15 +148,32 @@ def apply_outcomes(outcomes, game):
         OUTCOMES[key](value, game)
 
 def start_game():
+    # Initialize game data
+    task_card_deck = db.fetch_task_cards()
+    great_old_ones = db.fetch_great_old_ones()
+    # this should be a separate selection function
+    investigators = db.fetch_investigators()
+    for demon in great_old_ones:
+        demon.selection()
+    index = input("Choose a Great Old One to battle by entering its index.")
+    selection = [demon for demon in great_old_ones if demon.index == index]
+    print(selection[0])
+    for investigator in investigators:
+        print(investigator.index)
+        print(investigator)
+    index = input("Choose a Great Old One to battle by entering its index.")
+    selection = [demon for demon in investigators if investiga.index == index]
+    print(selection[0])
+    
     """
     Initializes game state:
         - Create Great Old Ones
-        - Create Characters
+        - Create investigators
         - Create Task Cards
         - Create Items
     Select game state:
         - Select Great Old One
-        - Select Character
+        - Select investigator
     Begin Game:
         - Deal Task Cards
         - Begin Game (call main_gameplay_loop)
@@ -185,7 +193,7 @@ def main_gameplay_loop(game) -> None:
         task_card = select_task_card(game)
         print("card selected")
         print(task_card)
-        outcomes, task_card = attempt_task_card(game.character, task_card)
+        outcomes, task_card = attempt_task_card(game.investigator, task_card)
         game.discard_completed_task_card(task_card)
         print(f"{outcomes} received from card")
         apply_outcomes(outcomes, game)
@@ -195,17 +203,11 @@ def main_gameplay_loop(game) -> None:
     # these messages could be refactored into a dict maybe?
     # or a method of the game object, like a property?
     if end_condition == "Banished":
-        print(f"Congratulations! {game.character.name} has defeated {game.great_old_one.name} and successfully banished them to the dimension from which they came.")
+        print(f"Congratulations! {game.investigator.name} has defeated {game.great_old_one.name} and successfully banished them to the dimension from which they came.")
     elif end_condition == "Died":
-        print(f"Oh no! {game.character.name} has been defeated. Now nothing stands in the way of {game.great_old_one.name}.")
+        print(f"Oh no! {game.investigator.name} has been defeated. Now nothing stands in the way of {game.great_old_one.name}.")
     elif end_condition == "Summoned":
-        print(f"{game.character.name} was unable to prevent the inevitable. {game.great_old_one.name} has been summoned. The end of humanity is at hand.")
-
-def create_task_card_deck():
-    task_card_data = db.fetch_task_card_data()
-    task_card_deck = [db.task_dict_to_task_card(card_dict) for card_dict in task_card_data]
-    task_card_deck = [card for card in task_card_deck if card.reward]
-    return task_card_deck
+        print(f"{game.investigator.name} was unable to prevent the inevitable. {game.great_old_one.name} has been summoned. The end of humanity is at hand.")
 
 
 def create_simple_hard(doom, elder_signs, sanity, stamina, start_time):
@@ -216,8 +218,8 @@ def create_simple_hard(doom, elder_signs, sanity, stamina, start_time):
     bt1b = Task({'Investigate':2, 'Skull':1})
     bt2 = Task({'Investigate':1, 'Lore':2})
     ht3 = Task({"Investigate":6})
-    basic_old_one = GreatOldOne("basic old one", doom, elder_signs, "+1 damage")
-    basic_character = Character("joe shmoe",sanity, stamina)
+    basic_old_one = GreatOldOne('0',"basic", doom, elder_signs, "+1 damage")
+    basic_investigator = Investigator("joe shmoe",sanity, stamina)
     basic_card1 = TaskCard("basic task card1","no flavor", [bt1a, bt1b], {'Stamina': 1}, {"Stamina": -1})
     basic_card2 = TaskCard("basic task card2","no flavor", [bt1a,bt2], {"Elder Sign": 1}, {"Sanity": -1})
     hard_card1 = TaskCard("hard task card 1","no flavor", [bt1a,ht3], {"Elder Sign": 2}, {"Stamina": -1})
@@ -228,14 +230,14 @@ def create_simple_hard(doom, elder_signs, sanity, stamina, start_time):
         task_deck.append(basic_card2)
         task_deck.append(hard_card1)
         task_deck.append(hard_card2)
-    game1 = Game(basic_character,basic_old_one,start_time,task_deck)
-    game2 = Game(basic_character,basic_old_one,start_time,create_task_card_deck())
+    game1 = Game(basic_investigator,basic_old_one,start_time,task_deck)
+    game2 = Game(basic_investigator,basic_old_one,start_time,db.fetch_task_cards())
     game1.shuffle()
     return game1, game2
 
     
 # current_progress
-game1, game2= create_simple_hard(2,2,5,5,0)
+#game1, game2= create_simple_hard(2,2,5,5,0)
 
 bt1 = Task({'Investigate':2, 'Skull':1})
 bt2 = Task({'Investigate':1, 'Lore':2})

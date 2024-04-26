@@ -7,58 +7,77 @@ class GreatOldOne:
     """
     Creates Great Old One enemy.
     """
-    def __init__(self, name:str, doom:int, elder_signs:int,attack:str) -> None:
+    def __init__(self, index:str, name:str, elder_signs:int, doom:int,ability:str) -> None:
+        self.index = index
         self.name = name
         self.doom = doom
         self.elder_signs = elder_signs
-        self.attack = attack # this should be replaced by something later, I now, a custom function will be stored here.
+        self.ability = ability # this should be replaced by something later, I now, a custom function will be stored here.
     
     def __str__(self):
-        string = f"{self.great_old_one.name} has {self.current_doom}/{self.doom_max} Doom."
-        string += f"You have {self.current_elder_signs}/{self.elder_sign_max} Elder Signs."
-        return string
-
+        msg = f"{self.name}: {self.doom} Doom needed to Awaken\n"
+        # this length should eventually be replaced by max name length for the class.
+        msg += (len(self.name)+2-self.extra)*' '+f'{self.elder_signs} Elder Signs needed to Banish'
+        return msg
     
-class Character:
-    def __init__(self, name:str, sanity: int, stamina: int, items: list=None) -> None:
+    @property
+    def extra(self):
+        doom = str(self.doom)
+        elder_signs = str(self.elder_signs)
+        length = len(elder_signs)-len(doom)
+        #print(doom, len(doom))
+        #print(elder_signs, len(elder_signs))
+        #print(length, length*' ')
+        return length
+
+    def selection(self):
+        lines = str(self).split('\n')
+        white_space = (14-len(self.name)+self.extra)*' '
+        print(str(self.index)+'. '+lines[0].replace(': ',': '+white_space))
+        # 19 =14 from name +2+3
+        print(19*' '+lines[1].strip())
+    
+class Investigator:
+    def __init__(self, index:str, name:str, profession: str, spirit: int, body: int, ability: str, items: list=None) -> None:
         # maybe these will be added to or removed
         # could have special dice
         # start with no items in example
+        self.index = index
         self.name = name
-        if sanity <= 0 or stamina <= 0:
-            raise ValueError(f"{sanity=} and {stamina=} are not a starting values.")
-        self.starting_sanity = sanity
-        self.sanity = sanity
-        self.starting_stamina = stamina
-        self.stamina = stamina
+        if spirit <= 0 or body <= 0:
+            raise ValueError(f"{spirit=} and {body=} are not a starting values.")
+        self.starting_spirit = spirit
+        self.spirit = spirit
+        self.starting_body = body
+        self.body = body
         if items:
             self.items = items
         else:
             self.items = []
         # self.dice = 6 # this val will be modified, reset it at the beginning of each turn or at the end of each turn.
         self.dice_pool = DicePool()
-
+    # modify this later for selection etc
     def __str__(self):
-        return f"{self.name} has {self.sanity} Sanity and {self.stamina} Stamina left."
+        return f"{self.name} has {self.spirit} Spirit and {self.body} Body left."
         
     # Loss condition
     @property
     def alive(self) -> bool:
-        if self.sanity <= 0 or self.stamina <= 0:
+        if self.spirit <= 0 or self.body <= 0:
             return False
         else:
             return True
 
     # Adjust health accordingly
-    def lose_sanity(self, damage: int) -> None:
-        self.sanity -= damage
-        if self.sanity < 0:
-            self.sanity = 0
+    def lose_spirit(self, damage: int) -> None:
+        self.spirit -= damage
+        if self.spirit < 0:
+            self.spirit = 0
     
-    def lose_stamina(self, damage: int) -> None:
-        self.stamina -= damage
-        if self.stamina < 0:
-            self.stamina = 0
+    def lose_body(self, damage: int) -> None:
+        self.body -= damage
+        if self.body < 0:
+            self.body = 0
     
     
     def roll_dice(self) -> None:
@@ -81,8 +100,8 @@ class Character:
 # needs overflow check method maybe? <- wtf does this mean
 
 class Game:
-    def __init__(self, character, great_old_one, start_time, task_card_deck) -> None:
-        self.character = character
+    def __init__(self, investigator, great_old_one, start_time, task_card_deck) -> None:
+        self.investigator = investigator
         self.great_old_one = great_old_one
         self.current_doom = 0
         self.doom_max = great_old_one.doom
@@ -94,12 +113,19 @@ class Game:
         self.current_task_cards = []
         self.refill_task_cards()
     
+    # should this be __str__?
+    def status(self) -> str:
+        msg = f"{self.great_old_one.name} only needs {-self.current_doom + self.doom_max} more Doom to awaken.\n"
+        msg += f"You only need {-self.current_elder_signs + self.elder_sign_max} more Elder Signs."
+        print(msg)
+
     def end_turn(self) -> str:
         self.clock.advance()
         if self.clock.time == 12:
             self.apply_doom(1)
-        self.character.reset()
+        self.investigator.reset()
         self.refill_task_cards()
+        self.status()
         return self.end_condition
     
     def apply_doom(self, num:int) -> None:
@@ -133,7 +159,7 @@ class Game:
             return "Summoned"
         elif self.great_old_one_banished:
             return "Banished"
-        elif not self.character.alive:
+        elif not self.investigator.alive:
             return "Died"
         else:
             return ""
@@ -162,7 +188,7 @@ class Game:
 
     def status(self)-> str:
         print(self.great_old_one)
-        print(self.character)
+        print(self.investigator)
         print(f"The time is {self.clock} o'clock.")
 class Clock:
     #This is where the difficulty setting could be, the number of turns in a day.
@@ -185,29 +211,29 @@ class Clock:
 
 def gain_elder_sign(num:int, game:'Game') -> None:
     game.current_elder_signs += num
-    print(f"{game.character.name} now has {game.current_elder_signs} Elder Signs.")
+    print(f"{game.investigator.name} now has {game.current_elder_signs} Elder Signs.")
 
 def increase_doom(num:int, game:'Game') -> None:
     game.apply_doom(num)
     
-def change_sanity(num:int, game:'Game') -> None:
-    game.character.sanity += num
-    print(f"{game.character.name} now has {game.character.sanity} Sanity.")
+def change_spirit(num:int, game:'Game') -> None:
+    game.investigator.spirit += num
+    print(f"{game.investigator.name} now has {game.investigator.spirit} Spirit .")
 
-def change_stamina(num:int, game:'Game') -> None:
-    game.character.stamina += num
-    print(f"{game.character.name} now has {game.character.stamina} Stamina.")
+def change_body(num:int, game:'Game') -> None:
+    game.investigator.body += num
+    print(f"{game.investigator.name} now has {game.investigator.body} Body.")
 
 OUTCOMES = {"Elder Sign": gain_elder_sign,
-            "Sanity": change_sanity,
-            "Stamina": change_stamina,
+            "Spirit": change_spirit,
+            "Body": change_body,
             "Doom": increase_doom}
 
 class Task:
     TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 'Lore':'Lore', 
                     'Peril':'Skulls', 'Terror': 'Tentacles','Unique':'Unique Item', 
                     'Common': 'Common Item', 'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
-                    'Sanity':'Sanity','Stamina':'Stamina', 'Doom':'Doom'}
+                    'Sanity':'Spirit','Stamina':'Body', 'Doom':'Doom'}
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable
         self.pattern = pattern
@@ -404,6 +430,15 @@ class DicePool:
         # probably don't want to remove those by default
         return self.dice.pop(index)
     
+    def pass_move(self) -> None:
+        """
+        Removes a die from the dice pool and rerolls remaining dice.
+        """
+        print("Sacrificing a die.")
+        self.pop()
+        print("Rerolling your remaining dice.")
+        # will roll throw an exception if there are no dice?
+        self.roll()
 
     def reset(self) -> None:
         #print("Dice pool is being reset.")

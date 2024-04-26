@@ -4,7 +4,8 @@ This file is for routines related to the google spreadsheet storing the game dat
 import gspread
 from google.oauth2.service_account import Credentials
 from typing import List, Tuple, Optional, Dict, Union
-from game_pieces import TaskCard, Task
+# I guess I should change this to not load everything
+from game_pieces import *
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -17,22 +18,69 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("pp3-command-line-game")
 
-def fetch_task_card_data()-> List[dict]: 
+
+#Great Old One section
+def fetch_great_old_ones() -> List[dict]:
+    raw = SHEET.worksheet("GreatOldOnes").get_all_values()
+    keys = raw.pop(0)
+    keys[0] = 'Name'
+    great_old_ones_dicts = []
+    index = 1
+    for row in raw:
+        great_old_ones_dicts.append({key:val for key, val in zip(keys,row)})
+        # storing as string since that is how input will convert it
+        great_old_ones_dicts[-1]['index'] = str(index)
+        index += 1
+    return [g_o_o_dict_to_g_o_o(g_o_o_dict) for g_o_o_dict in great_old_ones_dicts]
+
+def g_o_o_dict_to_g_o_o(g_o_o:dict) -> 'GreatOldOne':
+    index = g_o_o['index']
+    name = g_o_o['Name']
+    elder_signs = int(g_o_o['Elder Signs Needed'])
+    doom = int(g_o_o['Doom to Awake'])
+    ability = g_o_o['Special Ability']
+    return GreatOldOne(index, name, elder_signs, doom, ability)
+
+# Investigator section
+def fetch_investigators() -> List[dict]:
+    raw = SHEET.worksheet("Investigators").get_all_values()
+    keys = raw.pop(0)
+    keys[0] = 'Name'
+    investigator_dicts = []
+    index = 1
+    for row in raw:
+        investigator_dicts.append({key:val for key, val in zip(keys,row)})
+        # storing as string since that is how input will convert it
+        investigator_dicts[-1]['index'] = str(index)
+        index += 1
+    return [inv_dict_to_inv(inv_dict) for inv_dict in investigator_dicts]
+
+def inv_dict_to_inv(inv:dict) -> 'Investigator':
+    index = inv['index']
+    name = inv['Name']
+    profession = inv['Profession']
+    spirit = int(inv['Sanity'])
+    body = int(inv['Stamina'])
+    ability = inv['Ability']
+    # passing an empty item list until items are implemented with respect to the db
+    return Investigator(index, name, profession, spirit, body, ability, [])
+
+
+
+# Task Card section
+def fetch_task_cards() -> List[dict]: 
     raw = SHEET.worksheet('TaskCards').get_all_values()
     keys = raw.pop(0)
     keys[0] = 'Name'
     # gold on task cards not yet implemented
-    keys[-1] = 'Gold'
-    task_card_dicts = []
+    #keys[-1] = 'Gold'
+    task_card_deck = []
     for row in raw:
-        task_card_dicts.append({key:val for key, val in zip(keys,row)})
-    return [drop_cols(card_dict) for card_dict in task_card_dicts]
+        task_dict = {key:val for key, val in zip(keys,row)}
+        task_card_deck.append(task_dict_to_task_card(task_dict))
+    #I actually don't need to drop these columns since the data is thrown away when I create the task cards.
+    return [task_card for task_card in task_card_deck if task_card.reward]
 
-def drop_cols(task_dict:dict ) -> dict:
-    del task_dict['Effect?']
-    del task_dict['Locked Dice?']
-    del task_dict['Monster Task?']
-    return task_dict
 
 def task_dict_to_task_card(task_dict:dict) -> "TaskCard":
     task_data = [task_dict['Task 1'],task_dict['Task 2'],task_dict['Task 3']]
@@ -50,7 +98,7 @@ def create_task_list(task_data:List[str])-> List['Task']:
     return tasks
 
 def clean_raw(raw:str) -> str:
-    remove_terms = [' (Total Monster Task)', ' (Total Monter Task)', ' -->', ' Token', ' Signs', ' Sign'] #,' Item'] 
+    remove_terms = [' (Total Monster Task)',' (Partial Monster Task)', ' (Total Monter Task)', ' -->', ' Token', ' Signs', ' Sign'] #,' Item'] 
     for term in remove_terms:
         raw = raw.replace(term, '')
     return raw
@@ -92,6 +140,7 @@ def clean_outcome_raw(outcome_raw:str) -> str:
             cleaned_outcome_list.append(clean_raw(item))
     return cleaned_outcome_list
 
+# refactor this eventually
 def clean_outcome_list(outcome_list:List[str]) -> List[str]:
     drop_terms = ['Other', 'Monster', 'Monter','Spell', 'Ally', 'Clue', 'Item']
     cleaned_outcome_list = []
