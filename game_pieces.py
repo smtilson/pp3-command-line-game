@@ -9,36 +9,15 @@ class GreatOldOne:
     """
     def __init__(self, name:str, doom:int, elder_signs:int,attack:str) -> None:
         self.name = name
-        self.doom_threshold = doom
-        self.current_doom = 0
-        self.elder_sign_threshold = elder_signs
-        self.current_elder_signs = 0
+        self.doom = doom
+        self.elder_signs = elder_signs
         self.attack = attack # this should be replaced by something later, I now, a custom function will be stored here.
     
     def __str__(self):
-        string = f"{self.great_old_one.name} has {self.great_old_one.current_doom}/{self,great_old_one.doom_threshold} Doom."
-        string += f"You have {self.great_old_one.current_elder_signs}/{self.great_old_one.elder_sign_threshold} Elder Signs."
+        string = f"{self.great_old_one.name} has {self.current_doom}/{self.doom_max} Doom."
+        string += f"You have {self.current_elder_signs}/{self.elder_sign_max} Elder Signs."
         return string
 
-    # Win condition
-    @property
-    def banished(self) -> bool:
-        if self.current_elder_signs >= self.elder_sign_threshold:
-            print(f"You have defeated the terrifying {self.name}. The world is forever in your debt.")
-            return True
-        else:
-            # should there be a message here
-            return False
-    
-    # Loss condition
-    @property
-    def summoned(self) -> bool:
-        if self.current_doom >= self.doom_threshold:
-            print(f"The terrifying {self.name} has been summoned and devours the world.")
-            return True
-        else:
-            # should there be a message here
-            return False
     
 class Character:
     def __init__(self, name:str, sanity: int, stamina: int, items: list=None) -> None:
@@ -105,6 +84,10 @@ class Game:
     def __init__(self, character, great_old_one, start_time, task_card_deck) -> None:
         self.character = character
         self.great_old_one = great_old_one
+        self.current_doom = 0
+        self.doom_max = great_old_one.doom
+        self.current_elder_signs = 0
+        self.elder_sign_max = great_old_one.elder_signs
         self.clock = Clock(start_time)
         # not yet fully implimented
         self.task_card_deck = task_card_deck #TaskCard.create_deck()
@@ -113,24 +96,42 @@ class Game:
     
     def end_turn(self) -> str:
         self.clock.advance()
-        print("applying doom")
-        self.apply_doom()
-        print("character being reset")
+        if self.clock.time == 12:
+            self.apply_doom(1)
         self.character.reset()
-        print("refilling task cards")
         self.refill_task_cards()
         return self.end_condition
     
-    def apply_doom(self) -> None:
-        if self.clock.time == 12:
-            self.great_old_one.current_doom += 1
-            print(f"There is {self.great_old_one.current_doom}/{self.great_old_one.doom_threshold} Doom.")
+    def apply_doom(self, num:int) -> None:
+        self.current_doom += num
+        print(f"There is {self.current_doom}/{self.doom_max} Doom.")
+
+    # Loss condition
+    @property
+    def great_old_one_summoned(self) -> bool:
+        if self.current_doom >= self.doom_max:
+            print(f"The terrifying {self.great_old_one.name} has been summoned and devours the world.")
+            return True
+        else:
+            # should there be a message here
+            return False
+    
+        # Win condition
+    @property
+    def great_old_one_banished(self) -> bool:
+        if self.current_elder_signs >= self.elder_sign_max:
+            print(f"You have defeated the terrifying {self.great_old_one.name}. The world is forever in your debt.")
+            return True
+        else:
+            # should there be a message here
+            return False
+
 
     @property
     def end_condition(self) -> str:
-        if self.great_old_one.summoned:
+        if self.great_old_one_summoned:
             return "Summoned"
-        elif self.great_old_one.banished:
+        elif self.great_old_one_banished:
             return "Banished"
         elif not self.character.alive:
             return "Died"
@@ -144,7 +145,7 @@ class Game:
         #print(len(self.current_task_cards))
         while len(self.current_task_cards) < 3:
             self.draw_task_card()
-        #print("refill finished")
+        print("Task cards replenished.")
         #print(len(self.current_task_cards))
         
     
@@ -182,9 +183,12 @@ class Clock:
         print(f"You have {(12-self.time)//3} turns until doom advances.")
 
 
-def elder_sign(num:int, game:'Game') -> None:
-    game.great_old_one.current_elder_signs += num
-    print(f"{game.character.name} now has {game.great_old_one.current_elder_signs} Elder Signs.")
+def gain_elder_sign(num:int, game:'Game') -> None:
+    game.current_elder_signs += num
+    print(f"{game.character.name} now has {game.current_elder_signs} Elder Signs.")
+
+def increase_doom(num:int, game:'Game') -> None:
+    game.apply_doom(num)
     
 def change_sanity(num:int, game:'Game') -> None:
     game.character.sanity += num
@@ -194,9 +198,10 @@ def change_stamina(num:int, game:'Game') -> None:
     game.character.stamina += num
     print(f"{game.character.name} now has {game.character.stamina} Stamina.")
 
-OUTCOMES = {"Elder Sign":elder_sign,
-            "Sanity":change_sanity,
-            "Stamina":change_stamina}
+OUTCOMES = {"Elder Sign": gain_elder_sign,
+            "Sanity": change_sanity,
+            "Stamina": change_stamina,
+            "Doom": increase_doom}
 
 class Task:
     TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 'Lore':'Lore', 
