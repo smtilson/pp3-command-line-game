@@ -203,7 +203,7 @@ def main_gameplay_loop(game) -> None:
 
 def create_task_card_deck():
     task_card_data = db.fetch_task_card_data()
-    task_card_deck = [db.task_dict_to_task_card(card_dict) for card_dict in task_card_data]
+    task_card_deck = [db.task_dict_to_task_card(card_dict) for card_dict in task_card_data if card_dict['Rewards']!={}]
     return task_card_deck
 
 
@@ -234,7 +234,7 @@ def create_simple_hard(doom, elder_signs, sanity, stamina, start_time):
 
     
 # current_progress
-game1= create_simple_hard(1,1,5,5,9)
+game1, game2= create_simple_hard(2,2,5,5,0)
 
 bt1 = Task({'Investigate':2, 'Skull':1})
 bt2 = Task({'Investigate':1, 'Lore':2})

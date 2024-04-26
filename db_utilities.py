@@ -43,12 +43,7 @@ def task_dict_to_task_card(task_dict:dict) -> "TaskCard":
 
 def create_task_list(task_data:List[str])-> List['Task']:
     tasks = []
-    #print(task_data)
     for task_raw in task_data:
-        #print(task_raw)
-        #print(len(task_raw))
-        #print(len(task_raw.strip()))
-        #input()
         if not task_raw.strip():
             break
         tasks.append(create_task(task_raw))
@@ -76,6 +71,7 @@ def create_task(task_raw:str) -> 'Task':
         try:
             int(part[0])
         except ValueError as e:
+            print("Hit ValueError in create task.")
             print(f"{part[0]=}")
             print(f'{part=}')
             print(f"{task_raw=}")
@@ -97,7 +93,7 @@ def clean_outcome_raw(outcome_raw:str) -> str:
     return cleaned_outcome_list
 
 def clean_outcome_list(outcome_list:List[str]) -> List[str]:
-    drop_terms = ['Other', 'Spell', 'Ally', 'Clue', 'Item']
+    drop_terms = ['Other', 'Monster', 'Monter','Spell', 'Ally', 'Clue', 'Item']
     cleaned_outcome_list = []
     for item in outcome_list:
         add = True
@@ -110,14 +106,16 @@ def clean_outcome_list(outcome_list:List[str]) -> List[str]:
     return cleaned_outcome_list
 
 #Outcomes should be refactored to work with a dictionary.
-def create_outcome(outcome_raw:str) -> List[str]:
-    outcome_list = outcome_raw.split(' ')
+def create_outcome(outcome_raw:str) -> dict:
+    outcome_list = outcome_raw.split(', ')
     outcome_list = clean_outcome_list(outcome_list)
     proper_outcomes = {}
     for outcome in outcome_list:
         try:
             proper_outcomes[translate_term(outcome.split()[1])]=outcome.split()[0]
-        except IndexError as e:
+        except (IndexError, KeyError) as e:
+            print("Hit error in create_outcome")
+            print(type(e))
             print(e)
             print(outcome_raw)
             print(outcome_list)

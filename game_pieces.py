@@ -200,7 +200,7 @@ OUTCOMES = {"Elder Sign":elder_sign,
             "Stamina":change_stamina}
 
 class Task:
-    TRANSLATION = {'Inv.': 'Investigation', 'Investigation':'Investigation', 'Lore':'Lore', 
+    TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 'Lore':'Lore', 
                     'Peril':'Skull', 'Terror': 'Tentacle','Unique':'Unique Item', 
                     'Common': 'Common Item', 'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
                     'Sanity':'Sanity','Stamina':'Stamina', 'Doom':'Doom'}
