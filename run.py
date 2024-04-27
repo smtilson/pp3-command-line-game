@@ -24,10 +24,10 @@ def report_dice_n_task(investigator, task):
     print(task)    
 
 # needs a better name
-def use_item_proceedure(investigator: 'Investigator') -> 'Investigator':
+def use_item_procedure(investigator: 'Investigator') -> 'Investigator':
     items = investigator.items
     for index, item in enumerate(items):
-        white_space = item.white_space+(3-len(str(index)))*' '
+        white_space = item.white_space+(3-len(str(index+1)))*' '
         print(f"{index+1}. {item.name}: {white_space}{item.effect}")
     index = get_selection(len(items),'an item to use.',{'none'})
     if index == 'none':
@@ -51,7 +51,7 @@ def assign_die_to_task(investigator, task): #'DicePool','Task':
         investigator.pass_move()
         return investigator, task
     elif index == "item":
-        return use_item_proceedure(investigator), task
+        return use_item_procedure(investigator), task
     die = investigator.dice_pool[index-1]
     if die in task:
         task.assign_die(die)
@@ -108,7 +108,8 @@ def attempt_location(investigator:'Investigator',location:'Location') -> str:
             investigator.pass_move()
             continue
         elif task_index == "item":
-            investigator = use_item_proceedure(investigator)
+            investigator = use_item_procedure(investigator)
+            continue
         task = location[task_index-1]
         # should this part of the validation be done elsewhere?
         if task.valid(investigator.dice_pool):
@@ -142,8 +143,9 @@ def start_game(start_time=0):
     great_old_one = game_data.select_great_old_one()
     investigator = game_data.select_investigator()
     start_time = 0
-    game = Game(investigator,great_old_one,start_time,game_data.location_deck,
-                game_data.item_deck)
+    increment = 12
+    game = Game(investigator,great_old_one,game_data.location_deck,
+                game_data.item_deck,start_time, increment)
     #print(game)
     print(great_old_one)
     print(investigator)

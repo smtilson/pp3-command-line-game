@@ -108,15 +108,16 @@ class Investigator:
         print("Sacrificing a die.")
         self.dice_pool.pop()
         print("Rerolling your remaining dice.")
-        # will roll throw an exception if there are no dice?
+        # will roll throw an exception if there are no dice? no
         self.roll()
 
 
     # advances clock, check alive and resets number of die
     def reset(self):
         # This resets the dice pool and the face of each die to initial face
-        print(f"{self.name} is still alive.")
-        self.dice_pool.reset()
+        if self.alive:
+            print(f"{self.name} is still alive.")
+            self.dice_pool.reset()
 
     # should the Item effect dictionary be here?
     # how relevant is this?
@@ -133,14 +134,14 @@ class Investigator:
 
 
 class Game:
-    def __init__(self, investigator, great_old_one, start_time, location_deck, item_deck) -> None:
+    def __init__(self, investigator, great_old_one, location_deck, item_deck, start_time:int=0, increment:int=3) -> None:
         self.investigator = investigator
         self.great_old_one = great_old_one
         self.current_doom = 0
         self.doom_max = great_old_one.doom
         self.current_elder_signs = 0
         self.elder_sign_max = great_old_one.elder_signs
-        self.clock = Clock(start_time)
+        self.clock = Clock(start_time, increment)
         # not yet fully implimented
         self.location_deck = location_deck #Location.create_deck()
         self.current_locations = []
@@ -239,16 +240,16 @@ class Game:
         
 class Clock:
     #This is where the difficulty setting could be, the number of turns in a day.
-    def __init__(self, start_time):
+    def __init__(self, start_time,increment):
         self.time = start_time
+        self.increment = increment
     
     #how many hours are in the day
     def advance(self) -> None:
-        self.time += 3
+        self.time += self.increment
         if self.time == 12:
             print("It is midnight!")
-        elif self.time == 15:
-            self.time = 3
+            self.time = 0
         print(f'The time is now {self.time}.')
             
     def check_clock(self) -> None:
@@ -274,7 +275,7 @@ def gain_sanity(investigator:'Investigator') -> None:
 def add_spell_die(investigator:'Investigator') -> None:
     investigator.add_die('spell')
 
-def reroll_rice(investigator:'Investigator') -> None:
+def reroll_dice(investigator:'Investigator') -> None:
     #print("Using a Clue to reroll dice.")
     investigator.roll()
 
@@ -289,7 +290,7 @@ def restore(investigator:'Investigator') -> None:
 class Item:
     ITEM_EFFECT = {'Add a yellow die':add_yellow, 'Add a red die':add_red, 'Gain 1 Health':gain_health,
                     'Gain 1 Sanity':gain_sanity,#'Change 1 die to Skulls':change_to_skull, 
-                    'Add a yellow and red die':add_yellow_n_red, 'Gain a spell':add_spell_die, 
+                    'Add a yellow and a red die':add_yellow_n_red, 'Gain a spell':add_spell_die, 
                     "Reroll all dice":reroll_dice, "Restore Health and Sanity":restore}
 
     def __init__(self, name:str, effect:str, item_type:str) -> None:
@@ -551,7 +552,8 @@ class Die:
 # maybe add sorting function and ordering as well as color 
 #to order the dice and then only pop from the front will be more appropriate
 class DicePool:
-    def __init__(self, defn:dict={'green':5,'yellow':2,'red':2, 'blue':1}) -> None:
+    #{'green':5,'yellow':2,'red':2, 'spell':1}
+    def __init__(self, defn:dict={'green':6}) -> None:
         self.defn = defn
         self.dice = []
         for color in defn.keys():
