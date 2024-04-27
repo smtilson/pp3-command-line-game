@@ -185,7 +185,7 @@ class Game:
         #print(len(self.current_task_cards))
         while len(self.current_task_cards) < 3:
             self.draw_task_card()
-        print("Task cards replenished.")
+        #print("Task cards replenished.")
         #print(len(self.current_task_cards))
     
     def draw_task_card(self) -> None:

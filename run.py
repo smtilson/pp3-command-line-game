@@ -3,7 +3,7 @@
 # Write your code to expect a terminal of 80 investigators wide and 24 rows high
 # Eventually classes should probably be changed to named tuples
 
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 # the below import statement should eventually be changed
 from game_pieces import *
 import db_utilities as db
@@ -32,7 +32,7 @@ def assign_die_to_task(dice_pool, task): #'DicePool','Task':
     report_dice_n_task(dice_pool, task)
     # would a get die function be better?, I guess decoupling the dice pool and the task 
     # would mean that you wouldn't see what the task is anymore...
-    index = get_die_choice(len(dice_pool))
+    index = get_selection(len(dice_pool),"a die to assign to this task", {'pass'})
     if index == "pass":
         dice_pool.pass_move()
         return dice_pool, task
@@ -126,9 +126,25 @@ def get_task_choice(num_tasks: int):
     else:
         return int(index)
 
-def get_die_choice(num_dice: int): #return value for this is a bit complex
-    # what about when num_dice = 0 or 1?
-    # maybe refactor these get_choice functions into one function.
+#call needs to be paired with soem other message to explain the extra options.
+# extra_options maybe will be changed to a list to make it easier
+def get_selection(num_choices:int, type_of_choice:str, extra_options:set=set()) -> Union[int,str]:
+    index = input(f"Please select an option from 1-{num_choices} to choose a {type_of_choice}.\n"
+                    f"You may also select an option from {extra_options}.")
+    # explain(extra_options)
+    extra_options = {word.lower() for word in extra_options}
+    valid_input = {str(num) for num in range(1,num_choices+1)}.union(extra_options)
+    while index not in valid_input:
+        print(f"{index} is not a valid choice.")
+        index = input(f"Please select an option from 1-{num_choices} to choose a {type_of_choice}.\n"
+                    f"You may also select an option from {extra_options}.")
+        index = index.lower()
+    if index in extra_options:
+        return index
+    else:
+        return int(index)
+'''
+def get_die_choice(num_dice: int): 
     valid_input = [str(num) for num in range(1,num_dice+1)]
     valid_input.append("pass")
     index = input(f"Please input a selection from 1-{num_dice} to select which die to assign to the task.\n"
@@ -141,17 +157,16 @@ def get_die_choice(num_dice: int): #return value for this is a bit complex
         return index.lower()
     else:
         return int(index)
-        
+        '''
 def apply_outcomes(outcomes, game):
     for key, value in outcomes.items():
         print(f"Applying outcome {key}: {value}.")
         OUTCOMES[key](value, game)
 
-def start_game(start_time=0):
+def setup_game():
     # Initialize game data
     task_card_deck = db.fetch_task_cards()
     great_old_ones = db.fetch_great_old_ones()
-    # this should be a separate selection function
     investigators = db.fetch_investigators()
     #print(investigators)
     #pause()
@@ -166,13 +181,15 @@ def start_game(start_time=0):
     index = '3' #input("Choose a Great Old One to battle by entering its index.\n")
     #pause()
     investigator = [inv for inv in investigators if inv.index == index][0]
-    
+    start_time = 0
     game = Game(investigator,great_old_one,start_time,task_card_deck, item_deck)
     #print(game)
     print(great_old_one)
     print(investigator)
     pause()
-    #main_gameplay_loop(game)
+    return game
+    
+def start_game(start_time=0):
     """
     Initializes game state:
         - Create Great Old Ones
@@ -186,6 +203,7 @@ def start_game(start_time=0):
         - Deal Task Cards
         - Begin Game (call main_gameplay_loop)
     """
+    game = setup_game()
     return game
 
 def select_task_card(game):
@@ -216,43 +234,9 @@ def main_gameplay_loop(game) -> None:
         print(f"Oh no! {game.investigator.name} has been defeated. Now nothing stands in the way of {game.great_old_one.name}.")
     elif end_condition == "Summoned":
         print(f"{game.investigator.name} was unable to prevent the inevitable. {game.great_old_one.name} has been summoned. The end of humanity is at hand.")
-
-
-def create_simple_hard(doom, elder_signs, sanity, stamina, start_time):
-    """
-    This function creates basic instances of the above classes for the purpose of development.
-    """
-    bt1a = Task({'Investigate':2, 'Skull':1})
-    bt1b = Task({'Investigate':2, 'Skull':1})
-    bt2 = Task({'Investigate':1, 'Lore':2})
-    ht3 = Task({"Investigate":6})
-    basic_old_one = GreatOldOne('0',"basic", doom, elder_signs, "+1 damage")
-    basic_investigator = Investigator("joe shmoe",sanity, stamina)
-    basic_card1 = TaskCard("basic task card1","no flavor", [bt1a, bt1b], {'Stamina': 1}, {"Stamina": -1})
-    basic_card2 = TaskCard("basic task card2","no flavor", [bt1a,bt2], {"Elder Sign": 1}, {"Sanity": -1})
-    hard_card1 = TaskCard("hard task card 1","no flavor", [bt1a,ht3], {"Elder Sign": 2}, {"Stamina": -1})
-    hard_card2 = TaskCard("hard task card 2","no flavor", [bt2,ht3], {"Elder Sign": +2}, {"Sanity": -1})
-    task_deck = []
-    for _ in range(3):
-        task_deck.append(basic_card1)
-        task_deck.append(basic_card2)
-        task_deck.append(hard_card1)
-        task_deck.append(hard_card2)
-    game1 = Game(basic_investigator,basic_old_one,start_time,task_deck)
-    game2 = Game(basic_investigator,basic_old_one,start_time,db.fetch_task_cards())
-    game1.shuffle()
-    return game1, game2
-
     
 # current_progress
 game = start_game()
-darrell = game.investigator
-whiskey, dynamite = darrell.items
-pause()
-print(darrell.sanity)
-darrell.sanity -= 1
-print(darrell.sanity)
-whiskey.use(darrell)
-print(darrell.sanity)
+main_gameplay_loop(game)
 
 
