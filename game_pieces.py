@@ -13,7 +13,8 @@ class GreatOldOne:
         self.doom = doom
         self.elder_signs = elder_signs
         self.ability = ability # this should be replaced by something later, I now, a custom function will be stored here.
-    
+
+    #should this be a display mehtod instead?
     def __str__(self):
         msg = f"{self.name}: {self.doom} Doom needed to Awaken\n"
         # this length should eventually be replaced by max name length for the class.
@@ -61,8 +62,12 @@ class Investigator:
         self.dice_pool = DicePool()
     # modify this later for selection etc
     def __str__(self):
-        return f"{self.name} has {self.sanity} Sanity and {self.health} Health left."
+        return f"{self.name}: {self.sanity} Sanity, {self.health} Health"
         
+
+    def selection(self):
+        white_space = (18-len(self.name)-len(str(self.index)))*' '
+        print(str(self.index)+'. '+str(self).replace(': ',': '+white_space))
     # Loss condition
     @property
     def alive(self) -> bool:
@@ -110,6 +115,8 @@ class Investigator:
         
 # needs validation
 # needs overflow check method maybe? <- wtf does this mean
+
+
 
 class Game:
     def __init__(self, investigator, great_old_one, start_time, task_card_deck, item_deck) -> None:
@@ -199,10 +206,10 @@ class Game:
         shuffle(self.task_card_deck)
         shuffle(self.item_deck)
     
-    def draw_item(self, rarity) -> None:
+    def draw_item(self, item_type) -> None:
         self.shuffle()
         for item in self.item_deck:
-            if item.rarity == rarity:
+            if item.item_type == item_type:
                 break
         self.investigator.items.append(item)
     
@@ -210,9 +217,9 @@ class Game:
         starting_list = [term for term in self.investigator.items]
         self.investigator.items = []
         for term in starting_list:
-            num, rarity = term.split()
+            num, item_type = term.split()
             for _ in range(int(num)):
-                self.draw_item(rarity)
+                self.draw_item(item_type)
         pass
         
 class Clock:
@@ -250,20 +257,20 @@ def gain_sanity(investigator:'Investigator') -> None:
     investigator.sanity += 1
 
 # a clue behaves like an item but it isn't in the item deck.
-# or just make clue a rarity
+# or just make clue a item_type
 #maybe same with spell, but make it assign a wild die.
 # I guess when I write the gain_clue reward function I will just make an item in that function and add it to the inventory.
 class Item:
     ITEM_EFFECT = {'Adds yellow die':add_yellow, 'Adds red die':add_red, 'Gain 1 Health':gain_health,
                     'Gain 1 Sanity':gain_sanity,#'Change 1 die to Skulls':change_to_skull, 
                     'Adds yellow and red dice':add_yellow_n_red}
-    def __init__(self, name:str, effect:str, rarity:str) -> None:
+    def __init__(self, name:str, effect:str, item_type:str) -> None:
         self.name = name
         self.effect = effect
-        self.rarity = rarity
+        self.item_type = item_type
     
     def __str__(self) -> str:
-        return f"The {self.name} is a {self.rarity} item.\nEffect: {self.effect}"
+        return f"The {self.name} is a {self.item_type} item.\nEffect: {self.effect}"
 
     def use(self, investigator):
         self.ITEM_EFFECT[self.effect](investigator)

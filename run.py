@@ -6,7 +6,8 @@
 from typing import List, Optional, Tuple, Union
 # the below import statement should eventually be changed
 from game_pieces import *
-import db_utilities as db
+from db_utilities import GameSelection
+from utilities import get_selection
 
 def pause() -> None:
     input("Hit enter to continue.\n")
@@ -109,23 +110,6 @@ def attempt_task_card(investigator:'Investigator',task_card:'TaskCard') -> str:
         print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
         return task_card.penalty, task_card
         
-#call needs to be paired with some other message to explain the extra options.
-# extra_options maybe will be changed to a list to make it easier
-def get_selection(num_choices:int, type_of_choice:str, extra_options:set=set()) -> Union[int,str]:
-    index = input(f"Please select an option from 1-{num_choices} to choose {type_of_choice}.\n"
-                    f"You may also select an option from {extra_options}.")
-    # explain(extra_options)
-    extra_options = {word.lower() for word in extra_options}
-    valid_input = {str(num) for num in range(1,num_choices+1)}.union(extra_options)
-    while index not in valid_input:
-        print(f"{index} is not a valid choice.")
-        index = input(f"Please select an option from 1-{num_choices} to choose a {type_of_choice}.\n"
-                    f"You may also select an option from {extra_options}.")
-        index = index.lower()
-    if index in extra_options:
-        return index
-    else:
-        return int(index)
 
 def apply_outcomes(outcomes, game):
     for key, value in outcomes.items():
@@ -134,28 +118,11 @@ def apply_outcomes(outcomes, game):
 
 def setup_game():
     # Initialize game data
-    task_card_deck = db.fetch_task_cards()
+
+    possible_game['task_card_deck'] = db.fetch_task_cards()
     great_old_ones = db.fetch_great_old_ones()
     investigators = db.fetch_investigators()
-    #print(investigators)
-    #pause()
     item_deck = db.fetch_items()
-    for great_old_one in great_old_ones:
-        great_old_one.selection()
-    index = get_selection(len(great_old_ones),'a Great Old One to battle')
-    great_old_one = [demon for demon in great_old_ones if demon.index == index][0]
-    for investigator in investigators:
-        print(investigator.index)
-        print(investigator)
-    index = get_selection(len(investigators),"an investigator to play as")
-    investigator = [inv for inv in investigators if inv.index == index][0]
-    start_time = 0
-    game = Game(investigator,great_old_one,start_time,task_card_deck, item_deck)
-    #print(game)
-    print(great_old_one)
-    print(investigator)
-    pause()
-    return game
     
 def start_game(start_time=0):
     """
@@ -171,7 +138,21 @@ def start_game(start_time=0):
         - Deal Task Cards
         - Begin Game (call main_gameplay_loop)
     """
-    game = setup_game()
+    possible_game = setup_game()
+    for great_old_one in great_old_ones:
+        great_old_one.selection()
+    index = get_selection(len(great_old_ones),'a Great Old One to battle')
+    great_old_one = [demon for demon in great_old_ones if demon.index == index][0]
+    for investigator in investigators:
+        investigator.selection()
+    index = get_selection(len(investigators),"an investigator to play as")
+    investigator = [inv for inv in investigators if inv.index == index][0]
+    start_time = 0
+    game = Game(investigator,great_old_one,start_time,task_card_deck, item_deck)
+    #print(game)
+    print(great_old_one)
+    print(investigator)
+    pause()
     return game
 
 def select_task_card(game):
@@ -204,7 +185,8 @@ def main_gameplay_loop(game) -> None:
         print(f"{game.investigator.name} was unable to prevent the inevitable. {game.great_old_one.name} has been summoned. The end of humanity is at hand.")
     
 # current_progress
-game = start_game()
-main_gameplay_loop(game)
+investigators = db.fetch_investigators()
+for investigator in investigators:
+    investigator.selection()
 
 

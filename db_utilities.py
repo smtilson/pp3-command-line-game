@@ -6,6 +6,7 @@ from google.oauth2.service_account import Credentials
 from typing import List, Tuple, Optional, Dict, Union
 # I guess I should change this to not load everything
 from game_pieces import *
+from utilities import get_selection
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -81,8 +82,8 @@ def fetch_items() -> List[dict]:
 def item_dict_to_item(item:dict) -> 'Item':
     name = item['Name']
     effect = item['Text/Effect']
-    rarity = item['Rarity']
-    return Item(name, effect, rarity)
+    item_type = item['Rarity']
+    return Item(name, effect, item_type)
 
 
 
@@ -174,3 +175,27 @@ def create_outcome(outcome_raw:str) -> dict:
     for outcome in outcome_list:
         proper_outcomes[translate_term(outcome.split()[1])]=int(outcome.split()[0])
     return proper_outcomes
+
+
+class GameSelection:
+    """
+    This class queries the database and initializes the potential game state.
+    """
+    def __init__(self) -> None:
+        self.task_card_deck = fetch_task_cards()
+        self.item_deck = fetch_items()
+        self.great_old_ones = fetch_great_old_ones()
+        self.investigators = fetch_investigators()
+    
+    def select_great_old_one(self):
+        for great_old_one in self.great_old_ones:
+            great_old_one.selection()
+        index = get_selection(len(self.great_old_ones),'womp womp')
+        return self.great_old_ones[index]
+    
+    
+    def select_investigator(self):
+        for investigator in self.investigators:
+            investigator.selection()
+        index = get_selection(len(self.investigators),'womp womp')
+        return self.investigators[index]
