@@ -9,7 +9,7 @@ from game_pieces import *
 import db_utilities as db
 
 def pause() -> None:
-    input("Hit enter to continue.")
+    input("Hit enter to continue.\n")
 
 #I feel like this can be combined with the other report function to be more streamlined?
 def report_options(dice_pool, task_card):
@@ -117,7 +117,7 @@ def get_task_choice(num_tasks: int):
     condition = True
     valid_input = [str(num) for num in range(1,num_tasks+1)]
     valid_input.append("pass")
-    index = input(f"\nPlease input numbers 1-{num_tasks} to select which task to attempt.\n")
+    index = input(f"Please input numbers 1-{num_tasks} to select which task to attempt.\n")
     while index not in valid_input:
         print(f"{index} is invalid.")
         index = input(f"Please input numbers 1-{num_tasks} to select which task to attempt.\n")
@@ -131,11 +131,11 @@ def get_die_choice(num_dice: int): #return value for this is a bit complex
     # maybe refactor these get_choice functions into one function.
     valid_input = [str(num) for num in range(1,num_dice+1)]
     valid_input.append("pass")
-    index = input(f"\nPlease input a selection from 1-{num_dice} to select which die to assign to the task.\n"
+    index = input(f"Please input a selection from 1-{num_dice} to select which die to assign to the task.\n"
         f"Enter pass to sacrifice a die and reroll.\n")
     while index not in valid_input:
         print(f"\n{index} is invalid.\n")
-        index = input(f"\nPlease input numbers 1-{num_dice} to select which die to assign to the task.\n"
+        index = input(f"Please input numbers 1-{num_dice} to select which die to assign to the task.\n"
         f"Enter pass to sacrifice a die and reroll.\n")
     if index.lower() == "pass":
         return index.lower()
@@ -158,12 +158,12 @@ def start_game(start_time=0):
     item_deck = db.fetch_items()
     for demon in great_old_ones:
         demon.selection()
-    index = '3' #input("Choose a Great Old One to battle by entering its index.")
+    index = '3' #input("Choose a Great Old One to battle by entering its index.\n")
     great_old_one = [demon for demon in great_old_ones if demon.index == index][0]
     #for investigator in investigators:
      #   print(investigator.index)
       #  print(investigator)
-    index = '3' #input("Choose a Great Old One to battle by entering its index.")
+    index = '3' #input("Choose a Great Old One to battle by entering its index.\n")
     #pause()
     investigator = [inv for inv in investigators if inv.index == index][0]
     

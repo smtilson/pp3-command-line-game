@@ -50,8 +50,9 @@ class Investigator:
         self.sanity = sanity
         self.starting_health = health
         self.health = health
-        #setting up the items for the character is maybe an issue.
-        # method of the game that is called at the end of init.
+        # setting up the items for the character is maybe an issue.
+        # that method is part of the game class.
+        # is this still necessary?
         if items:
             self.items = items
         else:
@@ -97,6 +98,15 @@ class Investigator:
         # This resets the dice pool and the face of each die to initial face
         print(f"{self.name} is still alive.")
         self.dice_pool.reset()
+
+    # should the Item effect dictionary be here?
+    # how relevant is this?
+    # this seems convoluted and not streamlined.
+    # moving the item effect dictionary would help that, I think.
+    def use_item(self, index) -> None:
+        item = self.items.pop(index)
+        item.use(self)
+
         
 # needs validation
 # needs overflow check method maybe? <- wtf does this mean

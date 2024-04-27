@@ -49,10 +49,10 @@ def fetch_investigators() -> List[dict]:
     inv_dicts = []
     for row in raw:
         inv_dicts.append({key:val for key, val in zip(keys,row)})
-        # storing as string since that is how input will convert it
     exclusions = ['Amanda Sharpe','"Ashcan" Pete']
     inv_dicts = [inv_dict for inv_dict in inv_dicts if inv_dict['Name'] not in exclusions]
     for index, inv_dict in enumerate(inv_dicts):    
+        # storing as string since that is how input will convert it
         inv_dict['index'] = str(index+1)
     return [inv_dict_to_inv(inv_dict) for inv_dict in inv_dicts]
 
@@ -135,20 +135,13 @@ def create_task(task_raw:str) -> 'Task':
     #print(f'{parts=}')
     for part in parts:
         part = part.split()
-        try:
-            int(part[0])
-        except ValueError as e:
-            print("Hit ValueError in create task.")
-            print(f"{part[0]=}")
-            print(f'{part=}')
-            print(f"{task_raw=}")
-            input()
+        int(part[0])
         pattern[translate_term(part[1])] = int(part[0])
     return Task(pattern)
 
 #maybe not necessary
 def clean_outcome_raw(outcome_raw:str) -> str:
-    drop_terms = ['Other', 'World', 'Spell', 'Ally','Clues', 'Clue', 'Item']
+    drop_terms = ['Other', 'World', 'Spell', 'Ally','Clues', 'Clue', 'Item']# does item need to be allowed back in now?
     cleaned_outcome = ''
     for item in outcome_list.split():
         add = True
@@ -179,14 +172,5 @@ def create_outcome(outcome_raw:str) -> dict:
     outcome_list = clean_outcome_list(outcome_list)
     proper_outcomes = {}
     for outcome in outcome_list:
-        try:
-            proper_outcomes[translate_term(outcome.split()[1])]=int(outcome.split()[0])
-        except (IndexError, KeyError) as e:
-            print("Hit error in create_outcome")
-            print(type(e))
-            print(e)
-            print(outcome_raw)
-            print(outcome_list)
-            print(outcome)
-            input()
+        proper_outcomes[translate_term(outcome.split()[1])]=int(outcome.split()[0])
     return proper_outcomes
