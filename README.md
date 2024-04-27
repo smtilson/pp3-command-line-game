@@ -41,3 +41,22 @@ If necessary, navigate back to the Dashboard for the current project, click on "
 1. Search for the Google Sheets API and select it.
 2. Click "Enable".
 Note: This API does not require credentials.
+
+### Deploying to Heroku
+
+1. Copy/Clone the <a href="https://github.com/smtilson/pp3-command-line-game" target="_blank">repository</a> on github.
+2. Log in to your Heroku account.
+3. From the Heroku Dashboard, click the dropdown menu "New" and select "Create new app".
+4. Choose a unique name for your app, shoose the appropriate region, and then click "Create app".
+5. Go to the "Settings" tab. Scroll to "Config Vars" section anc click "Reveal Config Vars".
+6. In field for key, enter "CREDS". In the field for value, paste the contents of your creds.json file which you created in the Google Drive API section above.
+7. Scroll down to "Buildpacks". Click "Add buildpack", select "python", and click "Add buildpack".
+8. Click "Add buildpack", select "nodejs", and click "Add buildpack".
+
+Note: Make sure that the python buildpack is before the nodejs buildpack. If not, you can reorder them by dragging python to the top.
+
+9. Go to the "Deploy" tab. Scroll down to "Deployment method" and select "GitHub". Search for your repository that you copied/cloned in step 1 above.  Click "Connect" once you have found it.
+
+10. Scroll down to "Manual deploy" and click "Deploy Branch". Once the build is complete, click "View" to be taken to your deployed app.
+
+[return to Table of Contents](#toc)
