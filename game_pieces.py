@@ -377,9 +377,16 @@ class Task:
         return selection[index]
     
     def suffer_penalty(self, investigator) -> 'Investigator':
-        #if 
-        #sort, amount = penalty.split(': ')
-        #print(sort, amount)
+        if "Health" in self.remaining.keys():
+            amount = self.remaining['Health']
+            print(f"You lose {abs(amount)} Health.")
+            investigator.health += amount
+            del self.remaining['Health']
+        elif "Sanity" in self.remaining.keys():
+            amount = self.remaining['Sanity']
+            print(f"You lose {abs(amount)} Sanity.")
+            investigator.sanity += amount
+            del self.remaining['Sanity']
         return investigator
        
     # resets task for next attempt, if at all

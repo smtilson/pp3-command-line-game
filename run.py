@@ -68,7 +68,7 @@ def attempt_task(investigator, task):
     and potentially suffering a penalty. Returns investigator and task if dice_pool is 
     empty, or task is complete.
     '''
-    #task.suffer_penalty(investigator)
+    task.suffer_penalty(investigator)
     investigator, task = assign_dice_to_task(investigator, task)
     while not task.complete and len(investigator) > 0:
         investigator, task = assign_dice_to_task(investigator, task)
