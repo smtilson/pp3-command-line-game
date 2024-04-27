@@ -99,13 +99,6 @@ def fetch_task_cards() -> List[dict]:
         task_dict = {key:val for key, val in zip(keys,row)}
         task_card_deck.append(task_dict_to_task_card(task_dict))
     #I actually don't need to drop these columns since the data is thrown away when I create the task cards.
-    count = 0
-    for card in task_card_deck:
-        if not card.reward:
-            print(f"Not adding {card.name} because the reward is empty.")
-            input()
-            count+=1
-    print(f"{count} cards not added")
     return [task_card for task_card in task_card_deck if task_card.reward]
 
 

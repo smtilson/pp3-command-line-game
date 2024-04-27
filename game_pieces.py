@@ -89,7 +89,11 @@ class Investigator:
         self.health -= damage
         if self.health < 0:
             self.health = 0
-    
+    # there should maybe be a more detailed version of this
+    # or an inspect item to see what the item does
+    def list_items(self) -> None:
+        for index,item in enumerate(self.items):
+            print(index+1, item.name, item.effect)
     
     def roll(self) -> None:
         self.dice_pool.roll()
@@ -221,6 +225,7 @@ class Game:
         for item in self.item_deck:
             if item.item_type == item_type:
                 break
+        self.item_deck.remove(item)
         self.investigator.items.append(item)
     
     def starting_items(self) -> None:
@@ -300,10 +305,22 @@ def change_health(num:int, game:'Game') -> None:
     game.investigator.health += num
     print(f"{game.investigator.name} now has {game.investigator.health} Health.")
 
+def draw_unique(num:int, game:'Game') -> None:
+    for _ in range(num):
+        game.draw_item('Unique')
+    game.investigator.list_items()
+
+def draw_common(num:int, game:'Game') -> None:
+    for _ in range(num):
+        game.draw_item('Common')
+    game.investigator.list_items()
+    
 OUTCOMES = {"Elder Sign": gain_elder_sign,
             "Sanity": change_sanity,
             "Health": change_health,
-            "Doom": increase_doom}
+            "Doom": increase_doom,
+            "Unique Item": draw_unique,
+            "Common Item": draw_common}
 
 class Task:
     TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 'Lore':'Lore', 
@@ -348,14 +365,15 @@ class Task:
         if self.remaining[symbol] <= 0:
             del self.remaining[symbol]
     
+    #I can use get selection here now.
     def assign_wild(self) -> str:
         selection = {str(index+1):key for index, key in enumerate(self.remaining.keys())}
         for index, key in selection.items():
             print(f'{index} = {key}')
-        index = input("Please select a symbol to turn your Wild die into.")
+        index = input("Please select a symbol to turn your Wild die into.\n")
         while index not in selection.keys():
             print(f"{index} is not a valid choice.")
-            index = input("Please select a symbol to turn your Wild die into.")
+            index = input("Please select a symbol to turn your Wild die into.\n")
         return selection[index]
     
     def suffer_penalty(self, investigator) -> 'Investigator':
