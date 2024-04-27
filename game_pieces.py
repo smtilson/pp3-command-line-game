@@ -271,6 +271,17 @@ def gain_health(investigator:'Investigator') -> None:
 def gain_sanity(investigator:'Investigator') -> None:
     investigator.sanity += 1
 
+def add_spell_die(investigator:'Investigator') -> None:
+    investigator.add_die('spell')
+
+def reroll_rice(investigator:'Investigator') -> None:
+    #print("Using a Clue to reroll dice.")
+    investigator.roll()
+
+def restore(investigator:'Investigator') -> None:
+    investigator.health = investigator.starting_health
+    investigator.sanity = investigator.starting_sanity
+
 # a clue behaves like an item but it isn't in the item deck.
 # or just make clue a item_type
 #maybe same with spell, but make it assign a wild die.
@@ -278,7 +289,9 @@ def gain_sanity(investigator:'Investigator') -> None:
 class Item:
     ITEM_EFFECT = {'Add a yellow die':add_yellow, 'Add a red die':add_red, 'Gain 1 Health':gain_health,
                     'Gain 1 Sanity':gain_sanity,#'Change 1 die to Skulls':change_to_skull, 
-                    'Add a yellow and red die':add_yellow_n_red}
+                    'Add a yellow and red die':add_yellow_n_red, 'Gain a spell':add_spell_die, 
+                    "Reroll all dice":reroll_dice, "Restore Health and Sanity":restore}
+
     def __init__(self, name:str, effect:str, item_type:str) -> None:
         self.name = name
         self.effect = effect
@@ -322,13 +335,25 @@ def draw_common(num:int, game:'Game') -> None:
         game.draw_item('Common')
         print(f"You got the {game.investigator.items[-1].name}")
     #game.investigator.list_items()
+
+def gain_clue(num:int, game:'Game') -> None:
+    for _ in range(num):
+        clue = Item("Clue", "Clue", "Reroll all dice")
+        game.investigator.items.append(clue)
     
+def gain_spell(num:int, game:'Game') -> None:
+    for _ in range(num):
+        spell = Item("Spell", "Spell", "Gain a wild die")
+        game.investigator.items.append(spell)
+
 OUTCOMES = {"Elder Sign": gain_elder_sign,
             "Sanity": change_sanity,
             "Health": change_health,
             "Doom": increase_doom,
             "Unique Item": draw_unique,
-            "Common Item": draw_common}
+            "Common Item": draw_common,
+            "Clue": gain_clue,
+            "Spell": gain_spell}
 
 class Task:
     TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 'Lore':'Lore', 
@@ -479,7 +504,7 @@ class Die:
     COLORS = {'green':['Investigate: 1','Investigate: 2','Investigate: 3','Lore: 1', 'Skulls: 1', 'Tentacles: 1'], 
                 'yellow':['Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skulls: 1'],
                 'red':['Wild: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skulls: 1'],
-                'blue':['Wild: 1' for _ in range(6)]}
+                'spell':['Wild: 1' for _ in range(6)]}
     def __init__(self, color, *faces:str)-> None:
         # this should be put into a validate color method
         self.color = color 
