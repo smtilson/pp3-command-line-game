@@ -25,8 +25,17 @@ def report_dice_n_task(investigator, task):
 
 # needs a better name
 def use_item_proceedure(investigator: 'Investigator') -> 'Investigator':
-    #for item in 
-    pass
+    items = investigator.items
+    for index, item in enumerate(items):
+        white_space = item.white_space+(3-len(str(index)))*' '
+        print(f"{index+1}. {item.name}: {white_space}{item.effect}")
+    index = get_selection(len(items),'an item to use.',{'none'})
+    if index == 'none':
+        return investigator
+    item = items[index-1]
+    item.use(investigator)
+    print(f'{investigator.name} used the {item.name} to {item.effect.lower()}.')
+    return investigator
 # I think this should be refactored into two functions, one a method of the Task class.
 def assign_die_to_task(investigator, task): #'DicePool','Task':
     """
@@ -41,6 +50,8 @@ def assign_die_to_task(investigator, task): #'DicePool','Task':
     if index == "pass":
         investigator.pass_move()
         return investigator, task
+    elif index == "item":
+        return use_item_proceedure(investigator), task
     die = investigator.dice_pool[index-1]
     if die in task:
         task.assign_die(die)
@@ -96,6 +107,8 @@ def attempt_location(investigator:'Investigator',location:'Location') -> str:
         if task_index == 'pass':
             investigator.pass_move()
             continue
+        elif task_index == "item":
+            investigator = use_item_proceedure(investigator)
         task = location[task_index-1]
         # should this part of the validation be done elsewhere?
         if task.valid(investigator.dice_pool):
@@ -178,5 +191,5 @@ def main_gameplay_loop(game) -> None:
     
 # current_progress
 
-game_data = GameSelection()
-
+game = start_game()
+main_gameplay_loop(game)

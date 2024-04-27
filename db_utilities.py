@@ -76,7 +76,7 @@ def fetch_items() -> List[dict]:
     item_dicts = []
     for row in raw:
         item_dicts.append({key:val for key, val in zip(keys,row)})
-    exclusions = ['Flute of the Outer Gods','Shotgun','Blue Watcher of the Pyramid',]
+    exclusions = ['Flute of the Outer Gods','Shotgun','Blue Watcher of the Pyramid','Necronomicon']
     return [item_dict_to_item(item_dict) for item_dict in item_dicts if item_dict['Name'] not in exclusions]
 
 def item_dict_to_item(item:dict) -> 'Item':

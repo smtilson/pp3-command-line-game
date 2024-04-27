@@ -276,9 +276,9 @@ def gain_sanity(investigator:'Investigator') -> None:
 #maybe same with spell, but make it assign a wild die.
 # I guess when I write the gain_clue reward function I will just make an item in that function and add it to the inventory.
 class Item:
-    ITEM_EFFECT = {'Adds yellow die':add_yellow, 'Adds red die':add_red, 'Gain 1 Health':gain_health,
+    ITEM_EFFECT = {'Add a yellow die':add_yellow, 'Add a red die':add_red, 'Gain 1 Health':gain_health,
                     'Gain 1 Sanity':gain_sanity,#'Change 1 die to Skulls':change_to_skull, 
-                    'Adds yellow and red dice':add_yellow_n_red}
+                    'Add a yellow and red die':add_yellow_n_red}
     def __init__(self, name:str, effect:str, item_type:str) -> None:
         self.name = name
         self.effect = effect
@@ -287,12 +287,14 @@ class Item:
     def __str__(self) -> str:
         return f"The {self.name} is a {self.item_type} item.\nEffect: {self.effect}"
 
-    def display(self) -> str:
-        white_space = (19-len(self.name)+3)*' '
-        return self.name + ':  ' + white_space + self.effect  
+    @property
+    def white_space(self) -> str:
+        return (19-len(self.name)+3)*' '
+          
 
     def use(self, investigator):
         self.ITEM_EFFECT[self.effect](investigator)
+        investigator.items.remove(self)
 
 def gain_elder_sign(num:int, game:'Game') -> None:
     game.current_elder_signs += num
@@ -312,11 +314,13 @@ def change_health(num:int, game:'Game') -> None:
 def draw_unique(num:int, game:'Game') -> None:
     for _ in range(num):
         game.draw_item('Unique')
+        print(f"You got the {game.investigator.items[-1].name}")
     #game.investigator.list_items()
 
 def draw_common(num:int, game:'Game') -> None:
     for _ in range(num):
         game.draw_item('Common')
+        print(f"You got the {game.investigator.items[-1].name}")
     #game.investigator.list_items()
     
 OUTCOMES = {"Elder Sign": gain_elder_sign,
@@ -516,7 +520,9 @@ class Die:
     def create_die(cls,color:str):
         if color not in cls.COLORS.keys():
             raise ValueError(f"{color} is not a valid color of die")
-        return cls(color.capitalize(),*cls.COLORS[color])
+        die = cls(color.capitalize(),*cls.COLORS[color])
+        die.roll()
+        return die
 # maybe add sorting function and ordering as well as color 
 #to order the dice and then only pop from the front will be more appropriate
 class DicePool:
