@@ -99,15 +99,27 @@ def fetch_task_cards() -> List[dict]:
         task_dict = {key:val for key, val in zip(keys,row)}
         task_card_deck.append(task_dict_to_task_card(task_dict))
     #I actually don't need to drop these columns since the data is thrown away when I create the task cards.
+    count = 0
+    for card in task_card_deck:
+        if not card.reward:
+            print(f"Not adding {card.name} because the reward is empty.")
+            input()
+            count+=1
+    print(f"{count} cards not added")
     return [task_card for task_card in task_card_deck if task_card.reward]
 
 
 def task_dict_to_task_card(task_dict:dict) -> "TaskCard":
+    #print(task_dict)
+    #input()
     task_data = [task_dict['Task 1'],task_dict['Task 2'],task_dict['Task 3']]
     tasks = create_task_list(task_data)
     reward = create_outcome(task_dict['Rewards'])
     penalty = create_outcome(task_dict['Penalties'])
-    return TaskCard(task_dict['Name'],task_dict['Flavor Text'],tasks, reward, penalty)
+    card = TaskCard(task_dict['Name'],task_dict['Flavor Text'],tasks, reward, penalty)
+    #print(card)
+    #input()
+    return card
 
 def create_task_list(task_data:List[str])-> List['Task']:
     tasks = []
@@ -118,7 +130,8 @@ def create_task_list(task_data:List[str])-> List['Task']:
     return tasks
 
 def clean_raw(raw:str) -> str:
-    remove_terms = [' (Total Monster Task)',' (Partial Monster Task)', ' (Total Monter Task)', ' -->', ' Token', ' Signs', ' Sign'] #,' Item'] 
+    raw = raw.replace(' -->', ',')
+    remove_terms = [' (Total Monster Task)',' (Partial Monster Task)', ' (Total Monter Task)', ' Token', ' Signs', ' Sign'] #,' Item'] 
     for term in remove_terms:
         raw = raw.replace(term, '')
     return raw
@@ -140,7 +153,7 @@ def create_task(task_raw:str) -> 'Task':
 
 # refactor this eventually
 def clean_outcome_list(outcome_list:List[str]) -> List[str]:
-    drop_terms = ['Other', 'Monster', 'Monter','Spell', 'Ally', 'Clue', 'Item']
+    drop_terms = ['Other', 'Monster', 'Monter','Spell', 'Ally', 'Clue']
     cleaned_outcome_list = []
     for item in outcome_list:
         add = True

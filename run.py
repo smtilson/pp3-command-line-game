@@ -136,7 +136,7 @@ def start_game(start_time=0):
     return game
 
 def select_task_card(game):
-    return game.current_task_cards.pop(14)
+    return game.task_card_deck.pop(11)
 
 def test_gameplay():
     game_data = GameSelection()

@@ -217,7 +217,7 @@ class Game:
         shuffle(self.item_deck)
     
     def draw_item(self, item_type) -> None:
-        self.shuffle()
+        #self.shuffle()
         for item in self.item_deck:
             if item.item_type == item_type:
                 break
