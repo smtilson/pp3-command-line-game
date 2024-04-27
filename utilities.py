@@ -22,3 +22,7 @@ def get_selection(num_choices:int, type_of_choice:str, extra_options:set=set()) 
         return index
     else:
         return int(index)
+
+def ending_the_fix(string:str) -> str:
+    # this is supposed to move the ending the to the front.
+    pass

@@ -88,28 +88,28 @@ def item_dict_to_item(item:dict) -> 'Item':
 
 
 # Task Card section
-def fetch_task_cards() -> List[dict]: 
-    raw = SHEET.worksheet('TaskCards').get_all_values()
+def fetch_locations() -> List[dict]: 
+    raw = SHEET.worksheet('Locations').get_all_values()
     keys = raw.pop(0)
     keys[0] = 'Name'
     # gold on task cards not yet implemented
     #keys[-1] = 'Gold'
-    task_card_deck = []
+    location_deck = []
     for row in raw:
         task_dict = {key:val for key, val in zip(keys,row)}
-        task_card_deck.append(task_dict_to_task_card(task_dict))
+        location_deck.append(task_dict_to_location(task_dict))
     #I actually don't need to drop these columns since the data is thrown away when I create the task cards.
-    return [task_card for task_card in task_card_deck if task_card.reward]
+    return [location for location in location_deck if location.reward]
 
 
-def task_dict_to_task_card(task_dict:dict) -> "TaskCard":
+def task_dict_to_location(task_dict:dict) -> "Location":
     #print(task_dict)
     #input()
     task_data = [task_dict['Task 1'],task_dict['Task 2'],task_dict['Task 3']]
     tasks = create_task_list(task_data)
     reward = create_outcome(task_dict['Rewards'])
     penalty = create_outcome(task_dict['Penalties'])
-    card = TaskCard(task_dict['Name'],task_dict['Flavor Text'],tasks, reward, penalty)
+    card = Location(task_dict['Name'],task_dict['Flavor Text'],tasks, reward, penalty)
     #print(card)
     #input()
     return card
@@ -173,7 +173,7 @@ class GameSelection:
     This class queries the database and initializes the potential game state.
     """
     def __init__(self) -> None:
-        self.task_card_deck = fetch_task_cards()
+        self.location_deck = fetch_locations()
         self.item_deck = fetch_items()
         self.great_old_ones = fetch_great_old_ones()
         self.investigators = fetch_investigators()

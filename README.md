@@ -52,13 +52,13 @@ Note: This API does not require credentials.
 4. Choose a unique name for your app, shoose the appropriate region, and then click "Create app".
 5. Go to the "Settings" tab. Scroll to "Config Vars" section anc click "Reveal Config Vars".
 6. In field for key, enter "CREDS". In the field for value, paste the contents of your creds.json file which you created in the Google Drive API section above.
-7. Scroll down to "Buildpacks". Click "Add buildpack", select "python", and click "Add buildpack".
-8. Click "Add buildpack", select "nodejs", and click "Add buildpack".
+7. Add a second Config Var with key "PORT" and value "8000".
+8. Scroll down to "Buildpacks". Click "Add buildpack", select "python", and click "Add buildpack".
+9. Click "Add buildpack", select "nodejs", and click "Add buildpack".
 
 Note: Make sure that the python buildpack is before the nodejs buildpack. If not, you can reorder them by dragging python to the top.
 
-9. Go to the "Deploy" tab. Scroll down to "Deployment method" and select "GitHub". Search for your repository that you copied/cloned in step 1 above.  Click "Connect" once you have found it.
-
-10. Scroll down to "Manual deploy" and click "Deploy Branch". Once the build is complete, click "View" to be taken to your deployed app.
+10. Go to the "Deploy" tab. Scroll down to "Deployment method" and select "GitHub". Search for your repository that you copied/cloned in step 1 above.  Click "Connect" once you have found it.
+11. Scroll down to "Manual deploy" and click "Deploy Branch". Once the build is complete, click "View" to be taken to your deployed app.
 
 [return to Table of Contents](#toc)

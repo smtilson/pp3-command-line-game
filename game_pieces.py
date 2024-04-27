@@ -133,7 +133,7 @@ class Investigator:
 
 
 class Game:
-    def __init__(self, investigator, great_old_one, start_time, task_card_deck, item_deck) -> None:
+    def __init__(self, investigator, great_old_one, start_time, location_deck, item_deck) -> None:
         self.investigator = investigator
         self.great_old_one = great_old_one
         self.current_doom = 0
@@ -142,9 +142,9 @@ class Game:
         self.elder_sign_max = great_old_one.elder_signs
         self.clock = Clock(start_time)
         # not yet fully implimented
-        self.task_card_deck = task_card_deck #TaskCard.create_deck()
-        self.current_task_cards = []
-        self.refill_task_cards()
+        self.location_deck = location_deck #Location.create_deck()
+        self.current_locations = []
+        self.refill_locations()
         self.item_deck = item_deck
         self.starting_items()
     
@@ -159,7 +159,7 @@ class Game:
         if self.clock.time == 12:
             self.apply_doom(1)
         self.investigator.reset()
-        self.refill_task_cards()
+        self.refill_locations()
         self.status()
         return self.end_condition
     
@@ -198,26 +198,26 @@ class Game:
         else:
             return ""
 
-#    commented out until the TaskCard.create_deck() function is written
-    def refill_task_cards(self) -> None:
+#    commented out until the Location.create_deck() function is written
+    def refill_locations(self) -> None:
         # the number of active cards is also a parameter that can be messed with
         #print("refill called")
-        #print(len(self.current_task_cards))
-        while len(self.current_task_cards) < 3:
-            self.draw_task_card()
+        #print(len(self.current_locations))
+        while len(self.current_locations) < 3:
+            self.draw_location()
         #print("Task cards replenished.")
-        #print(len(self.current_task_cards))
+        #print(len(self.current_locations))
     
-    def draw_task_card(self) -> None:
-        task_card = self.task_card_deck.pop(0)
-        self.current_task_cards.append(task_card)
+    def draw_location(self) -> None:
+        location = self.location_deck.pop(0)
+        self.current_locations.append(location)
    
-    def discard_completed_task_card(self, task_card) -> None:
-        task_card.reset()
-        self.task_card_deck.append(task_card)
+    def discard_completed_location(self, location) -> None:
+        location.reset()
+        self.location_deck.append(location)
     
     def shuffle(self) -> None:
-        shuffle(self.task_card_deck)
+        shuffle(self.location_deck)
         shuffle(self.item_deck)
     
     def draw_item(self, item_type) -> None:
@@ -287,6 +287,10 @@ class Item:
     def __str__(self) -> str:
         return f"The {self.name} is a {self.item_type} item.\nEffect: {self.effect}"
 
+    def display(self) -> str:
+        white_space = (19-len(self.name)+3)*' '
+        return self.name + ':  ' + white_space + self.effect  
+
     def use(self, investigator):
         self.ITEM_EFFECT[self.effect](investigator)
 
@@ -308,12 +312,12 @@ def change_health(num:int, game:'Game') -> None:
 def draw_unique(num:int, game:'Game') -> None:
     for _ in range(num):
         game.draw_item('Unique')
-    game.investigator.list_items()
+    #game.investigator.list_items()
 
 def draw_common(num:int, game:'Game') -> None:
     for _ in range(num):
         game.draw_item('Common')
-    game.investigator.list_items()
+    #game.investigator.list_items()
     
 OUTCOMES = {"Elder Sign": gain_elder_sign,
             "Sanity": change_sanity,
@@ -403,7 +407,7 @@ class Task:
         return True
     
 
-class TaskCard:
+class Location:
     """
     Create task object. The pattern is what is necessary to succeed at a task. The reward is what happens when you succeed, the penalty is what happens when you fail.
     """

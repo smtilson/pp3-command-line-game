@@ -13,9 +13,9 @@ def pause() -> None:
     input("Hit enter to continue.\n")
 
 #I feel like this can be combined with the other report function to be more streamlined?
-def report_options(investigator, task_card):
+def report_options(investigator, location):
     print(investigator.dice_pool)
-    for index, task in enumerate(task_card):
+    for index, task in enumerate(location):
         print(f"{index+1} = {str(task)}")
 
 #thise should be made to be nicer
@@ -23,7 +23,10 @@ def report_dice_n_task(investigator, task):
     print(investigator.dice_pool)
     print(task)    
 
-
+# needs a better name
+def use_item_proceedure(investigator: 'Investigator') -> 'Investigator':
+    #for item in 
+    pass
 # I think this should be refactored into two functions, one a method of the Task class.
 def assign_die_to_task(investigator, task): #'DicePool','Task':
     """
@@ -34,7 +37,7 @@ def assign_die_to_task(investigator, task): #'DicePool','Task':
     report_dice_n_task(investigator, task)
     # would a get die function be better?, I guess decoupling the dice pool and the task 
     # would mean that you wouldn't see what the task is anymore...
-    index = get_selection(len(investigator),"a die to assign to this task", {'pass'})
+    index = get_selection(len(investigator),"a die to assign to this task", {'pass','item'})
     if index == "pass":
         investigator.pass_move()
         return investigator, task
@@ -79,21 +82,21 @@ def attempt_task(investigator, task):
     print("You are out of dice.")
     return investigator, task
 
-def attempt_task_card(investigator:'Investigator',task_card:'TaskCard') -> str:
+def attempt_location(investigator:'Investigator',location:'Location') -> str:
     # do we roll here? I think so.
     investigator.roll()
     #print(dice_pool)
-    #for task in task_card:
+    #for task in location:
      #   print(task)
     #I feel like I don't really need these conditions here
-    while not task_card.complete and len(investigator) > 0:
-        report_options(investigator, task_card)
-        task_index = get_selection(len(task_card.tasks),"a task to attempt",{'pass'})
+    while not location.complete and len(investigator) > 0:
+        report_options(investigator, location)
+        task_index = get_selection(len(location.tasks),"a task to attempt",{'pass','item'})
         # Is this technically in the spirit of the game?
         if task_index == 'pass':
             investigator.pass_move()
             continue
-        task = task_card[task_index-1]
+        task = location[task_index-1]
         # should this part of the validation be done elsewhere?
         if task.valid(investigator.dice_pool):
             investigator, task = attempt_task(investigator, task)
@@ -102,13 +105,13 @@ def attempt_task_card(investigator:'Investigator',task_card:'TaskCard') -> str:
         else:
             print("Your roll doesn't have any symbols for that task.")
             continue
-    if task_card.complete:
-            print(f"You have completed {task_card.name}!")
-            print(f"You receive {task_card.reward}")
-            return task_card.reward, task_card
+    if location.complete:
+            print(f"You have completed {location.name}!")
+            print(f"You receive {location.reward}")
+            return location.reward, location
     elif len(investigator) == 0:
-        print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
-        return task_card.penalty, task_card
+        print(f"You have failed, you suffer the penalty of {location.penalty}.")
+        return location.penalty, location
         
 
 def apply_outcomes(outcomes, game):
@@ -126,7 +129,7 @@ def start_game(start_time=0):
     great_old_one = game_data.select_great_old_one()
     investigator = game_data.select_investigator()
     start_time = 0
-    game = Game(investigator,great_old_one,start_time,game_data.task_card_deck,
+    game = Game(investigator,great_old_one,start_time,game_data.location_deck,
                 game_data.item_deck)
     #print(game)
     print(great_old_one)
@@ -135,15 +138,15 @@ def start_game(start_time=0):
     # main_gameplay_loop(game)
     return game
 
-def select_task_card(game):
-    return game.current_task_cards.pop(0)
+def select_location(game):
+    return game.current_locations.pop(0)
 
 def test_gameplay():
     game_data = GameSelection()
     great_old_one = game_data.great_old_ones[0]
     investigator = game_data.investigators[0]
     start_time = 0
-    game = Game(investigator,great_old_one,start_time,game_data.task_card_deck,
+    game = Game(investigator,great_old_one,start_time,game_data.location_deck,
                 game_data.item_deck)
     main_gameplay_loop(game)
 
@@ -154,11 +157,11 @@ def main_gameplay_loop(game) -> None:
     # this is all meta code essentially
     end_condition = False
     while not end_condition:
-        task_card = select_task_card(game)
+        location = select_location(game)
         print("card selected")
-        print(task_card)
-        outcomes, task_card = attempt_task_card(game.investigator, task_card)
-        game.discard_completed_task_card(task_card)
+        print(location)
+        outcomes, location = attempt_location(game.investigator, location)
+        game.discard_completed_location(location)
         print(f"{outcomes} received from card")
         apply_outcomes(outcomes, game)
         pause()
@@ -175,5 +178,5 @@ def main_gameplay_loop(game) -> None:
     
 # current_progress
 
-
+game_data = GameSelection()
 
