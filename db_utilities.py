@@ -29,7 +29,7 @@ def fetch_great_old_ones() -> List[dict]:
     for row in raw:
         great_old_ones_dicts.append({key:val for key, val in zip(keys,row)})
         # storing as string since that is how input will convert it
-        great_old_ones_dicts[-1]['index'] = str(index)
+        great_old_ones_dicts[-1]['index'] = index
         index += 1
     return [g_o_o_dict_to_g_o_o(g_o_o_dict) for g_o_o_dict in great_old_ones_dicts]
 
@@ -53,7 +53,7 @@ def fetch_investigators() -> List[dict]:
     inv_dicts = [inv_dict for inv_dict in inv_dicts if inv_dict['Name'] not in exclusions]
     for index, inv_dict in enumerate(inv_dicts):    
         # storing as string since that is how input will convert it
-        inv_dict['index'] = str(index+1)
+        inv_dict['index'] = index+1
     return [inv_dict_to_inv(inv_dict) for inv_dict in inv_dicts]
 
 def inv_dict_to_inv(inv:dict) -> 'Investigator':

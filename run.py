@@ -87,7 +87,7 @@ def attempt_task_card(investigator:'Investigator',task_card:'TaskCard') -> str:
     # change this to a do while loop, like in the get choice function
     while not task_card.complete and len(dice_pool) > 0:
         report_options(dice_pool, task_card)
-        task_index = get_task_choice(len(task_card.tasks))
+        task_index = get_selection(len(task_card.tasks),"a task to attempt",{'pass'})
         # Is this technically in the spirit of the game?
         if task_index == 'pass':
             dice_pool.pass_move()
@@ -109,27 +109,10 @@ def attempt_task_card(investigator:'Investigator',task_card:'TaskCard') -> str:
         print(f"You have failed, you suffer the penalty of {task_card.penalty}.")
         return task_card.penalty, task_card
         
-# I don't like the reroll being part of this move, but I guess it is fine.
-
-    
-# write valid input function.
-def get_task_choice(num_tasks: int):
-    condition = True
-    valid_input = [str(num) for num in range(1,num_tasks+1)]
-    valid_input.append("pass")
-    index = input(f"Please input numbers 1-{num_tasks} to select which task to attempt.\n")
-    while index not in valid_input:
-        print(f"{index} is invalid.")
-        index = input(f"Please input numbers 1-{num_tasks} to select which task to attempt.\n")
-    if index.lower() == "pass":
-        return 'pass'
-    else:
-        return int(index)
-
-#call needs to be paired with soem other message to explain the extra options.
+#call needs to be paired with some other message to explain the extra options.
 # extra_options maybe will be changed to a list to make it easier
 def get_selection(num_choices:int, type_of_choice:str, extra_options:set=set()) -> Union[int,str]:
-    index = input(f"Please select an option from 1-{num_choices} to choose a {type_of_choice}.\n"
+    index = input(f"Please select an option from 1-{num_choices} to choose {type_of_choice}.\n"
                     f"You may also select an option from {extra_options}.")
     # explain(extra_options)
     extra_options = {word.lower() for word in extra_options}
@@ -143,21 +126,7 @@ def get_selection(num_choices:int, type_of_choice:str, extra_options:set=set()) 
         return index
     else:
         return int(index)
-'''
-def get_die_choice(num_dice: int): 
-    valid_input = [str(num) for num in range(1,num_dice+1)]
-    valid_input.append("pass")
-    index = input(f"Please input a selection from 1-{num_dice} to select which die to assign to the task.\n"
-        f"Enter pass to sacrifice a die and reroll.\n")
-    while index not in valid_input:
-        print(f"\n{index} is invalid.\n")
-        index = input(f"Please input numbers 1-{num_dice} to select which die to assign to the task.\n"
-        f"Enter pass to sacrifice a die and reroll.\n")
-    if index.lower() == "pass":
-        return index.lower()
-    else:
-        return int(index)
-        '''
+
 def apply_outcomes(outcomes, game):
     for key, value in outcomes.items():
         print(f"Applying outcome {key}: {value}.")
@@ -171,15 +140,14 @@ def setup_game():
     #print(investigators)
     #pause()
     item_deck = db.fetch_items()
-    for demon in great_old_ones:
-        demon.selection()
-    index = '3' #input("Choose a Great Old One to battle by entering its index.\n")
+    for great_old_one in great_old_ones:
+        great_old_one.selection()
+    index = get_selection(len(great_old_ones),'a Great Old One to battle')
     great_old_one = [demon for demon in great_old_ones if demon.index == index][0]
-    #for investigator in investigators:
-     #   print(investigator.index)
-      #  print(investigator)
-    index = '3' #input("Choose a Great Old One to battle by entering its index.\n")
-    #pause()
+    for investigator in investigators:
+        print(investigator.index)
+        print(investigator)
+    index = get_selection(len(investigators),"an investigator to play as")
     investigator = [inv for inv in investigators if inv.index == index][0]
     start_time = 0
     game = Game(investigator,great_old_one,start_time,task_card_deck, item_deck)

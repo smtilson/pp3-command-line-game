@@ -129,9 +129,9 @@ class Game:
     
     # should this be __str__?
     def status(self) -> str:
-        msg = f"{self.great_old_one.name} only needs {-self.current_doom + self.doom_max} more Doom to awaken.\n"
-        msg += f"You only need {-self.current_elder_signs + self.elder_sign_max} more Elder Signs."
-        print(msg)
+        print(f"{self.great_old_one.name} only needs {-self.current_doom + self.doom_max} more Doom to awaken.")
+        print(f"You only need {-self.current_elder_signs + self.elder_sign_max} more Elder Signs.")
+        print(f"The time is {self.clock.time} o'clock.")
 
     def end_turn(self) -> str:
         self.clock.advance()
@@ -165,7 +165,6 @@ class Game:
         else:
             # should there be a message here
             return False
-
 
     @property
     def end_condition(self) -> str:
@@ -215,11 +214,7 @@ class Game:
             for _ in range(int(num)):
                 self.draw_item(rarity)
         pass
-
-    def status(self)-> str:
-        print(self.great_old_one)
-        print(self.investigator)
-        print(f"The time is {self.clock} o'clock.")
+        
 class Clock:
     #This is where the difficulty setting could be, the number of turns in a day.
     def __init__(self, start_time):
