@@ -63,11 +63,14 @@ class Investigator:
     # modify this later for selection etc
     def __str__(self):
         return f"{self.name}: {self.sanity} Sanity, {self.health} Health"
-        
+    
+    def __len__(self):
+        return len(self.dice_pool)
 
     def selection(self):
         white_space = (18-len(self.name)-len(str(self.index)))*' '
         print(str(self.index)+'. '+str(self).replace(': ',': '+white_space))
+    
     # Loss condition
     @property
     def alive(self) -> bool:
@@ -88,15 +91,22 @@ class Investigator:
             self.health = 0
     
     
-    def roll_dice(self) -> None:
+    def roll(self) -> None:
         self.dice_pool.roll()
 
     def add_die(self, color: str) -> None:
         self.dice_pool.add_die(color)
 
-    @property
-    def dice(self) -> int:
-        return len(self.dice_pool)
+    def pass_move(self) -> None:
+        """
+        Removes a die from the dice pool and rerolls remaining dice.
+        """
+        print("Sacrificing a die.")
+        self.dice_pool.pop()
+        print("Rerolling your remaining dice.")
+        # will roll throw an exception if there are no dice?
+        self.roll()
+
 
     # advances clock, check alive and resets number of die
     def reset(self):
@@ -220,7 +230,7 @@ class Game:
             num, item_type = term.split()
             for _ in range(int(num)):
                 self.draw_item(item_type)
-        pass
+        
         
 class Clock:
     #This is where the difficulty setting could be, the number of turns in a day.
@@ -347,8 +357,12 @@ class Task:
             print(f"{index} is not a valid choice.")
             index = input("Please select a symbol to turn your Wild die into.")
         return selection[index]
-    # def assign_die_from_pool(self, dice_pool) -> 'DicePool':
-
+    
+    def suffer_penalty(self, investigator) -> 'Investigator':
+        #if 
+        #sort, amount = penalty.split(': ')
+        #print(sort, amount)
+        return investigator
        
     # resets task for next attempt, if at all
     # eventually this will be removed
@@ -518,15 +532,6 @@ class DicePool:
         # probably don't want to remove those by default
         return self.dice.pop(index)
     
-    def pass_move(self) -> None:
-        """
-        Removes a die from the dice pool and rerolls remaining dice.
-        """
-        print("Sacrificing a die.")
-        self.pop()
-        print("Rerolling your remaining dice.")
-        # will roll throw an exception if there are no dice?
-        self.roll()
 
     def reset(self) -> None:
         #print("Dice pool is being reset.")

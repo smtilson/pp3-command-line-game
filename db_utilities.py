@@ -132,26 +132,11 @@ def create_task(task_raw:str) -> 'Task':
     task_raw = clean_raw(task_raw)
     parts = task_raw.split(', ')
     pattern = {}
-    #print(f'{task_raw=}')
-    #print(f'{parts=}')
     for part in parts:
         part = part.split()
         int(part[0])
         pattern[translate_term(part[1])] = int(part[0])
     return Task(pattern)
-
-#maybe not necessary
-def clean_outcome_raw(outcome_raw:str) -> str:
-    drop_terms = ['Other', 'World', 'Spell', 'Ally','Clues', 'Clue', 'Item']# does item need to be allowed back in now?
-    cleaned_outcome = ''
-    for item in outcome_list.split():
-        add = True
-        for term in drop_terms:
-            if term in item:
-                add =False
-        if add:
-            cleaned_outcome_list.append(clean_raw(item))
-    return cleaned_outcome_list
 
 # refactor this eventually
 def clean_outcome_list(outcome_list:List[str]) -> List[str]:
@@ -190,12 +175,11 @@ class GameSelection:
     def select_great_old_one(self):
         for great_old_one in self.great_old_ones:
             great_old_one.selection()
-        index = get_selection(len(self.great_old_ones),'womp womp')
+        index = get_selection(len(self.great_old_ones),'a Great Old One to battle')-1
         return self.great_old_ones[index]
-    
     
     def select_investigator(self):
         for investigator in self.investigators:
             investigator.selection()
-        index = get_selection(len(self.investigators),'womp womp')
+        index = get_selection(len(self.investigators),'an investigator to play as')-1
         return self.investigators[index]
