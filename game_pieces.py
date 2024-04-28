@@ -356,11 +356,13 @@ OUTCOMES = {"Elder Sign": gain_elder_sign,
             "Spell": gain_spell}
 
 class Task:
-    TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 'Lore':'Lore', 
-                    'Peril':'Skulls', 'Terror': 'Tentacles','Unique':'Unique Item', 
-                    'Common': 'Common Item', 'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
-                    'Sanity':'Sanity','Stamina':'Health', 'Doom':'Doom', 'unique item': 'Unique',
-                    'common item': 'Common', 'spell':'Unique'}#spell can be changed to clue once clues are written.
+    TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 
+                   'Lore':'Lore', 'Peril':'Skulls', 'Terror': 'Tentacles',
+                   'Unique':'Unique Item', 'Common': 'Common Item', 
+                   'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
+                   'Sanity':'Sanity','Stamina':'Health', 'Doom':'Doom', 
+                   'unique item': 'Unique', 'common item': 'Common', 
+                   'spell':'Spell'}
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable
         self.pattern = pattern

@@ -147,7 +147,7 @@ def create_task(task_raw:str) -> 'Task':
 
 # refactor this eventually
 def clean_outcome_list(outcome_list:List[str]) -> List[str]:
-    drop_terms = ['Other', 'Monster', 'Monter','Spell', 'Ally', 'Clue']
+    drop_terms = ['Other', 'Monster', 'Monter', 'Ally']
     cleaned_outcome_list = []
     for item in outcome_list:
         add = True
