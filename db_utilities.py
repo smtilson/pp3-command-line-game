@@ -4,6 +4,7 @@ data.
 """
 import gspread
 from google.oauth2.service_account import Credentials
+import datetime
 from typing import List, Tuple, Dict, Union
 # I guess I should change this to not load everything
 from game_pieces import *
@@ -85,7 +86,6 @@ def item_dict_to_item(item:dict) -> 'Item':
     effect = item['Text/Effect']
     item_type = item['Rarity']
     return Item(name, effect, item_type)
-
 
 
 # Task Card section
@@ -184,11 +184,33 @@ class GameSelection:
     def select_great_old_one(self):
         for great_old_one in self.great_old_ones:
             great_old_one.selection()
-        index = get_selection(len(self.great_old_ones),'a Great Old One to battle')-1
+        index = get_selection(len(self.great_old_ones),'a Great Old One to '\
+                              'battle')
         return self.great_old_ones[index]
     
     def select_investigator(self):
         for investigator in self.investigators:
             investigator.selection()
-        index = get_selection(len(self.investigators),'an investigator to play as')-1
+        index = get_selection(len(self.investigators),'an investigator to '\
+                              'play as')
         return self.investigators[index]
+    
+
+def record(game):
+    result = ''
+    investigator = game.investigator.name
+    great_old_one = game.great_old_one.name
+    if not game.end_condition:
+        pass
+    elif game.end_condition == "Banished":
+        result = f"{investigator} defeated {great_old_one}."
+    elif game.end_condition == "Died":
+        result = f"{investigator} perished and {great_old_one} devoured the "\
+        "world."
+    elif game.end_condition == "Summoned":
+        result = f"{investigator} was unable to prevent {great_old_one} from "\
+        "being summoned and devouring the world."
+    target_sheet = SHEET.worksheet('Records')
+    record = [game.player, game.game_start_time, str(datetime.datetime.now()), 
+              investigator, great_old_one, result]
+    target_sheet.append_row(record)

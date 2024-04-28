@@ -5,7 +5,7 @@
 from typing import List, Optional, Tuple, Union
 # the below import statement should eventually be changed
 from game_pieces import *
-from db_utilities import GameSelection
+from db_utilities import GameSelection, record
 from utilities import get_selection
 
 def pause() -> None:
@@ -114,9 +114,10 @@ def use_item_procedure(investigator: 'Investigator') -> 'Investigator':
     index = get_selection(len(items), 'an item to use.', {'none'})
     if index == 'none':
         return investigator
-    item = items[index-1]
+    item = items[index]
     item.use(investigator)
-    print(f'{investigator.name} used the {item.name} to {item.effect.lower()}.')
+    print(f'{investigator.name} used the {item.name} to 
+          {item.effect.lower()}.')
     return investigator
 
 
@@ -124,37 +125,35 @@ def use_item_procedure(investigator: 'Investigator') -> 'Investigator':
 # one a method of the Task class.
 def assign_die_to_task(investigator, task): #'DicePool','Task':
     """
-    Assigns single die from dice pool to task. Gets index of die from user and assigns it,
-     if possible. If a pass is submitted, pass_move is called. This pops a die from 
-     the dice pool and rerolls the remaining dice.
+    Assigns single die from dice pool to task. Gets index of die from user and 
+    assigns it, if possible. If a pass is submitted, pass_move is called. This 
+    pops a die from the dice pool and rerolls the remaining dice.
     """
     report_dice_n_task(investigator, task)
-    # would a get die function be better?, I guess decoupling the dice pool and the task 
-    # would mean that you wouldn't see what the task is anymore...
-    index = get_selection(len(investigator),"a die to assign to this task", {'pass','item'})
+    # would a get die function be better?, I guess decoupling the dice pool and
+    # the task would mean that you wouldn't see what the task is anymore...
+    index = get_selection(len(investigator),"a die to assign to this task", 
+                          {'pass','item'})
     if index == "pass":
         investigator.pass_move()
         return investigator, task
     elif index == "item":
         return use_item_procedure(investigator), task
-    die = investigator.dice_pool[index-1]
+    die = investigator.dice_pool[index]
     if die in task:
         task.assign_die(die)
-        investigator.dice_pool.pop(index-1)
+        investigator.dice_pool.pop(index)
         pause()
     else:
         print(f"{str(die)} is not a valid choice for {task}.")
     return investigator, task
 
-# this function feels sloppy and not very streamlined/clean
+
 def assign_dice_to_task(investigator, task):
     """
-    Assigns dice from dice pool to a task until dice_pool is empty or the task is complete.
-    Then returns the task and remaining dice.
+    Assigns dice from dice pool to a task until dice_pool is empty or the task
+    is complete. Then returns the task and remaining dice.
     """
-    # This is still a bit messy with where the rolling and print statements happen being logically correct but slightly convoluted.
-    # is the above still true?
-    # change to a do while loop, but how?
     investigator, task = assign_die_to_task(investigator, task)
     while not task.complete and len(investigator) > 0:
         # should this catch be at the beginning?
@@ -187,15 +186,15 @@ def attempt_location(investigator:'Investigator',location:'Location') -> str:
     #I feel like I don't really need these conditions here
     while not location.complete and len(investigator) > 0:
         report_options(investigator, location)
-        task_index = get_selection(len(location.tasks),"a task to attempt",{'pass','item'})
+        index = get_selection(len(location.tasks),"a task to attempt",{'pass','item'})
         # Is this technically in the spirit of the game?
-        if task_index == 'pass':
+        if index == 'pass':
             investigator.pass_move()
             continue
-        elif task_index == "item":
+        elif index == "item":
             investigator = use_item_procedure(investigator)
             continue
-        task = location[task_index-1]
+        task = location[index]
         # should this part of the validation be done elsewhere?
         if task.valid(investigator.dice_pool):
             investigator, task = attempt_task(investigator, task)
@@ -224,10 +223,10 @@ def start_game(start_time=0):
     Selects game state by getting input from user.
     Begins game by dealing task cards and initializing main gameplay loop.
     """
-    introduction()
-    name = input('Please enter your name.')
+    
+    name = input('Please enter your name.\n')
     while name.strip() == '':
-        name = input('Please enter something other than blank space.')
+        name = input('Please enter something other than blank space.\n')
     game_data = GameSelection()
     great_old_one = game_data.select_great_old_one()
     investigator = game_data.select_investigator()
@@ -284,9 +283,11 @@ def main_gameplay_loop(game) -> None:
         print(f"{game.investigator.name} was unable to prevent the inevitable."
               f" {game.great_old_one.name} has been summoned. The end of "
               f"humanity is at hand.")
-    # results = 
+    record(game)
 
 
 # current_progress
+
+# introduction()
 game = start_game()
-# main_gameplay_loop(game)
+main_gameplay_loop(game)

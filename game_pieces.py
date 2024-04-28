@@ -1,24 +1,27 @@
 # This file contains the game pieces that need to be loaded to play the game
 from random import choice, shuffle
 from typing import List, Optional, Tuple
+import datetime
 
-#add some validation to this class
+
+# add some validation to this class
 class GreatOldOne:
     """
     Creates Great Old One enemy.
     """
-    def __init__(self, index:str, name:str, elder_signs:int, doom:int,ability:str) -> None:
+    def __init__(self, index:str, name:str, elder_signs:int, doom:int,
+                 ability:str) -> None:
         self.index = index
         self.name = name
         self.doom = doom
         self.elder_signs = elder_signs
-        self.ability = ability # this should be replaced by something later, I now, a custom function will be stored here.
+        self.ability = ability # should this be removed?
 
     #should this be a display mehtod instead?
     def __str__(self):
-        msg = f"{self.name}: {self.doom} Doom needed to Awaken\n"
-        # this length should eventually be replaced by max name length for the class.
-        msg += (len(self.name)+2-self.extra)*' '+f'{self.elder_signs} Elder Signs needed to Banish'
+        msg = f"{self.name}: {self.doom} Doom to Awaken\n"
+        msg += (len(self.name)+2-self.extra)*' '+f'{self.elder_signs} Elder '\
+               'Signs to Banish'
         return msg
     
     @property
@@ -26,41 +29,34 @@ class GreatOldOne:
         doom = str(self.doom)
         elder_signs = str(self.elder_signs)
         length = len(elder_signs)-len(doom)
-        #print(doom, len(doom))
-        #print(elder_signs, len(elder_signs))
-        #print(length, length*' ')
         return length
 
     def selection(self):
         lines = str(self).split('\n')
         white_space = (14-len(self.name)+self.extra)*' '
         print(str(self.index)+'. '+lines[0].replace(': ',': '+white_space))
-        # 19 =14 from name +2+3
         print(19*' '+lines[1].strip())
     
 class Investigator:
-    def __init__(self, index:str, name:str, profession: str, sanity: int, health: int, ability: str, items: list=None) -> None:
-        # maybe these will be added to or removed
-        # could have special dice
-        # start with no items in example
+    def __init__(self, index:str, name:str, profession: str, sanity: int, 
+                 health: int, ability: str, items: list=None) -> None:
         self.index = index
         self.name = name
+        self.profession = profession
+        self.ability = ability
+        # is validation still necessary?
         if sanity <= 0 or health <= 0:
             raise ValueError(f"{sanity=} and {health=} are not a starting values.")
         self.starting_sanity = sanity
         self.sanity = sanity
         self.starting_health = health
         self.health = health
-        # setting up the items for the character is maybe an issue.
-        # that method is part of the game class.
-        # is this still necessary?
         if items:
             self.items = items
         else:
             self.items = []
-        # self.dice = 6 # this val will be modified, reset it at the beginning of each turn or at the end of each turn.
         self.dice_pool = DicePool()
-    # modify this later for selection etc
+
     def __str__(self):
         return f"{self.name}: {self.sanity} Sanity, {self.health} Health"
     
@@ -79,18 +75,18 @@ class Investigator:
         else:
             return True
 
-    # Adjust health accordingly
+    # Adjust Sanity
     def lose_sanity(self, damage: int) -> None:
         self.sanity -= damage
         if self.sanity < 0:
             self.sanity = 0
     
+    #Adjust Health
     def lose_health(self, damage: int) -> None:
         self.health -= damage
         if self.health < 0:
             self.health = 0
-    # there should maybe be a more detailed version of this
-    # or an inspect item to see what the item does
+    
     def list_items(self) -> None:
         for index,item in enumerate(self.items):
             print(index+1, item.name, item.effect)
@@ -108,34 +104,26 @@ class Investigator:
         print("Sacrificing a die.")
         self.dice_pool.pop()
         print("Rerolling your remaining dice.")
-        # will roll throw an exception if there are no dice? no
         self.roll()
 
 
-    # advances clock, check alive and resets number of die
+    # Advances clock, Check alive and resets dice
     def reset(self):
-        # This resets the dice pool and the face of each die to initial face
+        # This resets the dice pool
         if self.alive:
             print(f"{self.name} is still alive.")
             self.dice_pool.reset()
 
-    # should the Item effect dictionary be here?
-    # how relevant is this?
-    # this seems convoluted and not streamlined.
     # moving the item effect dictionary would help that, I think.
     def use_item(self, index) -> None:
         item = self.items.pop(index)
         item.use(self)
 
-        
-# needs validation
-# needs overflow check method maybe? <- wtf does this mean
-
-
 
 class Game:
-    def __init__(self, player:str, investigator:'Investigator', great_old_one:'GreatOldOne', 
-        location_deck:List['Location'], item_deck:List['Item'], increment:int=6) -> None:
+    def __init__(self, player:str, investigator:'Investigator', 
+                 great_old_one:'GreatOldOne', location_deck:List['Location'], 
+                 item_deck:List['Item'], increment:int=6) -> None:
         self.player = player
         self.investigator = investigator
         self.great_old_one = great_old_one
@@ -144,8 +132,9 @@ class Game:
         self.current_elder_signs = 0
         self.elder_sign_max = great_old_one.elder_signs
         self.clock = Clock(increment)
+        self.game_start_time = str(datetime.datetime.now())
         # not yet fully implimented
-        self.location_deck = location_deck #Location.create_deck()
+        self.location_deck = location_deck
         self.current_locations = []
         self.refill_locations()
         self.item_deck = item_deck
@@ -174,20 +163,26 @@ class Game:
     @property
     def great_old_one_summoned(self) -> bool:
         if self.current_doom >= self.doom_max:
-            print(f"The terrifying {self.great_old_one.name} has been summoned and devours the world.")
+            print(f"The terrifying {self.great_old_one.name} has been "\
+                  "summoned and devours the world.")
             return True
         else:
-            # should there be a message here
+            print(f"Only {self.doom_max-self.doom} more Doom is needed to "\
+                  f"summon {self.great_old_one.name} to this plane of "\
+                  "existence.")
             return False
     
-        # Win condition
+    # Win condition
     @property
     def great_old_one_banished(self) -> bool:
         if self.current_elder_signs >= self.elder_sign_max:
-            print(f"You have defeated the terrifying {self.great_old_one.name}. The world is forever in your debt.")
+            print(f"The terrifying {self.great_old_one.name} has been "\
+                  "banished. The world is forever in your debt.")
             return True
         else:
-            # should there be a message here
+            print(f"Only {self.elder_sign_max-self.elder_signs} more Elder "\
+                  f"Signs is needed to banish {self.great_old_one.name} and "\
+                  "save the world.")
             return False
 
     @property
@@ -203,12 +198,8 @@ class Game:
 
     def refill_locations(self) -> None:
         # the number of active cards is also a parameter that can be messed with
-        #print("refill called")
-        #print(len(self.current_locations))
         while len(self.current_locations) < 3:
             self.draw_location()
-        #print("Task cards replenished.")
-        #print(len(self.current_locations))
     
     def draw_location(self) -> None:
         location = self.location_deck.pop(0)
@@ -223,7 +214,6 @@ class Game:
         shuffle(self.item_deck)
     
     def draw_item(self, item_type) -> None:
-        #self.shuffle()
         for item in self.item_deck:
             if item.item_type == item_type:
                 break
@@ -240,11 +230,17 @@ class Game:
         
         
 class Clock:
-    # This is where the difficulty setting could be, the number of turns in a 
-    # day.
     def __init__(self, increment:int):
         self.time = 0
+        self. day = 0
         self.increment = increment
+    
+    def __str__(self):
+        if self.time == 0:
+            time = "midnight"
+        else:
+            time = str(self.time)+" o'clock"
+        return f"It is {time} on Day {self.day}."
     
     #how many hours are in the day
     def advance(self) -> None:
@@ -252,6 +248,7 @@ class Clock:
         if self.time == 24:
             print("It is midnight!")
             self.time = 0
+            self.day += 1
         print(f'The time is now {self.time}.')
             
     def check_clock(self) -> None:

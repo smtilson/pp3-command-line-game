@@ -29,7 +29,7 @@ def get_selection(num_choices: int, type_of_choice: str,
     if index in extra_options:
         return index
     else:
-        return int(index)
+        return int(index)-1
 
 
 def ending_the_fix(string: str) -> str:
