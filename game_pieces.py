@@ -167,7 +167,7 @@ class Game:
                   "summoned and devours the world.")
             return True
         else:
-            print(f"Only {self.doom_max-self.doom} more Doom is needed to "\
+            print(f"Only {self.doom_max-self.current_doom} more Doom is needed to "\
                   f"summon {self.great_old_one.name} to this plane of "\
                   "existence.")
             return False
