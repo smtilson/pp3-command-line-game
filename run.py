@@ -50,29 +50,33 @@ def introduction() -> None:
     "    Lore: 1, Skulls: 1\nRed =    Investigate: 2, Investigate: 3, "\
     "Investigate: 4,\n         Lore: 1, Skulls: 1, Wild: 1\nSpell =  All "\
     "Wild: 1"
-    losing_dice = '''    When you lose a die by passing, you will lose the earliest die in your 
-    pool according to the ordering:
-    Green < Yellow < Red < Spell'''
-    difficulty = '''    Difficulty can be adjusted through the setting of two different parameters.
-    Increment sets how much the clock advances after each of your turns. The 
-    standard setting is 6 hours, so Doom accumulates every 4 turns. The second 
-    is the starting dice pool. Standard (which is quite a challenge) is 6 Green 
-    dice.'''
-    items = '''    Each Investigator begins the game with different starting Items. Items come in
-    4 varieties: Common, Unique, Clue, and Spell. Common Items will usually give you 
-    a yellow die, Unique Items will usually give you a red die (for that location). 
-    Clues allow you to reroll your dice without penalty. Spells add a Wild symbol 
-    to your dice pool. You will also gain Items by completing Locations.'''
-    future = '''    In the future, we would like to implement more of the game, such as abilities 
-    of Investigators as well as Great Old Ones. This is a bit of a task though as 
-    each ability requires a separate function that must be implemented which may take
-    effect at different points in game play. There are other notable aspects of game 
-    play which we would also like to implement in the future, such as focusing, 
-    multiplayer mode, and Monsters.'''
-    more_help = '''    If you have further questions, please see the ReadMe for this project at, 
-    it contains examples of game play. It may also be beneficial to view geme play 
-    or "how to play" videos for Elder Sign on YouTube.'''
-    more_details = [basic_idea2, locations1, locations2, dice, losing_dice, difficulty, items, future, more_help]
+    losing_dice = "When you lose a die by passing, you will lose the earliest"\
+    "die in your pool\naccording to the ordering:\n       Green < Yellow < "\
+    "Red < Spell"
+    difficulty = "Difficulty can be adjusted through the setting of two "\
+    "different parameters.\nIncrement sets how much the clock advances after "\
+    "each of your turns. The\nstandard setting is 6 hours, so Doom "\
+    "accumulates every 4 turns. The second is\nthe starting dice pool. "\
+    "Standard (which is quite a challenge) is 6 Green dice."
+    items = "Each Investigator begins the game with different starting Items."\
+    " Items\ncome in 4 varieties: Common, Unique, Clue, and Spell. Common "\
+    "Items will\nusually give you a yellow die, Unique Items will usually "\
+    "give you a red die (for\nthat location). Clues allow you to reroll your "\
+    "dice without penalty. Spells\nadd a Wild symbol to your dice pool. You "\
+    "will also gain Items by\ncompleting Locations."
+    future = "In the future, we would like to implement more of the game, "\
+    "such as abilities\nof Investigators as well as Great Old Ones. This is a"\
+    " bit of a task though as\neach ability requires a separate function that"\
+    " must be implemented which may\ntake effect at different points in game "\
+    "play. There are other notable aspects\nof game play which we would also "\
+    "like to implement in the future, such as\nfocusing, multiplayer mode, "\
+    "and Monsters."
+    more_help = "If you have further questions, please see the ReadMe for "\
+    "this project at, it\ncontains examples of game play. It may also be "\
+    'beneficial to view game play\nor a "how to play" video for Elder Sign on'\
+    " YouTube."
+    more_details = [basic_idea2, locations1, locations2, dice, losing_dice, 
+                    difficulty, items, future, more_help]
     print(basic_idea1)
     pause()
     print(tldr)
@@ -83,7 +87,8 @@ def introduction() -> None:
             print(msg)
             pause()
     else:
-        print("    Alright! Let's get started. That Great Old One isn't going to banish itself.")
+        print("Alright! Let's get started. That Great Old One isn't going to "\
+              "banish itself.")
 
 
 # I feel like this can be combined with the other report function to be more 
