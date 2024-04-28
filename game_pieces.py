@@ -180,7 +180,7 @@ class Game:
                   "banished. The world is forever in your debt.")
             return True
         else:
-            print(f"Only {self.elder_sign_max-self.elder_signs} more Elder "\
+            print(f"Only {self.elder_sign_max-self.current_elder_signs} more Elder "\
                   f"Signs is needed to banish {self.great_old_one.name} and "\
                   "save the world.")
             return False
