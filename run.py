@@ -1,7 +1,3 @@
-# Your code goes here.
-# You can delete these comments, but do not change the name of this file
-# Write your code to expect a terminal of 80 columns wide and 24 rows high.
-
 from typing import List, Optional, Tuple, Union
 # the below import statement should eventually be changed
 from game_pieces import *
@@ -20,27 +16,27 @@ def introduction() -> None:
     "you will select an Investigator to play as.\nThe Great Old Ones are "\
     "Summoned when they gain enough Doom. They are Banished\nwhen you collect"\
     " enough Elder Signs."
-    tldr = "TL;DR: Go to Locations, assign dice to complete tasks. Collect "\
+    tldr = "TL;DR: Go to Adventures, assign dice to complete tasks. Collect "\
     "Elder Signs\nbefore you are Defeated or the Great Old One gains enough "\
     "Doom."
-    basic_idea2 = "You will collect Elder Signs by completing locations. Doom"\
+    basic_idea2 = "You will collect Elder Signs by completing Adventures. Doom"\
     " is gained when the\nclock strikes midnight (the clock advances after "\
     "each of your turns) as well\nas through game effects. If your "\
     "Investigator has 0 Health or 0 Sanity, then\nyou are defeated. If you "\
     "are defeated or the Great Old One is Summoned, then\nyou have lost. If "\
     "you collect enough Elder Signs to Banish the Great Old One,\nthen you "\
     "have won!"
-    locations1 = "Each turn you will go to a location. To complete a location"\
-    " you must complete\neach task at the location. A task is completed by "\
+    adventures1 = "Each turn you will go to a Adventure. To complete a Adventure"\
+    " you must complete\neach task at the Adventure. A task is completed by "\
     "assigning matching dice to\nthe task in order to fulfill the "\
     "requirements. Some tasks also have you suffer\na penalty by losing "\
     "Health or Sanity. If none of the symbols on your dice\nmatch a symbol on"\
     " the task, you may do a Pass."
-    locations2 = "A Pass rerolls all of your dice at the cost of forfeiting "\
+    adventures2 = "A Pass rerolls all of your dice at the cost of forfeiting "\
     "one of them. You\nmay also use an Item (the Item selection menu also "\
     "contains a description of\nwhat each Item does). If you run out of dice,"\
-    " you fail the Location and suffer\nassociated Penalty. If you complete a"\
-    " Location, you receive the associated\nReward. Penalties can be losing "\
+    " you fail the Adventure and suffer\nassociated Penalty. If you complete a"\
+    " Adventure, you receive the associated\nReward. Penalties can be losing "\
     "Health or Sanity, or the Great Old One gaining\nadditional Doom. Rewards"\
     " can be gaining an Item, Health, or Sanity."
     dice ="As the game revolves around rolling dice, here are the different "\
@@ -61,9 +57,9 @@ def introduction() -> None:
     items = "Each Investigator begins the game with different starting Items."\
     " Items\ncome in 4 varieties: Common, Unique, Clue, and Spell. Common "\
     "Items will\nusually give you a yellow die, Unique Items will usually "\
-    "give you a red die (for\nthat location). Clues allow you to reroll your "\
+    "give you a red die (for\nthat Adventure). Clues allow you to reroll your "\
     "dice without penalty. Spells\nadd a Wild symbol to your dice pool. You "\
-    "will also gain Items by\ncompleting Locations."
+    "will also gain Items by\ncompleting Adventures."
     future = "In the future, we would like to implement more of the game, "\
     "such as abilities\nof Investigators as well as Great Old Ones. This is a"\
     " bit of a task though as\neach ability requires a separate function that"\
@@ -75,7 +71,7 @@ def introduction() -> None:
     "this project at, it\ncontains examples of game play. It may also be "\
     'beneficial to view game play\nor a "how to play" video for Elder Sign on'\
     " YouTube."
-    more_details = [basic_idea2, locations1, locations2, dice, losing_dice, 
+    more_details = [basic_idea2, adventures1, adventures2, dice, losing_dice, 
                     difficulty, items, future, more_help]
     print(basic_idea1)
     pause()
@@ -93,9 +89,9 @@ def introduction() -> None:
 
 # I feel like this can be combined with the other report function to be more 
 # streamlined?
-def report_options(investigator, location):
+def report_options(investigator, adventure):
     print(investigator.dice_pool)
-    for index, task in enumerate(location):
+    for index, task in enumerate(adventure):
         print(f"{index+1} = {str(task)}")
 
 
@@ -177,16 +173,16 @@ def attempt_task(investigator, task):
     print("You are out of dice.")
     return investigator, task
 
-def attempt_location(investigator:'Investigator',location:'Location') -> str:
+def attempt_adventure(investigator:'Investigator',adventure:'Adventure') -> str:
     # do we roll here? I think so.
     investigator.roll()
     #print(dice_pool)
-    #for task in location:
+    #for task in adventure:
      #   print(task)
     #I feel like I don't really need these conditions here
-    while not location.complete and len(investigator) > 0:
-        report_options(investigator, location)
-        index = get_selection(len(location.tasks),"a task to attempt",{'pass','item'})
+    while not adventure.complete and len(investigator) > 0:
+        report_options(investigator, adventure)
+        index = get_selection(len(adventure.tasks),"a task to attempt",{'pass','item'})
         # Is this technically in the spirit of the game?
         if index == 'pass':
             investigator.pass_move()
@@ -194,7 +190,7 @@ def attempt_location(investigator:'Investigator',location:'Location') -> str:
         elif index == "item":
             investigator = use_item_procedure(investigator)
             continue
-        task = location[index]
+        task = adventure[index]
         # should this part of the validation be done elsewhere?
         if task.valid(investigator.dice_pool):
             investigator, task = attempt_task(investigator, task)
@@ -203,13 +199,13 @@ def attempt_location(investigator:'Investigator',location:'Location') -> str:
         else:
             print("Your roll doesn't have any symbols for that task.")
             continue
-    if location.complete:
-            print(f"You have completed {location.name}!")
-            print(f"You receive {location.reward}")
-            return location.reward, location
+    if adventure.complete:
+            print(f"You have completed {adventure.name}!")
+            print(f"You receive {adventure.reward}")
+            return adventure.reward, adventure
     elif len(investigator) == 0:
-        print(f"You have failed, you suffer the penalty of {location.penalty}.")
-        return location.penalty, location
+        print(f"You have failed, you suffer the penalty of {adventure.penalty}.")
+        return adventure.penalty, adventure
         
 
 def apply_outcomes(outcomes, game):
@@ -232,7 +228,7 @@ def start_game(start_time=0):
     investigator = game_data.select_investigator()
     #set difficulty function.
     increment = 12
-    game = Game(name,investigator,great_old_one,game_data.location_deck,
+    game = Game(name,investigator,great_old_one,game_data.adventure_deck,
                 game_data.item_deck, increment)
     #print(game)
     print(great_old_one)
@@ -241,15 +237,15 @@ def start_game(start_time=0):
     # main_gameplay_loop(game)
     return game
 
-def select_location(game):
-    return game.current_locations.pop(0)
+def select_adventure(game):
+    return game.current_adventures.pop(0)
 
 def test_gameplay():
     game_data = GameSelection()
     great_old_one = game_data.great_old_ones[0]
     investigator = game_data.investigators[0]
     start_time = 0
-    game = Game(investigator,great_old_one,start_time,game_data.location_deck,
+    game = Game(investigator,great_old_one,start_time,game_data.adventure_deck,
                 game_data.item_deck)
     main_gameplay_loop(game)
 
@@ -260,11 +256,11 @@ def main_gameplay_loop(game) -> None:
     # this is all meta code essentially
     end_condition = False
     while not end_condition:
-        location = select_location(game)
+        adventure = select_adventure(game)
         print("card selected")
-        print(location)
-        outcomes, location = attempt_location(game.investigator, location)
-        game.discard_completed_location(location)
+        print(adventure)
+        outcomes, adventure = attempt_adventure(game.investigator, adventure)
+        game.discard_completed_adventure(adventure)
         print(f"{outcomes} received from card")
         apply_outcomes(outcomes, game)
         pause()

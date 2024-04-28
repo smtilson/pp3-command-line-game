@@ -33,5 +33,6 @@ def get_selection(num_choices: int, type_of_choice: str,
 
 
 def ending_the_fix(string: str) -> str:
-    # this is supposed to move the ending the to the front.
-    pass
+    if string.endswith(', The'):
+        return 'The ' + string[:-5]
+    return string

@@ -122,7 +122,7 @@ class Investigator:
 
 class Game:
     def __init__(self, player:str, investigator:'Investigator', 
-                 great_old_one:'GreatOldOne', location_deck:List['Location'], 
+                 great_old_one:'GreatOldOne', adventure_deck:List['Adventure'], 
                  item_deck:List['Item'], increment:int=6) -> None:
         self.player = player
         self.investigator = investigator
@@ -134,9 +134,9 @@ class Game:
         self.clock = Clock(increment)
         self.game_start_time = str(datetime.datetime.now())
         # not yet fully implimented
-        self.location_deck = location_deck
-        self.current_locations = []
-        self.refill_locations()
+        self.adventure_deck = adventure_deck
+        self.current_adventures = []
+        self.refill_adventures()
         self.item_deck = item_deck
         self.starting_items()
     
@@ -151,7 +151,7 @@ class Game:
         if self.clock.time == 12:
             self.apply_doom(1)
         self.investigator.reset()
-        self.refill_locations()
+        self.refill_adventures()
         self.status()
         return self.end_condition
     
@@ -196,21 +196,21 @@ class Game:
         else:
             return ""
 
-    def refill_locations(self) -> None:
+    def refill_adventures(self) -> None:
         # the number of active cards is also a parameter that can be messed with
-        while len(self.current_locations) < 3:
-            self.draw_location()
+        while len(self.current_adventures) < 3:
+            self.draw_adventure()
     
-    def draw_location(self) -> None:
-        location = self.location_deck.pop(0)
-        self.current_locations.append(location)
+    def draw_adventure(self) -> None:
+        adventure = self.adventure_deck.pop(0)
+        self.current_adventures.append(adventure)
    
-    def discard_completed_location(self, location) -> None:
-        location.reset()
-        self.location_deck.append(location)
+    def discard_completed_adventure(self, adventure) -> None:
+        adventure.reset()
+        self.adventure_deck.append(adventure)
     
     def shuffle(self) -> None:
-        shuffle(self.location_deck)
+        shuffle(self.adventure_deck)
         shuffle(self.item_deck)
     
     def draw_item(self, item_type) -> None:
@@ -438,7 +438,7 @@ class Task:
         return True
     
 
-class Location:
+class Adventure:
     """
     Create task object. The pattern is what is necessary to succeed at a task. The reward is what happens when you succeed, the penalty is what happens when you fail.
     """

@@ -8,7 +8,7 @@ import datetime
 from typing import List, Tuple, Dict, Union
 # I guess I should change this to not load everything
 from game_pieces import *
-from utilities import get_selection
+from utilities import get_selection, endind_the_fix
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -89,30 +89,29 @@ def item_dict_to_item(item:dict) -> 'Item':
 
 
 # Task Card section
-def fetch_locations() -> List[dict]: 
-    raw = SHEET.worksheet('Locations').get_all_values()
+def fetch_adventures() -> List[dict]: 
+    raw = SHEET.worksheet('Adventures').get_all_values()
     keys = raw.pop(0)
     keys[0] = 'Name'
     # gold on task cards not yet implemented
     #keys[-1] = 'Gold'
-    location_deck = []
+    adventure_deck = []
     for row in raw:
-        task_dict = {key:val for key, val in zip(keys,row)}
-        location_deck.append(task_dict_to_location(task_dict))
+        adv_dict = {key:val for key, val in zip(keys,row)}
+        adventure_deck.append(adv_dict_to_adventure(adv_dict))
     #I actually don't need to drop these columns since the data is thrown away when I create the task cards.
-    return [location for location in location_deck if location.reward]
+    return [adventure for adventure in adventure_deck if adventure.reward]
 
 
-def task_dict_to_location(task_dict:dict) -> "Location":
-    #print(task_dict)
+def adv_dict_to_adventure(adv_dict:dict) -> "Adventure":
+    #print(adv_dict)
     #input()
-    task_data = [task_dict['Task 1'],task_dict['Task 2'],task_dict['Task 3']]
+    task_data = [adv_dict['Task 1'],adv_dict['Task 2'],adv_dict['Task 3']]
     tasks = create_task_list(task_data)
-    reward = create_outcome(task_dict['Rewards'])
-    penalty = create_outcome(task_dict['Penalties'])
-    card = Location(task_dict['Name'],task_dict['Flavor Text'],tasks, reward, penalty)
-    #print(card)
-    #input()
+    reward = create_outcome(adv_dict['Rewards'])
+    penalty = create_outcome(adv_dict['Penalties'])
+    card = Adventure(ending_the_fix(adv_dict['Name']), 
+                    adv_dict['Flavor Text'], tasks, reward, penalty)
     return card
 
 def create_task_list(task_data:List[str])-> List['Task']:
@@ -175,7 +174,7 @@ class GameSelection:
     """
     def __init__(self) -> None:
         print('Loading game data...')
-        self.location_deck = fetch_locations()
+        self.adventure_deck = fetch_adventures()
         self.item_deck = fetch_items()
         self.great_old_ones = fetch_great_old_ones()
         self.investigators = fetch_investigators()
