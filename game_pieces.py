@@ -167,9 +167,9 @@ class Game:
                   "summoned and devours the world.")
             return True
         else:
-            print(f"Only {self.doom_max-self.current_doom} more Doom is needed to "\
-                  f"summon {self.great_old_one.name} to this plane of "\
-                  "existence.")
+            #print(f"Only {self.doom_max-self.current_doom} more Doom is needed to "\
+            #      f"summon {self.great_old_one.name} to this plane of "\
+            #      "existence.")
             return False
     
     # Win condition
@@ -180,9 +180,9 @@ class Game:
                   "banished. The world is forever in your debt.")
             return True
         else:
-            print(f"Only {self.elder_sign_max-self.current_elder_signs} more Elder "\
-                  f"Signs is needed to banish {self.great_old_one.name} and "\
-                  "save the world.")
+            #print(f"Only {self.elder_sign_max-self.current_elder_signs} more Elder "\
+            #      f"Signs are needed to banish {self.great_old_one.name} and "\
+            #      "save the world.")
             return False
 
     @property
