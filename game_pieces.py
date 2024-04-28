@@ -134,7 +134,7 @@ class Investigator:
 
 
 class Game:
-    def __init__(self, investigator, great_old_one, location_deck, item_deck, start_time:int=0, increment:int=3) -> None:
+    def __init__(self, investigator, great_old_one, location_deck, item_deck, start_time:int=0, increment:int=6) -> None:
         self.investigator = investigator
         self.great_old_one = great_old_one
         self.current_doom = 0
@@ -247,7 +247,7 @@ class Clock:
     #how many hours are in the day
     def advance(self) -> None:
         self.time += self.increment
-        if self.time == 12:
+        if self.time == 24:
             print("It is midnight!")
             self.time = 0
         print(f'The time is now {self.time}.')
@@ -527,6 +527,13 @@ class Die:
     def __repr__(self) -> str:
         return self.color+': '+self.face
 
+    def __lt__(self, other) -> bool:
+        order = {'Green':0, 'Yellow':1, 'Red':2, 'Spell': 3}
+        return order[self.color] < order[other.color]
+    
+    def __eq__(self, other) -> bool:
+        return self.color == other.color
+
     def parse(self):
         """
         Parses the face of the die. Returns number of symbols as int and symbol as string.
@@ -569,10 +576,12 @@ class DicePool:
     
     def __str__(self) -> str:
         # something other than : and , should be used, things blend in
+        self.dice.sort()
         dice_strs = [f"{index+1} = {str(die)}" for index, die in enumerate(self.dice)]
         return 'Your roll: '+'; '.join(dice_strs)
 
     def __repr__(self) -> str:
+        self.dice.sort()
         dice_reprs = [die.__repr__() for die in self.dice]
         print(dice_reprs)
         return ', '.join(dice_reprs)
@@ -588,10 +597,11 @@ class DicePool:
         for die in self.dice:
             die.roll()
     
-    def pop(self, index:int=0) -> 'Die':
+    def pop(self, index:int=None) -> 'Die':
         # defaults to removing first die
-        # this is because yellow and red dice will be appended and we 
-        # probably don't want to remove those by default
+        if index is None:
+            self.dice.sort()
+            index = 0
         return self.dice.pop(index)
     
 

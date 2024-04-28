@@ -12,6 +12,41 @@ from utilities import get_selection
 def pause() -> None:
     input("Hit enter to continue.\n")
 
+def intro() -> None:
+    basic_idea = '''Welcome to "Chtulu Schmtulu," a dice rolling game heavily based on Elder Sign from Fantasy Flight Games.
+            Each game sees you attempting to Banish a Great Old One before they are Summoned or before you are defeated.
+            After selecting a Great Old One to battle against, you will select an Investigator to play as. The Great Old 
+            Ones are Summoned when they accumulate Doom equal to their doom threshold. They are Banished when you collect
+            Elder Signs equal to their Elder Sign threshold. You will collect Elder Signs by completing locations. Doom is
+            primarily accumulated when the clock strikes midnight (the clock advances after each of your turns) as well as 
+            through game effects. If your Investigator has 0 Health or 0 Sanity, then you are defeated. If you are defeated
+            or the Great Old One is Summoned, then you have lost. If you collect enough Elder Signs to Banish the Great Old 
+            One, then you have won!'''
+    print(basic_idea)
+    locations = '''Each turn you will go to a location. To complete a location you must complete each task at the location.
+            A task is completed by assigning dice from your dice pool to the task in order to fulfill the requirements. Some tasks
+            also have you suffer a penalty by losing Health or Sanity. If none of the symbols on your dice match a symbol on the task,
+            you may do a Pass. This rerolls all of your dice at the cost of forfeiting one of them. You may also use an Item (the 
+            Item selection menu also contains a description of what each Item does). If you run out of dice, you fail the Location
+            and suffer associated Penalty. If you complete a Location, you receive the associated Reward. Penalties can be losing 
+            Health or Sanity, or the Great Old One accumulating additional Doom. Rewards can be gaining an Item, Health, or Sanity.'''
+    print(locations)
+    dice = '''As the game revolves around rolling dice, here are the different dice that are in the game:
+            Green: Investigate: 1, Investigate: 2, Investigate: 3, Lore: 1, Skulls: 1, Tentacles: 1 
+            Yellow: Investigate: 1, Investigate: 2, Investigate: 3, Investigate: 4, Lore: 1, Skulls: 1
+            Red: Wild: 1, Investigate: 2, Investigate: 3, Investigate: 4, Lore: 1, Skulls: 1
+            Spell: All Wild: 1
+            When you loss a die by passing, you will lose the earliest die in your pool according to the ordering:
+            Green < Yellow < Red < Spell
+            '''
+    difficulty = '''Difficulty can be adjusted through the setting of two different parameters. Increment sets how much the clock
+            advances after each of your turns. The standard setting is 6 hours, so Doom accumulates every 4 turns. The second is 
+            the starting dice pool. Standard (which is quite a challenge) is 6 Green dice.'''
+    
+    items = '''Each Investigator begins the game with different starting Items. Items come in 4 varieties: Common, Unique, Clue, 
+            and Spell. Common Items will usually add a yellow die, while Unique Items will usually add a red die (to your dice for 
+            that location). Clues allow you to reroll your dice without penalty. Spells add a Wild symbol to your dice pool.'''
+    
 #I feel like this can be combined with the other report function to be more streamlined?
 def report_options(investigator, location):
     print(investigator.dice_pool)
@@ -193,5 +228,5 @@ def main_gameplay_loop(game) -> None:
     
 # current_progress
 
-game = start_game()
-main_gameplay_loop(game)
+#game = start_game()
+#main_gameplay_loop(game)
