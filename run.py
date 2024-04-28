@@ -288,6 +288,6 @@ def main_gameplay_loop(game) -> None:
 
 # current_progress
 
-# introduction()
+introduction()
 game = start_game()
 main_gameplay_loop(game)
