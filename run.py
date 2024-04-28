@@ -116,8 +116,8 @@ def use_item_procedure(investigator: 'Investigator') -> 'Investigator':
         return investigator
     item = items[index]
     item.use(investigator)
-    print(f'{investigator.name} used the {item.name} to 
-          {item.effect.lower()}.')
+    print(f'{investigator.name} used the {item.name} to '\
+          f'{item.effect.lower()}.')
     return investigator
 
 
