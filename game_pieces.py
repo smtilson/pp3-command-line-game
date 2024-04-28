@@ -134,14 +134,16 @@ class Investigator:
 
 
 class Game:
-    def __init__(self, investigator, great_old_one, location_deck, item_deck, start_time:int=0, increment:int=6) -> None:
+    def __init__(self, player:str, investigator:'Investigator', great_old_one:'GreatOldOne', 
+        location_deck:List['Location'], item_deck:List['Item'], increment:int=6) -> None:
+        self.player = player
         self.investigator = investigator
         self.great_old_one = great_old_one
         self.current_doom = 0
         self.doom_max = great_old_one.doom
         self.current_elder_signs = 0
         self.elder_sign_max = great_old_one.elder_signs
-        self.clock = Clock(start_time, increment)
+        self.clock = Clock(increment)
         # not yet fully implimented
         self.location_deck = location_deck #Location.create_deck()
         self.current_locations = []
@@ -199,7 +201,6 @@ class Game:
         else:
             return ""
 
-#    commented out until the Location.create_deck() function is written
     def refill_locations(self) -> None:
         # the number of active cards is also a parameter that can be messed with
         #print("refill called")
@@ -239,9 +240,10 @@ class Game:
         
         
 class Clock:
-    #This is where the difficulty setting could be, the number of turns in a day.
-    def __init__(self, start_time,increment):
-        self.time = start_time
+    # This is where the difficulty setting could be, the number of turns in a 
+    # day.
+    def __init__(self, increment:int):
+        self.time = 0
         self.increment = increment
     
     #how many hours are in the day

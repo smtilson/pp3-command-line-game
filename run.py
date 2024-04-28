@@ -1,7 +1,6 @@
 # Your code goes here.
 # You can delete these comments, but do not change the name of this file
-# Write your code to expect a terminal of 80 investigators wide and 24 rows high
-# Eventually classes should probably be changed to named tuples
+# Write your code to expect a terminal of 80 columns wide and 24 rows high.
 
 from typing import List, Optional, Tuple, Union
 # the below import statement should eventually be changed
@@ -12,45 +11,46 @@ from utilities import get_selection
 def pause() -> None:
     input("\n                     Hit enter to continue.\n")
 
+
 def introduction() -> None:
-    basic_idea1 = '''    Welcome to "Chtulu Schmtulu," a dice rolling game heavily based on 
-    Elder Sign from Fantasy Flight Games. In each game, you attempt 
-    to Banish a Great Old One before they are Summoned or before you 
-    are Defeated. After selecting a Great Old One to battle against, you 
-    will select an Investigator to play as. The Great Old Ones are Summoned 
-    when they gain enough Doom. They are Banished when you collect enough 
-    Elder Signs.'''
-    tldr = '''    TL;DR: Go to Locations, assign dice to complete tasks. Collect Elder Signs 
-    before you are Defeated or the Great Old One gains enough Doom.'''
-    basic_idea2 = '''    You will collect Elder Signs by completing locations. Doom is gained
-    when the clock strikes midnight (the clock advances after each of your 
-    turns) as well as through game effects. If your Investigator has 0 Health 
-    or 0 Sanity, then you are defeated. If you are defeated or the Great Old 
-    One is Summoned, then you have lost. If you collect enough Elder Signs to 
-    Banish the Great Old One, then you have won!'''
-    locations1 = '''    Each turn you will go to a location. To complete a location you must
-    complete each task at the location. A task is completed by assigning 
-    matching dice to the task in order to fulfill the requirements. Some 
-    tasks also have you suffer a penalty by losing Health or Sanity. If 
-    none of the symbols on your dice match a symbol on the task, you may 
-    do a Pass.''' 
-    locations2 = '''    A Pass rerolls all of your dice at the cost of forfeiting one of them.
-    You may also use an Item (the Item selection menu also contains a 
-    description of what each Item does). If you run out of dice, you fail
-    the Location and suffer associated Penalty. If you complete a Location,
-    you receive the associated Reward. Penalties can be losing Health or 
-    Sanity, or the Great Old One gaining additional Doom. Rewards can be
-    gaining an Item, Health, or Sanity.'''
-    dice = '''    As the game revolves around rolling dice, here are the different dice 
-    that are in the game:
-    Green =  Investigate: 1, Investigate: 2, Investigate: 3, Lore: 1, 
-             Skulls: 1, Tentacles: 1 
-    Yellow = Investigate: 1, Investigate: 2, Investigate: 3, Investigate: 4, 
-             Lore: 1, Skulls: 1
-    Red =    Wild: 1, Investigate: 2, Investigate: 3, Investigate: 4, 
-             Lore: 1, Skulls: 1
-    Spell =  All Wild: 1'''
-    losing_dice = '''    When you loss a die by passing, you will lose the earliest die in your 
+    basic_idea1 = 'Welcome to "Chtulu Schmtulu," a dice rolling game heavily '\
+    "based on Elder Sign\nfrom Fantasy Flight Games. In each game, you "\
+    "attempt to Banish a Great Old\nOne before they are Summoned or before "\
+    "you are Defeated. After selecting a\nGreat Old One to battle against, "\
+    "you will select an Investigator to play as.\nThe Great Old Ones are "\
+    "Summoned when they gain enough Doom. They are Banished\nwhen you collect"\
+    " enough Elder Signs."
+    tldr = "TL;DR: Go to Locations, assign dice to complete tasks. Collect "\
+    "Elder Signs\nbefore you are Defeated or the Great Old One gains enough "\
+    "Doom."
+    basic_idea2 = "You will collect Elder Signs by completing locations. Doom"\
+    " is gained when the\nclock strikes midnight (the clock advances after "\
+    "each of your turns) as well\nas through game effects. If your "\
+    "Investigator has 0 Health or 0 Sanity, then\nyou are defeated. If you "\
+    "are defeated or the Great Old One is Summoned, then\nyou have lost. If "\
+    "you collect enough Elder Signs to Banish the Great Old One,\nthen you "\
+    "have won!"
+    locations1 = "Each turn you will go to a location. To complete a location"\
+    " you must complete\neach task at the location. A task is completed by "\
+    "assigning matching dice to\nthe task in order to fulfill the "\
+    "requirements. Some tasks also have you suffer\na penalty by losing "\
+    "Health or Sanity. If none of the symbols on your dice\nmatch a symbol on"\
+    " the task, you may do a Pass."
+    locations2 = "A Pass rerolls all of your dice at the cost of forfeiting "\
+    "one of them. You\nmay also use an Item (the Item selection menu also "\
+    "contains a description of\nwhat each Item does). If you run out of dice,"\
+    " you fail the Location and suffer\nassociated Penalty. If you complete a"\
+    " Location, you receive the associated\nReward. Penalties can be losing "\
+    "Health or Sanity, or the Great Old One gaining\nadditional Doom. Rewards"\
+    " can be gaining an Item, Health, or Sanity."
+    dice ="As the game revolves around rolling dice, here are the different "\
+    "dice that \nare in the game:\nGreen =  Investigate: 1, Investigate: 2, "\
+    "Investigate: 3, \n         Lore: 1, Skulls: 1, Tentacles: 1\nYellow = "\
+    "Investigate: 1, Investigate: 2, Investigate: 3, Investigate: 4,\n     "\
+    "    Lore: 1, Skulls: 1\nRed =    Investigate: 2, Investigate: 3, "\
+    "Investigate: 4,\n         Lore: 1, Skulls: 1, Wild: 1\nSpell =  All "\
+    "Wild: 1"
+    losing_dice = '''    When you lose a die by passing, you will lose the earliest die in your 
     pool according to the ordering:
     Green < Yellow < Red < Spell'''
     difficulty = '''    Difficulty can be adjusted through the setting of two different parameters.
@@ -72,11 +72,11 @@ def introduction() -> None:
     more_help = '''    If you have further questions, please see the ReadMe for this project at, 
     it contains examples of game play. It may also be beneficial to view geme play 
     or "how to play" videos for Elder Sign on YouTube.'''
-    more_details = [basic_idea2, locations1, locations2, dice, difficulty, items, future, more_help]
+    more_details = [basic_idea2, locations1, locations2, dice, losing_dice, difficulty, items, future, more_help]
     print(basic_idea1)
     pause()
     print(tldr)
-    more_info = input("    Would you like more details about the game? Y/n\n")
+    more_info = input("Would you like more details about the game? Y/n\n")
     if more_info.lower() == 'y' or more_info.lower() =='yes':
         print()
         for msg in more_details:
@@ -84,18 +84,21 @@ def introduction() -> None:
             pause()
     else:
         print("    Alright! Let's get started. That Great Old One isn't going to banish itself.")
-    
 
-#I feel like this can be combined with the other report function to be more streamlined?
+
+# I feel like this can be combined with the other report function to be more 
+# streamlined?
 def report_options(investigator, location):
     print(investigator.dice_pool)
     for index, task in enumerate(location):
         print(f"{index+1} = {str(task)}")
 
+
 # this should be made to be nicer
-def report_dice_n_task(investigator, task):    
+def report_dice_n_task(investigator, task):
     print(investigator.dice_pool)
     print(task)    
+
 
 # needs a better name
 def use_item_procedure(investigator: 'Investigator') -> 'Investigator':
@@ -103,14 +106,17 @@ def use_item_procedure(investigator: 'Investigator') -> 'Investigator':
     for index, item in enumerate(items):
         white_space = item.white_space+(3-len(str(index+1)))*' '
         print(f"{index+1}. {item.name}: {white_space}{item.effect}")
-    index = get_selection(len(items),'an item to use.',{'none'})
+    index = get_selection(len(items), 'an item to use.', {'none'})
     if index == 'none':
         return investigator
     item = items[index-1]
     item.use(investigator)
     print(f'{investigator.name} used the {item.name} to {item.effect.lower()}.')
     return investigator
-# I think this should be refactored into two functions, one a method of the Task class.
+
+
+# I think this should be refactored into two functions, 
+# one a method of the Task class.
 def assign_die_to_task(investigator, task): #'DicePool','Task':
     """
     Assigns single die from dice pool to task. Gets index of die from user and assigns it,
@@ -214,13 +220,16 @@ def start_game(start_time=0):
     Begins game by dealing task cards and initializing main gameplay loop.
     """
     introduction()
+    name = input('Please enter your name.')
+    while name.strip() == '':
+        name = input('Please enter something other than blank space.')
     game_data = GameSelection()
     great_old_one = game_data.select_great_old_one()
     investigator = game_data.select_investigator()
-    start_time = 0
+    #set difficulty function.
     increment = 12
-    game = Game(investigator,great_old_one,game_data.location_deck,
-                game_data.item_deck,start_time, increment)
+    game = Game(name,investigator,great_old_one,game_data.location_deck,
+                game_data.item_deck, increment)
     #print(game)
     print(great_old_one)
     print(investigator)
@@ -260,13 +269,19 @@ def main_gameplay_loop(game) -> None:
     # these messages could be refactored into a dict maybe?
     # or a method of the game object, like a property?
     if end_condition == "Banished":
-        print(f"Congratulations! {game.investigator.name} has defeated {game.great_old_one.name} and successfully banished them to the dimension from which they came.")
+        print(f"Congratulations! {game.investigator.name} has defeated "
+              f"{game.great_old_one.name} and successfully banished them to "
+              f"the dimension from which they came.")
     elif end_condition == "Died":
-        print(f"Oh no! {game.investigator.name} has been defeated. Now nothing stands in the way of {game.great_old_one.name}.")
+        print(f"Oh no! {game.investigator.name} has been defeated. Now nothing"
+              f" stands in the way of {game.great_old_one.name}.")
     elif end_condition == "Summoned":
-        print(f"{game.investigator.name} was unable to prevent the inevitable. {game.great_old_one.name} has been summoned. The end of humanity is at hand.")
-    
-# current_progress
+        print(f"{game.investigator.name} was unable to prevent the inevitable."
+              f" {game.great_old_one.name} has been summoned. The end of "
+              f"humanity is at hand.")
+    # results = 
 
+
+# current_progress
 game = start_game()
-#main_gameplay_loop(game)
+# main_gameplay_loop(game)

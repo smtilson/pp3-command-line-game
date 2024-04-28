@@ -1,9 +1,10 @@
 """
-This file is for routines related to the google spreadsheet storing the game data.
+This file is for routines related to the google spreadsheet storing the game 
+data.
 """
 import gspread
 from google.oauth2.service_account import Credentials
-from typing import List, Tuple, Optional, Dict, Union
+from typing import List, Tuple, Dict, Union
 # I guess I should change this to not load everything
 from game_pieces import *
 from utilities import get_selection
@@ -20,7 +21,7 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("pp3-command-line-game")
 
 
-#Great Old One section
+# Great Old One section
 def fetch_great_old_ones() -> List[dict]:
     raw = SHEET.worksheet("GreatOldOnes").get_all_values()
     keys = raw.pop(0)
@@ -28,18 +29,18 @@ def fetch_great_old_ones() -> List[dict]:
     great_old_ones_dicts = []
     index = 1
     for row in raw:
-        great_old_ones_dicts.append({key:val for key, val in zip(keys,row)})
+        great_old_ones_dicts.append({key: val for key, val in zip(keys, row)})
         # storing as string since that is how input will convert it
         great_old_ones_dicts[-1]['index'] = index
         index += 1
-    return [g_o_o_dict_to_g_o_o(g_o_o_dict) for g_o_o_dict in great_old_ones_dicts]
+    return [goo_dict_to_goo(goo_dict) for goo_dict in great_old_ones_dicts]
 
-def g_o_o_dict_to_g_o_o(g_o_o:dict) -> 'GreatOldOne':
-    index = g_o_o['index']
-    name = g_o_o['Name']
-    elder_signs = int(g_o_o['Elder Signs Needed'])
-    doom = int(g_o_o['Doom to Awake'])
-    ability = g_o_o['Special Ability']
+def goo_dict_to_goo(goo:dict) -> 'GreatOldOne':
+    index = goo['index']
+    name = goo['Name']
+    elder_signs = int(goo['Elder Signs Needed'])
+    doom = int(goo['Doom to Awake'])
+    ability = goo['Special Ability']
     return GreatOldOne(index, name, elder_signs, doom, ability)
 
 # Investigator section
@@ -173,10 +174,12 @@ class GameSelection:
     This class queries the database and initializes the potential game state.
     """
     def __init__(self) -> None:
+        print('Loading game data...')
         self.location_deck = fetch_locations()
         self.item_deck = fetch_items()
         self.great_old_ones = fetch_great_old_ones()
         self.investigators = fetch_investigators()
+        print('Game data loaded.')
     
     def select_great_old_one(self):
         for great_old_one in self.great_old_ones:
