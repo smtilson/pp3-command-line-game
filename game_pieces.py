@@ -42,30 +42,21 @@ class GreatOldOne:
     
 class Investigator:
     def __init__(self, index:str, name:str, profession: str, sanity: int, 
-                 health: int, ability: str, items: list=None) -> None:
+                 health: int, ability: str, items: list) -> None:
         self.index = index
         self.name = name
         self.profession = profession
         self.ability = ability
-        # is validation still necessary?
-        if sanity <= 0 or health <= 0:
-            raise ValueError(f"{sanity=} and {health=} are not a starting values.")
         self.starting_sanity = sanity
         self.sanity = sanity
         self.starting_health = health
         self.health = health
-        if items:
-            self.items = items
-        else:
-            self.items = []
-        self.dice_pool = DicePool()
+        self.items = items
+        #self.dice_pool = DicePool()
 
     def __str__(self):
         return f"{self.name}: {self.sanity} Sanity, {self.health} Health"
     
-    def __len__(self):
-        return len(self.dice_pool)
-
     def selection(self):
         white_space = (18-len(self.name)-len(str(self.index)))*' '
         line = str(self.index)+'. '+str(self).replace(': ',': '+white_space)
@@ -80,51 +71,17 @@ class Investigator:
             return False
         else:
             return True
-
-    # Adjust Sanity
-    def lose_sanity(self, damage: int) -> None:
-        self.sanity -= damage
-        if self.sanity < 0:
-            self.sanity = 0
     
-    #Adjust Health
-    def lose_health(self, damage: int) -> None:
-        self.health -= damage
-        if self.health < 0:
-            self.health = 0
-    
+    # is this used?
     def list_items(self) -> None:
         for index,item in enumerate(self.items):
             print(index+1, item.name, item.effect)
-    
-    def roll(self) -> None:
-        self.dice_pool.roll()
 
-    def add_die(self, color: str) -> None:
-        self.dice_pool.add_die(color)
-
-    def pass_move(self) -> None:
-        """
-        Removes a die from the dice pool and rerolls remaining dice.
-        """
-        print("Sacrificing a die.")
-        self.dice_pool.pop()
-        print("Rerolling your remaining dice.")
-        self.roll()
-
-
-    # Advances clock, Check alive and resets dice
-    def reset(self):
-        # This resets the dice pool
-        if self.alive:
-            print(f"{self.name} is still alive.")
-            self.dice_pool.reset()
-
+    # this is broken now because item.use needs to accept a game.
     # moving the item effect dictionary would help that, I think.
     def use_item(self, index) -> None:
         item = self.items.pop(index)
         item.use(self)
-
 
 class Game:
     def __init__(self, player:str, investigator:'Investigator', 
@@ -141,31 +98,34 @@ class Game:
         self.game_start_time = str(datetime.datetime.now())
         # not yet fully implimented
         self.adventure_deck = adventure_deck
-        self.current_adventures = []
-        self.refill_adventures()
+        self.adventure_discard = []
+        # self.current_adventures = []
+        # self.refill_adventures()
         self.item_deck = item_deck
+        self.item_discard = []
+        self.shuffle()
         self.starting_items()
+        self.dice_pool = investigator.dice_pool
     
+    @property
+    def num_dice(self) -> int:
+        return len(self.dice_pool)
+
     # should this be __str__?
     def status(self) -> str:
         if not self.great_old_one_summoned:
             print(f"{self.great_old_one.name} only needs {-self.current_doom + self.doom_max} more Doom to awaken.")
-        # else:    
-            # print(f"The terrifying {self.great_old_one.name} has been "\
-            #       "summoned and devours the world.")
         if not self.great_old_one_banished:
             print(f"You only need {-self.current_elder_signs + self.elder_sign_max} more Elder Signs.")
-        # else:    
-            # print(f"The terrifying {self.great_old_one.name} has been "\
-            #       "banished. The world is forever in your debt.")
 
     def end_turn(self) -> str:
         self.clock.advance()
         if self.clock.time == 24:
             self.apply_doom(1)
-        self.investigator.reset()
-        self.refill_adventures()
+        # self.investigator.reset()
+        # self.refill_adventures()
         self.status()
+        self.dice_pool.reset()
         return self.end_condition
     
     def apply_doom(self, num:int) -> None:
@@ -204,19 +164,17 @@ class Game:
             return "Died"
         else:
             return ""
-
-    def refill_adventures(self) -> None:
-        # the number of active cards is also a parameter that can be messed with
-        while len(self.current_adventures) < 3:
-            self.draw_adventure()
     
     def draw_adventure(self) -> None:
-        adventure = self.adventure_deck.pop(0)
-        self.current_adventures.append(adventure)
-   
-    def discard_completed_adventure(self, adventure) -> None:
+        if len(self.adventure_deck) == 0:
+            self.adventure_deck = [adv for adv in self.adventure_discard]
+            self.adventure_discard = []
+            shuffle(self.adventure_deck)
+        return self.adventure_deck.pop(0)
+
+    def discard_adventure(self, adventure) -> None:
         adventure.reset()
-        self.adventure_deck.append(adventure)
+        self.adventure_discard.append(adventure)
     
     def shuffle(self) -> None:
         shuffle(self.adventure_deck)
@@ -233,7 +191,6 @@ class Game:
             self.investigator.items.append(spell)
             return
         elif item_type in {"common", "unique"}:
-            shuffle(self.item_deck)
             for index, item in enumerate(self.item_deck):
                 if item.item_type.lower() == item_type.lower():
                     self.item_deck.remove(item)
@@ -261,7 +218,15 @@ class Game:
         string = ', '.join(item_list)
         print(string)
         #print(fit_to_screen(string, ', '))
-        
+
+    def pass_move(self) -> None:
+        """
+        Removes a die from the dice pool and rerolls remaining dice.
+        """
+        print("Sacrificing a die.")
+        self.dice_pool.pop()
+        print("Rerolling your remaining dice.")
+        self.roll()
         
         
 class Clock:
@@ -287,14 +252,14 @@ class Clock:
         #print(f'The time is now {self.time}.')
             
 def add_yellow(investigator:'Investigator') -> None:
-    investigator.add_die('yellow')
+    game.dice_pool.add_die('yellow')
 
 def add_red(investigator:'Investigator') -> None:
-    investigator.add_die('red')
+    game.dice_pool.add_die('red')
 
 def add_yellow_n_red(investigator:'Investigator') -> None:
-    investigator.add_die('yellow')
-    investigator.add_die('red')
+    game.dice_pool.add_die('yellow')
+    game.dice_pool.add_die('red')
 
 def gain_health(investigator:'Investigator') -> None:
     investigator.health += 1
@@ -303,7 +268,7 @@ def gain_sanity(investigator:'Investigator') -> None:
     investigator.sanity += 1
 
 def add_spell_die(investigator:'Investigator') -> None:
-    investigator.add_die('spell')
+    game.dice_pool.add_die('spell')
 
 def reroll_dice(investigator:'Investigator') -> None:
     #print("Using a Clue to reroll dice.")
@@ -321,7 +286,7 @@ class Item:
     ITEM_EFFECT = {'Add a yellow die': add_yellow, 'Add a red die': add_red, 'Gain 1 Health': gain_health,
                    'Gain 1 Sanity': gain_sanity,#'Change 1 die to Skulls':change_to_skull, 
                    'Add a yellow and a red die': add_yellow_n_red, 'Gain a wild die': add_spell_die, 
-                   'Reroll all dice":reroll_dice, "Restore Health and Sanity': restore}
+                   "Reroll all dice":reroll_dice, "Restore Health and Sanity": restore}
 
     def __init__(self, name:str, effect:str, item_type:str) -> None:
         self.name = name
@@ -344,6 +309,11 @@ class Item:
     def use(self, investigator):
         self.ITEM_EFFECT[self.effect](investigator)
         investigator.items.remove(self)
+        
+        #This is how it will be after the refactor
+        #self.ITEM_EFFECT[self.effect](game.investigator)
+        #game.investigator.items.remove(self)
+        #game.item_discard.append(self)
     
     @classmethod
     def clue(cls) -> 'Item':
@@ -377,13 +347,11 @@ def draw_unique(num:int, game:'Game') -> None:
     for _ in range(num):
         game.draw_item('unique')
         print(f"You got the {game.investigator.items[-1].name}")
-    #game.investigator.list_items()
 
 def draw_common(num:int, game:'Game') -> None:
     for _ in range(num):
         game.draw_item('common')
         print(f"You got the {game.investigator.items[-1].name}")
-    #game.investigator.list_items()
 
 def gain_clue(num:int, game:'Game') -> None:
     if num > 0:
@@ -643,6 +611,7 @@ class DicePool:
     def __str__(self) -> str:
         # something other than : and , should be used, things blend in
         self.dice.sort()
+        # I could write a method for a die called display which addressed this. a bit.
         dice_strs = [f"{index+1} --> {str(die)}" for index, die in 
                      enumerate(self.dice)]
         first_half = dice_strs[:3]

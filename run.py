@@ -9,60 +9,40 @@ def pause() -> None:
 
 
 def introduction() -> None:
-    basic_idea1 = 'Welcome to "Chtulu Schmtulu," a dice rolling game heavily '\
+    basic_idea1 = 'Welcome to "Chtulu Schmtulu," a dice rolling game '\
     "based on Elder Sign from Fantasy Flight Games. In each game, you "\
-    "attempt to Banish a Great Old One before they are Summoned or before "\
-    "you are Defeated. After selecting a Great Old One to battle against, "\
-    "you will select an Investigator to play as. The Great Old Ones are "\
-    "Summoned when they gain enough Doom. They are Banished when you collect"\
-    " enough Elder Signs."
+    "try to collect Elder Signs before you die or the Great Old One gains "\
+    "enough Doom to be Summoned."
     tldr = "TL;DR: Go to Adventures, assign dice to complete tasks. Collect "\
-    "Elder Signs before you are Defeated or the Great Old One gains enough "\
-    "Doom."
-    basic_idea2 = "You will collect Elder Signs by completing Adventures. "\
-    "Doom is gained when the clock strikes midnight (the clock advances after"\
-    " each of your turns) as well as through game effects. If your "\
-    "Investigator has 0 Health or 0 Sanity, then you are defeated. If you "\
-    "are defeated or the Great Old One is Summoned, then you have lost. If "\
-    "you collect enough Elder Signs to Banish the Great Old One, then you "\
-    "have won!"
-    adventures1 = "Each turn you will go to a Adventure. To complete a "\
-    "Adventure you must complete each task at the Adventure. A task is "\
-    "completed by assigning matching dice to the task in order to fulfill the"\
-    " requirements. Some tasks also have you suffer a penalty by losing "\
-    "Health or Sanity. If none of the symbols on your dice match a symbol on"\
-    " the task, you may do a Pass."
-    adventures2 = "A Pass rerolls all of your dice at the cost of forfeiting "\
-    "one of them. You may also use an Item (the Item selection menu also "\
-    "contains a description of what each Item does). If you run out of dice,"\
-    " you fail the Adventure and suffer associated Penalty. If you complete a"\
-    " Adventure, you receive the associated Reward. Penalties can be losing "\
-    "Health or Sanity, or the Great Old One gaining additional Doom. Rewards"\
-    " can be gaining an Item, Health, or Sanity."
-    dice ="As the game revolves around rolling dice, here are the different "\
-    "dice that\nare in the game:\nGreen =  1 Investigate, 2 Investigate, "\
-    "3 Investigate, \n         1 Lore, 1 Skulls, 1 Tentacles\nYellow = "\
-    "1 Investigate, 2 Investigate, 3 Investigate, 4 Investigate,\n     "\
-    "    1 Lore, 1 Skulls\nRed =    2 Investigate, 3 Investigate, "\
-    "4 Investigate,\n         1 Lore, 1 Skulls, 1 Wild\nSpell =  All "\
-    "1 Wild"
-    losing_dice = "When you lose a die by passing, you will lose the earliest"\
-    "die in your pool\naccording to the ordering:\n       Green < Yellow < "\
-    "Red < Spell"
-    difficulty = "For an easier time, we suggest fighting the Baby Dragon with Superman."
-    # Difficulty can be adjusted through the setting of two "\
-    # "different parameters. Increment sets how much the clock advances after "\
-    #"each of your turns. 
-    "Every turn the clock advance 8 hours and every 24 hours the clock strikes"\
-    " midnight, so Doom accumulates every 3 turns. "\
-    #"The second is the starting dice pool. 
+    "Elder Signs, and Items."
+    basic_idea2 = "Every 3 turns, the Great Old One gains Doom, enough Doom "\
+    "and you lose. When your Health or Sanity are 0, then you lose. When you "\
+    "have enough Elder Signs (from completing Adventures) you win."
+    adventures1 = "Each turn, you go on an Adventure with various tasks. A "\
+    "task is completed by assigning dice with the right symbols. If none of "\
+    "your dice have the right symbols for the task, you can Pass to reroll "\
+    "(but you do lose a die). You can also use an Item to gain a die or get "\
+    "a free reroll (the Item menu has more details about each item). If you "\
+    "run out of dice, you fail and suffer a Penalty (more Doom or losing "\
+    "Health for example). Completing an Adventure gets you a Reward (an item "\
+    "or an Elder Sign for example)."
+    dice ="Here are the dice that are in the game:"\
+    "\nGreen =  1 Investigate, 2 Investigate, 3 Investigate, "\
+    "\n         1 Lore, 1 Skulls, 1 Tentacles"\
+    "\nYellow = 1 Investigate, 2 Investigate, 3 Investigate, 4 Investigate,"\
+    "\n         1 Lore, 1 Skulls"\
+    "\nRed =    2 Investigate, 3 Investigate, 4 Investigate,"\
+    "\n         1 Lore, 1 Skulls, 1 Wild"\
+    "\nSpell =  All 1 Wild"\
+    "When you lose a die, you first lose Greens, then Yellows, then Reds, and"\
+    " then Spells. At the end of each turn, your dice pool is reset to 6 "\
+    "Green dice."
+    difficulty = "For an easier time, we suggest fighting the Baby Dragon "\
+    "with Superman."
+    "Every 3 turns the clock strikes midnight, and Doom increases. "\
     "The starting dice pool has 6 Green dice."
-    items = "Each Investigator begins the game with different starting Items."\
-    " Items come in 4 varieties: Common, Unique, Clue, and Spell. Common "\
-    "Items will usually give you a yellow die, Unique Items will usually "\
-    "give you a red die (for that Adventure). Clues allow you to reroll your "\
-    "dice without penalty. Spells add a Wild symbol to your dice pool. You "\
-    "will also gain Items by completing Adventures."
+    items = "Investigators begin the game starting Items. Their effect is "\
+    "described in the Item menu. New dice only last for that Adventure."
     future = "In the future, we would like to implement more of the game, "\
     "such as abilities of Investigators as well as Great Old Ones. This is a"\
     " bit of a task though as each ability requires a separate function that"\
@@ -74,11 +54,11 @@ def introduction() -> None:
     "this project at, it contains examples of game play. It may also be "\
     'beneficial to view game play or a "how to play" video for Elder Sign on'\
     " YouTube."
-    more_details1 = [basic_idea2, adventures1, adventures2]
+    more_details1 = [basic_idea2, adventures1]
     dice_details = [dice, losing_dice]
                     # difficulty, add this once there is a select difficulty 
                     # function in place
-    more_details2 = [items, future, more_help]
+    more_details2 = [more_help]
     
     print(fit_to_screen(basic_idea1))
     print()
@@ -102,111 +82,112 @@ def introduction() -> None:
 
 # I feel like this can be combined with the other report function to be more 
 # streamlined?
-def report_options(investigator, adventure):
-    print(investigator.dice_pool)
+def report_options(game: 'Game', adventure):
+    print(game.dice_pool)
     for index, task in enumerate(adventure):
         print(f"Task {index+1} = {str(task)}")
 
 
 # this should be made to be nicer
-def report_dice_n_task(investigator, task):
-    print(investigator.dice_pool)
+def report_dice_n_task(game, task):
+    print(game.dice_pool)
     print(f"Remaining: {str(task)}")    
 
 
 # needs a better name
-def use_item_procedure(investigator: 'Investigator') -> 'Investigator':
-    items = investigator.items
+def use_item_procedure(game: 'Game') -> 'Game':
+    items = game.investigator.items
     for index, item in enumerate(items):
         white_space = item.white_space+(3-len(str(index+1)))*' '
         print(f"{index+1}. {item.name}: {white_space}{item.effect}")
     index = get_selection(len(items), 'an item to use.', {'none'})
     if index == 'none':
-        return investigator
+        return game
     item = items[index]
-    item.use(investigator)
-    print(f'{investigator.name} used the {item.name} to '\
+    item.use(game.investigator)
+    game.item_discard.append(item)
+    print(f'{game.investigator.name} used the {item.name} to '\
           f'{item.effect.lower()}.')
-    return investigator
+    return game
 
 
 # I think this should be refactored into two functions, 
 # one a method of the Task class.
-def assign_die_to_task(investigator, task): #'DicePool','Task':
+def assign_die_to_task(game, task): #'DicePool','Task':
     """
     Assigns single die from dice pool to task. Gets index of die from user and 
     assigns it, if possible. If a pass is submitted, pass_move is called. This 
     pops a die from the dice pool and rerolls the remaining dice.
     """
-    report_dice_n_task(investigator, task)
+    report_dice_n_task(game, task)
     # would a get die function be better?, I guess decoupling the dice pool and
     # the task would mean that you wouldn't see what the task is anymore...
-    index = get_selection(len(investigator),"a die to assign to this task", 
+    index = get_selection(game.num_dice,"a die to assign to this task", 
                           {'pass','item'})
     if index == "pass":
-        investigator.pass_move()
-        return investigator, task
+        game.pass_move()
+        return game, task
     elif index == "item":
-        return use_item_procedure(investigator), task
-    die = investigator.dice_pool[index]
+        return use_item_procedure(game), task
+    die = game.dice_pool[index]
     if die in task:
         task.assign_die(die)
-        investigator.dice_pool.pop(index)
+        game.dice_pool.pop(index)
         pause()
     else:
         print(f"{str(die)} is not a valid choice for {task}.")
-    return investigator, task
+    return game, task
 
 
-def assign_dice_to_task(investigator, task):
+def assign_dice_to_task(game, task):
     """
     Assigns dice from dice pool to a task until dice_pool is empty or the task
     is complete. Then returns the task and remaining dice.
     """
-    investigator, task = assign_die_to_task(investigator, task)
-    while not task.complete and len(investigator) > 0:
+    game, task = assign_die_to_task(game, task)
+    while not task.complete and game.num_dice > 0:
         # should this catch be at the beginning?
-        investigator, task = assign_die_to_task(investigator, task)
-    return investigator, task
+        game, task = assign_die_to_task(game, task)
+    return game, task
         
-def attempt_task(investigator, task):
+def attempt_task(game, task):
     '''
     Attempts to complete task by assigning dice, doing passing (lose die and reroll), 
     and potentially suffering a penalty. Returns investigator and task if dice_pool is 
     empty, or task is complete.
     '''
-    task.suffer_penalty(investigator)
-    investigator, task = assign_dice_to_task(investigator, task)
-    while not task.complete and len(investigator) > 0:
-        investigator, task = assign_dice_to_task(investigator, task)
+    task.suffer_penalty(game.investigator)
+    game, task = assign_dice_to_task(game, task)
+    while not task.complete and game.num_dice > 0:
+        game, task = assign_dice_to_task(game, task)
     if task.complete:
         print('You have completed this task!')
-        investigator.roll()
-        return investigator, task
+        game.dice_pool.roll()
+        return game, task
     print("You are out of dice.")
-    return investigator, task
+    return game, task
 
-def attempt_adventure(investigator:'Investigator',adventure:'Adventure') -> str:
+def attempt_adventure(game:'Game',adventure:'Adventure') -> str:
     # do we roll here? I think so.
-    investigator.roll()
+    game.dice_pool.roll()
     #print(dice_pool)
     #for task in adventure:
      #   print(task)
     #I feel like I don't really need these conditions here
-    while not adventure.complete and len(investigator) > 0:
-        report_options(investigator, adventure)
+    while not adventure.complete and game.num_dice > 0:
+        report_options(game, adventure)
         index = get_selection(len(adventure.tasks),"a task to attempt",{'pass','item'})
         # Is this technically in the spirit of the game?
         if index == 'pass':
-            investigator.pass_move()
+            game.pass_move()
             continue
         elif index == "item":
-            investigator = use_item_procedure(investigator)
+            game = use_item_procedure(game)
             continue
         task = adventure[index]
         # should this part of the validation be done elsewhere?
-        if task.valid(investigator.dice_pool):
-            investigator, task = attempt_task(investigator, task)
+        if task.valid(game.dice_pool):
+            game, task = attempt_task(game, task)
             # should I pop the task here if it is complete?
             # selecting the same task gives a free reroll.
         else:
@@ -216,7 +197,7 @@ def attempt_adventure(investigator:'Investigator',adventure:'Adventure') -> str:
             print(f"You have completed {adventure.name}!")
             print(f"You receive {print_dict(12, 3, adventure.reward)}")
             return adventure.reward, adventure
-    elif len(investigator) == 0:
+    elif game.num_dice == 0:
         print(f"You have failed, you suffer the penalty of "\
               f"{print_dict(43, 2, adventure.penalty)}.")
         return adventure.penalty, adventure
@@ -254,8 +235,6 @@ def start_game(start_time=0):
     # main_gameplay_loop(game)
     return game
 
-def select_adventure(game):
-    return game.current_adventures.pop(0)
 
 def test_game(goo_index:int = 0,inv_index: int=0):
     game_data = GameSelection()
@@ -274,11 +253,11 @@ def main_gameplay_loop(game) -> None:
     # this is all meta code essentially
     end_condition = False
     while not end_condition:
-        adventure = select_adventure(game)
+        adventure = game.adventure_deck.pop(0)
         # print("card selected")
         print(adventure)
-        outcomes, adventure = attempt_adventure(game.investigator, adventure)
-        game.discard_completed_adventure(adventure)
+        outcomes, adventure = attempt_adventure(game, adventure)
+        game.discard_adventure(adventure)
         # print(f"{outcomes} received from card")
         apply_outcomes(outcomes, game)
         pause()

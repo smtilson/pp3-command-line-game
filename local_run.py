@@ -79,16 +79,7 @@ def introduction() -> None:
     dice_text = [dice, losing_dice]
     return more_details, dice_text
 
-print('wakka wakka')
-game_data = db.GameSelection()
-great_old_one = game_data.great_old_ones[0]
-start_time = 0
-for index, inv in enumerate(game_data.investigators):
-    game = gp.Game('asd',inv,great_old_one,game_data.adventure_deck,
-                game_data.item_deck)
-    print(f"Trying to load items for {inv.name}.")
-    print([item.name for item in inv.items])
-    input()
-# run.main_gameplay_loop(game)
-# game = run.test_game()'''
+game = run.test_game()
+run.main_gameplay_loop(game)
+
 
