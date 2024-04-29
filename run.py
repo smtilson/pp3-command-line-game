@@ -246,14 +246,15 @@ def start_game(start_time=0):
 def select_adventure(game):
     return game.current_adventures.pop(0)
 
-def test_gameplay():
+def test_game():
     game_data = GameSelection()
     great_old_one = game_data.great_old_ones[0]
     investigator = game_data.investigators[0]
     start_time = 0
-    game = Game(investigator,great_old_one,start_time,game_data.adventure_deck,
+    game = Game('asd',investigator,great_old_one,game_data.adventure_deck,
                 game_data.item_deck)
-    main_gameplay_loop(game)
+    return game
+    # main_gameplay_loop(game)
 
 def main_gameplay_loop(game) -> None:
     """

@@ -2,6 +2,7 @@
 from random import choice, shuffle
 from typing import List, Optional, Tuple
 import datetime
+from utilities import print_dict
 
 
 # add some validation to this class
@@ -367,20 +368,18 @@ def gain_clue(num:int, game:'Game') -> None:
     if num > 0:
         for _ in range(num):
             game.draw_item('Clue')
-            print(f"You got the {game.investigator.items[-1].name}")
+            print(f"You got a Clue.")
     else:
-        # while loop is unnecessary since there is only a -1 clue penalty
-        # while num < 0:
         for item in game.investigator.items:
             if item.item_type == "Clue":
                 game.investigator.items.remove(item)
-                # num += 1
-                # break
+                print("You lost a Clue.")
+                break
     
 def gain_spell(num:int, game:'Game') -> None:
     for _ in range(num):
-        spell = Item("Spell", "Spell", "Gain a wild die")
-        game.investigator.items.append(spell)
+            game.draw_item('Spell')
+            print(f"You got a Spell.")
 
 OUTCOMES = {"Elder Sign": gain_elder_sign,
             "Sanity": change_sanity,
@@ -493,11 +492,12 @@ class Adventure:
         pass
 
     def __str__(self):
-        string = f"name: {self.name}\n"
-        for task in self.tasks:
-            string += f"task: {task.pattern}\n"
-        string += f"reward: {self.reward}\n"
-        string += f"penalty: {self.penalty}\n"
+        string = f"{self.name}\n"
+        string += self.flavor_text
+        for index, task in enumerate(self.tasks):
+            string += f"Task {index}: {str(task)}\n"
+        string += f"Reward:  {print_dict(9, self.reward)}\n"
+        string += f"Penalty: {print_dict(9, self.penalty)}\n"
         return string
 
     def __iter__(self):
@@ -540,13 +540,13 @@ class Adventure:
         
 # add color for this and then change the repn methodto show color and die face
 class Die:
-    SYMBOLS = {'1 Investigate ','2 Investigate ','3 Investigate ','4 Investigate ',
+    SYMBOLS = {'1 Investigate','2 Investigate','3 Investigate','4 Investigate',
                '1 Lore','Lore 2', '1 Skulls', '1 Tentacles', '1 Wild'}
-    COLORS = {'green': ['1 Investigate ','2 Investigate ','3 Investigate ',
+    COLORS = {'green': ['1 Investigate','2 Investigate','3 Investigate',
                        '1 Lore', '1 Skulls', '1 Tentacles'], 
-              'yellow': ['1 Investigate ','2 Investigate ','3 Investigate ',
-                         '4 Investigate ','1 Lore', '1 Skulls'],
-              'red': ['1 Wild','2 Investigate ','3 Investigate ','4 Investigate ',
+              'yellow': ['1 Investigate','2 Investigate','3 Investigate',
+                         '4 Investigate','1 Lore', '1 Skulls'],
+              'red': ['1 Wild','2 Investigate','3 Investigate','4 Investigate',
                       '1 Lore', '1 Skulls'],
               'spell': ['1 Wild' for _ in range(6)]}
     def __init__(self, color, *faces:str)-> None:

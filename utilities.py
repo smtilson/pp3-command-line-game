@@ -36,3 +36,17 @@ def ending_the_fix(string: str) -> str:
     if string.endswith(', The'):
         return 'The ' + string[:-5]
     return string
+
+
+def print_dict(length, sample_dict: dict) -> str:
+    string = ''
+    count = 0
+    for key, value in sample_dict.items():
+        if count == 2:
+            count = 0
+            # new line with proper alignment
+            string += '\n' + length*' '
+        string += f"{key}: {value},"
+        count += 1
+    return string
+
