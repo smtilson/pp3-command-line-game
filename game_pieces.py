@@ -142,9 +142,16 @@ class Game:
     
     # should this be __str__?
     def status(self) -> str:
-        print(f"{self.great_old_one.name} only needs {-self.current_doom + self.doom_max} more Doom to awaken.")
-        print(f"You only need {-self.current_elder_signs + self.elder_sign_max} more Elder Signs.")
-        print(f"The time is {self.clock.time} o'clock.")
+        if not self.great_old_one_summoned:
+            print(f"{self.great_old_one.name} only needs {-self.current_doom + self.doom_max} more Doom to awaken.")
+        # else:    
+            # print(f"The terrifying {self.great_old_one.name} has been "\
+            #       "summoned and devours the world.")
+        if not self.great_old_one_banished:
+            print(f"You only need {-self.current_elder_signs + self.elder_sign_max} more Elder Signs.")
+        # else:    
+            # print(f"The terrifying {self.great_old_one.name} has been "\
+            #       "banished. The world is forever in your debt.")
 
     def end_turn(self) -> str:
         self.clock.advance()
@@ -163,8 +170,6 @@ class Game:
     @property
     def great_old_one_summoned(self) -> bool:
         if self.current_doom >= self.doom_max:
-            #print(f"The terrifying {self.great_old_one.name} has been "\
-            #      "summoned and devours the world.")
             return True
         else:
             #print(f"Only {self.doom_max-self.current_doom} more Doom is needed to "\
@@ -176,8 +181,6 @@ class Game:
     @property
     def great_old_one_banished(self) -> bool:
         if self.current_elder_signs >= self.elder_sign_max:
-            #print(f"The terrifying {self.great_old_one.name} has been "\
-            #      "banished. The world is forever in your debt.")
             return True
         else:
             #print(f"Only {self.elder_sign_max-self.current_elder_signs} more Elder "\
