@@ -79,7 +79,8 @@ def introduction() -> None:
     dice_text = [dice]
     return more_details, dice_text
 
-game = run.test_game()
+run.introduction()
+game = run.start_game()
 run.main_gameplay_loop(game)
 
 

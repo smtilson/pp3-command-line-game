@@ -78,9 +78,7 @@ class Investigator:
 
     # this is broken now because item.use needs to accept a game.
     # moving the item effect dictionary would help that, I think.
-    def use_item(self, index) -> None:
-        item = self.items.pop(index)
-        item.use(self)
+    
 
 class Game:
     def __init__(self, player:str, investigator:'Investigator', 
@@ -179,7 +177,7 @@ class Game:
     def shuffle(self) -> None:
         shuffle(self.adventure_deck)
         shuffle(self.item_deck)
-    
+
     def draw_item(self, item_type) -> None:
         item_type = norm(item_type)
         if "clue" in item_type:
@@ -251,32 +249,32 @@ class Clock:
             self.day += 1
         #print(f'The time is now {self.time}.')
             
-def add_yellow(investigator:'Investigator') -> None:
+def add_yellow(game: 'Game') -> None:
     game.dice_pool.add_die('yellow')
 
-def add_red(investigator:'Investigator') -> None:
+def add_red(game: 'Game') -> None:
     game.dice_pool.add_die('red')
 
-def add_yellow_n_red(investigator:'Investigator') -> None:
+def add_yellow_n_red(game:'Game') -> None:
     game.dice_pool.add_die('yellow')
     game.dice_pool.add_die('red')
 
-def gain_health(investigator:'Investigator') -> None:
-    investigator.health += 1
+def gain_health(game:'Game') -> None:
+    game.health += 1
 
-def gain_sanity(investigator:'Investigator') -> None:
-    investigator.sanity += 1
+def gain_sanity(game:'Game') -> None:
+    game.investigator.sanity += 1
 
-def add_spell_die(investigator:'Investigator') -> None:
+def add_spell_die(game:'Game') -> None:
     game.dice_pool.add_die('spell')
 
-def reroll_dice(investigator:'Investigator') -> None:
+def reroll_dice(game:'game') -> None:
     #print("Using a Clue to reroll dice.")
-    investigator.roll()
+    game.dice_pool.roll()
 
-def restore(investigator:'Investigator') -> None:
-    investigator.health = investigator.starting_health
-    investigator.sanity = investigator.starting_sanity
+def restore(game: 'Game') -> None:
+    game.investigator.health = game.investigator.starting_health
+    game.investigator.sanity = game.investigator.starting_sanity
 
 # a clue behaves like an item but it isn't in the item deck.
 # or just make clue a item_type
@@ -305,10 +303,10 @@ class Item:
     def white_space(self) -> str:
         return (19-len(self.name)+3)*' '
           
-
-    def use(self, investigator):
-        self.ITEM_EFFECT[self.effect](investigator)
-        investigator.items.remove(self)
+    def use(self, game):
+        self.ITEM_EFFECT[self.effect](game)
+        game.investigator.items.remove(self)
+        game.item_discard.append(self)
         
         #This is how it will be after the refactor
         #self.ITEM_EFFECT[self.effect](game.investigator)
@@ -651,7 +649,3 @@ class DicePool:
         for color in self.defn.keys():
             for _ in range(self.defn[color]):
                 self.dice.append(Die.create_die(color))
-    
-    # adding red dice
-    # this requires figuring out wild first.
-print("ziggurat")

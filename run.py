@@ -104,8 +104,8 @@ def use_item_procedure(game: 'Game') -> 'Game':
     if index == 'none':
         return game
     item = items[index]
-    item.use(game.investigator)
-    game.item_discard.append(item)
+    item.use(game)
+    #game.item_discard.append(item)
     print(f'{game.investigator.name} used the {item.name} to '\
           f'{item.effect.lower()}.')
     return game
@@ -283,6 +283,6 @@ def main():
     game = start_game()
     main_gameplay_loop(game)
 
-# current_progress
+
 if __name__ == "__main__":
     main()
