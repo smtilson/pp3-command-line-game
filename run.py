@@ -33,9 +33,9 @@ def introduction() -> None:
     "\n         1 Lore, 1 Skulls"\
     "\nRed =    2 Investigate, 3 Investigate, 4 Investigate,"\
     "\n         1 Lore, 1 Skulls, 1 Wild"\
-    "\nSpell =  All 1 Wild"\
+    "\nSpell =  All 1 Wild\n"\
     "When you lose a die, you first lose Greens, then Yellows, then Reds, and"\
-    " then Spells. At the end of each turn, your dice pool is reset to 6 "\
+    " then \nSpells. At the end of each turn, your dice pool is reset to 6 "\
     "Green dice."
     difficulty = "For an easier time, we suggest fighting the Baby Dragon "\
     "with Superman."
@@ -54,8 +54,8 @@ def introduction() -> None:
     "this project at, it contains examples of game play. It may also be "\
     'beneficial to view game play or a "how to play" video for Elder Sign on'\
     " YouTube."
-    more_details1 = [basic_idea2, adventures1]
-    dice_details = [dice, losing_dice]
+    more_details1 = [adventures1, basic_idea2]
+    dice_details = [dice]
                     # difficulty, add this once there is a select difficulty 
                     # function in place
     more_details2 = [more_help]
@@ -71,7 +71,7 @@ def introduction() -> None:
             pause()
         for msg in dice_details:
             print(msg)
-        for msg in more_details1:
+        for msg in more_details2:
             print(fit_to_screen(msg))
             pause()
 

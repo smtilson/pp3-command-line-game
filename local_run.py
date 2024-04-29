@@ -76,7 +76,7 @@ def introduction() -> None:
                     # difficulty, add this once there is a select difficulty 
                     # function in place
                     items, future, more_help]
-    dice_text = [dice, losing_dice]
+    dice_text = [dice]
     return more_details, dice_text
 
 game = run.test_game()

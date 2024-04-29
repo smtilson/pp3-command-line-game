@@ -52,7 +52,6 @@ class Investigator:
         self.starting_health = health
         self.health = health
         self.items = items
-        #self.dice_pool = DicePool()
 
     def __str__(self):
         return f"{self.name}: {self.sanity} Sanity, {self.health} Health"
@@ -105,7 +104,7 @@ class Game:
         self.item_discard = []
         self.shuffle()
         self.starting_items()
-        self.dice_pool = investigator.dice_pool
+        self.dice_pool = DicePool()
     
     @property
     def num_dice(self) -> int:
@@ -117,6 +116,7 @@ class Game:
             print(f"{self.great_old_one.name} only needs {-self.current_doom + self.doom_max} more Doom to awaken.")
         if not self.great_old_one_banished:
             print(f"You only need {-self.current_elder_signs + self.elder_sign_max} more Elder Signs.")
+        print(self.investigator)
 
     def end_turn(self) -> str:
         self.clock.advance()
@@ -226,7 +226,7 @@ class Game:
         print("Sacrificing a die.")
         self.dice_pool.pop()
         print("Rerolling your remaining dice.")
-        self.roll()
+        self.dice_pool.roll()
         
         
 class Clock:
