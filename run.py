@@ -40,12 +40,12 @@ def introduction() -> None:
     "Health or Sanity, or the Great Old One gaining\nadditional Doom. Rewards"\
     " can be gaining an Item, Health, or Sanity."
     dice ="As the game revolves around rolling dice, here are the different "\
-    "dice that \nare in the game:\nGreen =  Investigate: 1, Investigate: 2, "\
-    "Investigate: 3, \n         Lore: 1, Skulls: 1, Tentacles: 1\nYellow = "\
-    "Investigate: 1, Investigate: 2, Investigate: 3, Investigate: 4,\n     "\
-    "    Lore: 1, Skulls: 1\nRed =    Investigate: 2, Investigate: 3, "\
-    "Investigate: 4,\n         Lore: 1, Skulls: 1, Wild: 1\nSpell =  All "\
-    "Wild: 1"
+    "dice that \nare in the game:\nGreen =  1 Investigate, 2 Investigate, "\
+    "3 Investigate, \n         1 Lore, 1 Skulls, 1 Tentacles\nYellow = "\
+    "1 Investigate, 2 Investigate, 3 Investigate, 4 Investigate,\n     "\
+    "    1 Lore, 1 Skulls\nRed =    2 Investigate, 3 Investigate, "\
+    "4 Investigate,\n         1 Lore, 1 Skulls, 1 Wild\nSpell =  All "\
+    "1 Wild"
     losing_dice = "When you lose a die by passing, you will lose the earliest"\
     "die in your pool\naccording to the ordering:\n       Green < Yellow < "\
     "Red < Spell"
@@ -72,9 +72,11 @@ def introduction() -> None:
     'beneficial to view game play\nor a "how to play" video for Elder Sign on'\
     " YouTube."
     more_details = [basic_idea2, adventures1, adventures2, dice, losing_dice, 
-                    difficulty, items, future, more_help]
+                    # difficulty, add this once there is a select difficulty 
+                    # function in place
+                    items, future, more_help]
     print(basic_idea1)
-    pause()
+    print()
     print(tldr)
     more_info = input("Would you like more details about the game? Y/n\n")
     if more_info.lower() == 'y' or more_info.lower() =='yes':
@@ -220,13 +222,16 @@ def start_game(start_time=0):
     Selects game state by getting input from user.
     Begins game by dealing task cards and initializing main gameplay loop.
     """
-    
     name = input('Please enter your name.\n')
     while name.strip() == '':
         name = input('Please enter something other than blank space.\n')
     game_data = GameSelection()
     great_old_one = game_data.select_great_old_one()
+    print(f"You have selected {great_old_one.name}.")
+    print(f"Good luck getting {great_old_one.elder_signs} Elder Signs before "\
+          f"they collect {great_old_one.doom} Doom!")
     investigator = game_data.select_investigator()
+    print(f"You have selected {investigator.name} {investigator.profession}.")
     #set difficulty function.
     increment = 12
     game = Game(name,investigator,great_old_one,game_data.adventure_deck,
@@ -282,9 +287,11 @@ def main_gameplay_loop(game) -> None:
               f"humanity is at hand.")
     record(game)
 
+def main():
+    introduction()
+    game = start_game()
+    main_gameplay_loop(game)
 
 # current_progress
-
-introduction()
-game = start_game()
-main_gameplay_loop(game)
+if __name__ == "__main__":
+    main()

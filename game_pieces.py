@@ -19,23 +19,25 @@ class GreatOldOne:
 
     #should this be a display mehtod instead?
     def __str__(self):
-        msg = f"{self.name}: {self.doom} Doom to Awaken\n"
-        msg += (len(self.name)+2-self.extra)*' '+f'{self.elder_signs} Elder '\
-               'Signs to Banish'
+        msg = f"{self.name}:   {self.doom} Doom to Awaken\n"
+        white_space = (len(self.name)+4+self.extra[1]-self.extra[0])*' '
+        msg += white_space + f'{self.elder_signs} Elder Signs to Banish'
         return msg
     
     @property
     def extra(self):
         doom = str(self.doom)
         elder_signs = str(self.elder_signs)
-        length = len(elder_signs)-len(doom)
-        return length
+        length_doom = 2 - len(doom)
+        length_elder = 2 - len(elder_signs)
+        return length_doom, length_elder
 
     def selection(self):
         lines = str(self).split('\n')
-        white_space = (14-len(self.name)+self.extra)*' '
+        factor = len(self.name)-self.extra[0]+(len(str(self.index))-1)
+        white_space = (14 - factor)*' '
         print(str(self.index)+'. '+lines[0].replace(': ',': '+white_space))
-        print(19*' '+lines[1].strip())
+        print((21+self.extra[1])*' '+lines[1].strip())
     
 class Investigator:
     def __init__(self, index:str, name:str, profession: str, sanity: int, 
@@ -65,7 +67,10 @@ class Investigator:
 
     def selection(self):
         white_space = (18-len(self.name)-len(str(self.index)))*' '
-        print(str(self.index)+'. '+str(self).replace(': ',': '+white_space))
+        line = str(self.index)+'. '+str(self).replace(': ',': '+white_space)
+        #self.items.append('Clue')
+        line += ';     Items: ' + ', '.join(self.items).title()
+        print(line)
     
     # Loss condition
     @property
@@ -239,7 +244,9 @@ class Game:
             for _ in range(int(num)):
                 self.draw_item(item_type)
         self.draw_item("Clue")
-        print(self.investigator.items)
+        print(f"{self.investigator.name} starts with:")
+        item_list = [item.name for item in self.investigator.items]
+        print(', '.join(item_list))
         
         
         
@@ -307,8 +314,13 @@ class Item:
         self.effect = effect
         self.item_type = item_type
     
-    def __str__(self) -> str:
-        return f"The {self.name} is a {self.item_type} item.\nEffect: {self.effect}"
+    def __str__(self):
+        description = f"The {self.name} is a {self.item_type} item."\
+                      f"\nEffect: {self.effect}"
+        return description
+    
+    def __repr__(self):
+        return self.name + ': ' + self.item_type + ' item' + '\n' + self.effect
 
     @property
     def white_space(self) -> str:
@@ -528,15 +540,15 @@ class Adventure:
         
 # add color for this and then change the repn methodto show color and die face
 class Die:
-    SYMBOLS = {'Investigate 1','Investigate 2','Investigate 3','Investigate 4',
-               'Lore 1','Lore 2', 'Skulls 1', 'Tentacles 1', 'Wild 1'}
-    COLORS = {'green': ['Investigate 1','Investigate 2','Investigate 3',
-                       'Lore 1', 'Skulls 1', 'Tentacles 1'], 
-              'yellow': ['Investigate 1','Investigate 2','Investigate 3',
-                         'Investigate 4','Lore 1', 'Skulls 1'],
-              'red': ['Wild 1','Investigate 2','Investigate 3','Investigate 4',
-                      'Lore 1', 'Skulls 1'],
-              'spell': ['Wild 1' for _ in range(6)]}
+    SYMBOLS = {'1 Investigate ','2 Investigate ','3 Investigate ','4 Investigate ',
+               '1 Lore','Lore 2', '1 Skulls', '1 Tentacles', '1 Wild'}
+    COLORS = {'green': ['1 Investigate ','2 Investigate ','3 Investigate ',
+                       '1 Lore', '1 Skulls', '1 Tentacles'], 
+              'yellow': ['1 Investigate ','2 Investigate ','3 Investigate ',
+                         '4 Investigate ','1 Lore', '1 Skulls'],
+              'red': ['1 Wild','2 Investigate ','3 Investigate ','4 Investigate ',
+                      '1 Lore', '1 Skulls'],
+              'spell': ['1 Wild' for _ in range(6)]}
     def __init__(self, color, *faces:str)-> None:
         # this should be put into a validate color method
         self.color = color 
@@ -572,7 +584,7 @@ class Die:
         # should this automatically roll the die if it hasn't been rolled yet?
         if not self.face:
             raise ValueError("This die has not yet been rolled.")
-        symbol, number = self.face.split(' ')
+        number, symbol = self.face.split(' ')
         number = int(number)
         return number, symbol
 
