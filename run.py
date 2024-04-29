@@ -10,37 +10,37 @@ def pause() -> None:
 
 def introduction() -> None:
     basic_idea1 = 'Welcome to "Chtulu Schmtulu," a dice rolling game heavily '\
-    "based on Elder Sign\nfrom Fantasy Flight Games. In each game, you "\
-    "attempt to Banish a Great Old\nOne before they are Summoned or before "\
-    "you are Defeated. After selecting a\nGreat Old One to battle against, "\
-    "you will select an Investigator to play as.\nThe Great Old Ones are "\
-    "Summoned when they gain enough Doom. They are Banished\nwhen you collect"\
+    "based on Elder Sign from Fantasy Flight Games. In each game, you "\
+    "attempt to Banish a Great Old One before they are Summoned or before "\
+    "you are Defeated. After selecting a Great Old One to battle against, "\
+    "you will select an Investigator to play as. The Great Old Ones are "\
+    "Summoned when they gain enough Doom. They are Banished when you collect"\
     " enough Elder Signs."
     tldr = "TL;DR: Go to Adventures, assign dice to complete tasks. Collect "\
-    "Elder Signs\nbefore you are Defeated or the Great Old One gains enough "\
+    "Elder Signs before you are Defeated or the Great Old One gains enough "\
     "Doom."
-    basic_idea2 = "You will collect Elder Signs by completing Adventures. Doom"\
-    " is gained when the\nclock strikes midnight (the clock advances after "\
-    "each of your turns) as well\nas through game effects. If your "\
-    "Investigator has 0 Health or 0 Sanity, then\nyou are defeated. If you "\
-    "are defeated or the Great Old One is Summoned, then\nyou have lost. If "\
-    "you collect enough Elder Signs to Banish the Great Old One,\nthen you "\
+    basic_idea2 = "You will collect Elder Signs by completing Adventures. "\
+    "Doom is gained when the clock strikes midnight (the clock advances after"\
+    " each of your turns) as well as through game effects. If your "\
+    "Investigator has 0 Health or 0 Sanity, then you are defeated. If you "\
+    "are defeated or the Great Old One is Summoned, then you have lost. If "\
+    "you collect enough Elder Signs to Banish the Great Old One, then you "\
     "have won!"
-    adventures1 = "Each turn you will go to a Adventure. To complete a Adventure"\
-    " you must complete\neach task at the Adventure. A task is completed by "\
-    "assigning matching dice to\nthe task in order to fulfill the "\
-    "requirements. Some tasks also have you suffer\na penalty by losing "\
-    "Health or Sanity. If none of the symbols on your dice\nmatch a symbol on"\
+    adventures1 = "Each turn you will go to a Adventure. To complete a "\
+    "Adventure you must complete each task at the Adventure. A task is "\
+    "completed by assigning matching dice to the task in order to fulfill the"\
+    " requirements. Some tasks also have you suffer a penalty by losing "\
+    "Health or Sanity. If none of the symbols on your dice match a symbol on"\
     " the task, you may do a Pass."
     adventures2 = "A Pass rerolls all of your dice at the cost of forfeiting "\
-    "one of them. You\nmay also use an Item (the Item selection menu also "\
-    "contains a description of\nwhat each Item does). If you run out of dice,"\
-    " you fail the Adventure and suffer\nassociated Penalty. If you complete a"\
-    " Adventure, you receive the associated\nReward. Penalties can be losing "\
-    "Health or Sanity, or the Great Old One gaining\nadditional Doom. Rewards"\
+    "one of them. You may also use an Item (the Item selection menu also "\
+    "contains a description of what each Item does). If you run out of dice,"\
+    " you fail the Adventure and suffer associated Penalty. If you complete a"\
+    " Adventure, you receive the associated Reward. Penalties can be losing "\
+    "Health or Sanity, or the Great Old One gaining additional Doom. Rewards"\
     " can be gaining an Item, Health, or Sanity."
     dice ="As the game revolves around rolling dice, here are the different "\
-    "dice that \nare in the game:\nGreen =  1 Investigate, 2 Investigate, "\
+    "dice that\nare in the game:\nGreen =  1 Investigate, 2 Investigate, "\
     "3 Investigate, \n         1 Lore, 1 Skulls, 1 Tentacles\nYellow = "\
     "1 Investigate, 2 Investigate, 3 Investigate, 4 Investigate,\n     "\
     "    1 Lore, 1 Skulls\nRed =    2 Investigate, 3 Investigate, "\
@@ -50,39 +50,46 @@ def introduction() -> None:
     "die in your pool\naccording to the ordering:\n       Green < Yellow < "\
     "Red < Spell"
     difficulty = "Difficulty can be adjusted through the setting of two "\
-    "different parameters.\nIncrement sets how much the clock advances after "\
-    "each of your turns. The\nstandard setting is 6 hours, so Doom "\
-    "accumulates every 4 turns. The second is\nthe starting dice pool. "\
+    "different parameters. Increment sets how much the clock advances after "\
+    "each of your turns. The standard setting is 6 hours, so Doom "\
+    "accumulates every 4 turns. The second is the starting dice pool. "\
     "Standard (which is quite a challenge) is 6 Green dice."
     items = "Each Investigator begins the game with different starting Items."\
-    " Items\ncome in 4 varieties: Common, Unique, Clue, and Spell. Common "\
-    "Items will\nusually give you a yellow die, Unique Items will usually "\
-    "give you a red die (for\nthat Adventure). Clues allow you to reroll your "\
-    "dice without penalty. Spells\nadd a Wild symbol to your dice pool. You "\
-    "will also gain Items by\ncompleting Adventures."
+    " Items come in 4 varieties: Common, Unique, Clue, and Spell. Common "\
+    "Items will usually give you a yellow die, Unique Items will usually "\
+    "give you a red die (for that Adventure). Clues allow you to reroll your "\
+    "dice without penalty. Spells add a Wild symbol to your dice pool. You "\
+    "will also gain Items by completing Adventures."
     future = "In the future, we would like to implement more of the game, "\
-    "such as abilities\nof Investigators as well as Great Old Ones. This is a"\
-    " bit of a task though as\neach ability requires a separate function that"\
-    " must be implemented which may\ntake effect at different points in game "\
-    "play. There are other notable aspects\nof game play which we would also "\
-    "like to implement in the future, such as\nfocusing, multiplayer mode, "\
+    "such as abilities of Investigators as well as Great Old Ones. This is a"\
+    " bit of a task though as each ability requires a separate function that"\
+    " must be implemented which may take effect at different points in game "\
+    "play. There are other notable aspects of game play which we would also "\
+    "like to implement in the future, such as focusing, multiplayer mode, "\
     "and Monsters."
     more_help = "If you have further questions, please see the ReadMe for "\
-    "this project at, it\ncontains examples of game play. It may also be "\
-    'beneficial to view game play\nor a "how to play" video for Elder Sign on'\
+    "this project at, it contains examples of game play. It may also be "\
+    'beneficial to view game play or a "how to play" video for Elder Sign on'\
     " YouTube."
-    more_details = [basic_idea2, adventures1, adventures2, dice, losing_dice, 
+    more_details1 = [basic_idea2, adventures1, adventures2]
+    dice_details = [dice, losing_dice]
                     # difficulty, add this once there is a select difficulty 
                     # function in place
-                    items, future, more_help]
-    print(basic_idea1)
+    more_details2 = [items, future, more_help]
+    
+    print(fit_to_screen(basic_idea1))
     print()
-    print(tldr)
+    print(fit_to_screen(tldr))
     more_info = input("Would you like more details about the game? Y/n\n")
     if more_info.lower() == 'y' or more_info.lower() =='yes':
         print()
-        for msg in more_details:
+        for msg in more_details1:
+            print(fit_to_screen(msg))
+            pause()
+        for msg in dice_details:
             print(msg)
+        for msg in more_details1:
+            print(fit_to_screen(msg))
             pause()
 
     else:
@@ -95,13 +102,13 @@ def introduction() -> None:
 def report_options(investigator, adventure):
     print(investigator.dice_pool)
     for index, task in enumerate(adventure):
-        print(f"{index+1} = {str(task)}")
+        print(f"Task {index+1} = {str(task)}")
 
 
 # this should be made to be nicer
 def report_dice_n_task(investigator, task):
     print(investigator.dice_pool)
-    print(task)    
+    print(f"Remaining: {str(task)}")    
 
 
 # needs a better name
@@ -204,16 +211,17 @@ def attempt_adventure(investigator:'Investigator',adventure:'Adventure') -> str:
             continue
     if adventure.complete:
             print(f"You have completed {adventure.name}!")
-            print(f"You receive {adventure.reward}")
+            print(f"You receive {print_dict(12, 3, adventure.reward)}")
             return adventure.reward, adventure
     elif len(investigator) == 0:
-        print(f"You have failed, you suffer the penalty of {adventure.penalty}.")
+        print(f"You have failed, you suffer the penalty of "\
+              f"{print_dict(43, 2, adventure.penalty)}.")
         return adventure.penalty, adventure
         
 
 def apply_outcomes(outcomes, game):
     for key, value in outcomes.items():
-        print(f"Applying outcome {key}: {value}.")
+        # print(f"Applying outcome {key}: {value}.")
         OUTCOMES[key](value, game)
     
 def start_game(start_time=0):
@@ -264,11 +272,11 @@ def main_gameplay_loop(game) -> None:
     end_condition = False
     while not end_condition:
         adventure = select_adventure(game)
-        print("card selected")
+        # print("card selected")
         print(adventure)
         outcomes, adventure = attempt_adventure(game.investigator, adventure)
         game.discard_completed_adventure(adventure)
-        print(f"{outcomes} received from card")
+        # print(f"{outcomes} received from card")
         apply_outcomes(outcomes, game)
         pause()
         print("End of turn.")

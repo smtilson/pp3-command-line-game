@@ -2,7 +2,7 @@
 from random import choice, shuffle
 from typing import List, Optional, Tuple
 import datetime
-from utilities import print_dict
+from utilities import *
 
 
 # add some validation to this class
@@ -247,7 +247,9 @@ class Game:
         self.draw_item("Clue")
         print(f"{self.investigator.name} starts with:")
         item_list = [item.name for item in self.investigator.items]
-        print(', '.join(item_list))
+        string = ', '.join(item_list)
+        print(string)
+        #print(fit_to_screen(string, ', '))
         
         
         
@@ -414,7 +416,7 @@ class Task:
     def __str__(self):
         if self.complete:
             return "This task is complete."
-        return f"Remaining: {self.remaining}"
+        return print_dict(0, 3, self.remaining)
     
     #should this be different?
     def __repr__(self):
@@ -482,7 +484,7 @@ class Adventure:
     # reward/penalty are currently strings, but should be changed to something else.
     def __init__(self, name: str, flavor_text:str, tasks: List['Task'], reward: str, penalty: str) -> None:
         self.name = name
-        self.flavor_text = flavor_text
+        self.flavor_text = fit_to_screen(flavor_text)
         self.tasks = tasks
         self.reward = reward
         self.penalty = penalty
@@ -492,12 +494,12 @@ class Adventure:
         pass
 
     def __str__(self):
-        string = f"{self.name}\n"
-        string += self.flavor_text
+        string = f"{self.name}\n\n"
+        string += self.flavor_text + "\n\n"
         for index, task in enumerate(self.tasks):
-            string += f"Task {index}: {str(task)}\n"
-        string += f"Reward:  {print_dict(9, self.reward)}\n"
-        string += f"Penalty: {print_dict(9, self.penalty)}\n"
+            string += f"Task {index + 1}: {str(task)}\n"
+        string += f"Reward:  {print_dict(9, 3, self.reward)}\n"
+        string += f"Penalty: {print_dict(9, 3, self.penalty)}\n"
         return string
 
     def __iter__(self):
@@ -620,10 +622,13 @@ class DicePool:
     def __str__(self) -> str:
         # something other than : and , should be used, things blend in
         self.dice.sort()
-        dice_strs = [f"{index+1} => {str(die)}" for index, die in enumerate(self.dice)]
+        dice_strs = [f"{index+1} --> {str(die)}" for index, die in 
+                     enumerate(self.dice)]
         first_half = dice_strs[:3]
         second_half = dice_strs[3:]
-        return 'Your roll: ' + '; '.join(first_half) + '\n' + 11*' ' + '; '.join(second_half) 
+        string =  'Roll: ' + ';   '.join(first_half) + '\n'\
+                  ' ' + 5*' ' + ';   '.join(second_half)
+        return string
 
     def __repr__(self) -> str:
         self.dice.sort()
