@@ -353,7 +353,9 @@ OUTCOMES = {"Elder Sign": gain_elder_sign,
             "Unique Item": draw_unique,
             "Common Item": draw_common,
             "Clue": gain_clue,
-            "Spell": gain_spell}
+            "Spell": gain_spell,
+            "Clues": gain_clue,
+            "Spells": gain_spell}
 
 class Task:
     TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 
@@ -362,7 +364,7 @@ class Task:
                    'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
                    'Sanity':'Sanity','Stamina':'Health', 'Doom':'Doom', 
                    'unique item': 'Unique', 'common item': 'Common', 
-                   'spell':'Spell'}
+                   'spell':'Spell', 'Spells':'Spells', 'Spell':'Spell'}
     def __init__(self, pattern:dict) -> None:
         #needs validation that pattern is acceptable
         self.pattern = pattern
