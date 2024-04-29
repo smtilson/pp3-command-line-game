@@ -502,11 +502,15 @@ class Adventure:
         
 # add color for this and then change the repn methodto show color and die face
 class Die:
-    SYMBOLS = {'Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1','Lore: 2', 'Skulls: 1', 'Tentacles: 1', 'Wild: 1'}
-    COLORS = {'green':['Investigate: 1','Investigate: 2','Investigate: 3','Lore: 1', 'Skulls: 1', 'Tentacles: 1'], 
-                'yellow':['Investigate: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skulls: 1'],
-                'red':['Wild: 1','Investigate: 2','Investigate: 3','Investigate: 4','Lore: 1', 'Skulls: 1'],
-                'spell':['Wild: 1' for _ in range(6)]}
+    SYMBOLS = {'Investigate 1','Investigate 2','Investigate 3','Investigate 4',
+               'Lore 1','Lore 2', 'Skulls 1', 'Tentacles 1', 'Wild 1'}
+    COLORS = {'green': ['Investigate 1','Investigate 2','Investigate 3',
+                       'Lore 1', 'Skulls 1', 'Tentacles 1'], 
+              'yellow': ['Investigate 1','Investigate 2','Investigate 3',
+                         'Investigate 4','Lore 1', 'Skulls 1'],
+              'red': ['Wild 1','Investigate 2','Investigate 3','Investigate 4',
+                      'Lore 1', 'Skulls 1'],
+              'spell': ['Wild 1' for _ in range(6)]}
     def __init__(self, color, *faces:str)-> None:
         # this should be put into a validate color method
         self.color = color 
@@ -542,7 +546,7 @@ class Die:
         # should this automatically roll the die if it hasn't been rolled yet?
         if not self.face:
             raise ValueError("This die has not yet been rolled.")
-        symbol, number = self.face.split(': ')
+        symbol, number = self.face.split(' ')
         number = int(number)
         return number, symbol
 
@@ -578,7 +582,7 @@ class DicePool:
     def __str__(self) -> str:
         # something other than : and , should be used, things blend in
         self.dice.sort()
-        dice_strs = [f"{index+1} = {str(die)}" for index, die in enumerate(self.dice)]
+        dice_strs = [f"{index+1} => {str(die)}" for index, die in enumerate(self.dice)]
         first_half = dice_strs[:3]
         second_half = dice_strs[3:]
         return 'Your roll: ' + '; '.join(first_half) + '\n' + 11*' ' + '; '.join(second_half) 

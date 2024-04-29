@@ -82,6 +82,7 @@ def introduction() -> None:
         for msg in more_details:
             print(msg)
             pause()
+
     else:
         print("Alright! Let's get started. That Great Old One isn't going to "\
               "banish itself.")
@@ -284,6 +285,6 @@ def main_gameplay_loop(game) -> None:
 
 # current_progress
 
-# introduction()
-# game = start_game()
-# main_gameplay_loop(game)
+introduction()
+game = start_game()
+main_gameplay_loop(game)
