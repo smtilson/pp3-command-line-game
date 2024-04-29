@@ -217,6 +217,14 @@ class Game:
         shuffle(self.item_deck)
     
     def draw_item(self, item_type) -> None:
+        if item_type == "Clue":
+            clue = Item("Clue", "Reroll all dice", "Clue")
+            self.investigator.items.append(clue)
+            return
+        elif item_type == "Spell":
+            spell = Item("Spell", "Gain a wild die", "Spell")
+            self.investigator.items.append(spell)
+            return
         for item in self.item_deck:
             if item.item_type == item_type:
                 break
@@ -230,6 +238,9 @@ class Game:
             num, item_type = term.split()
             for _ in range(int(num)):
                 self.draw_item(item_type)
+        self.draw_item("Clue")
+        print(self.investigator.items)
+        
         
         
 class Clock:
@@ -323,6 +334,11 @@ def change_health(num:int, game:'Game') -> None:
     game.investigator.health += num
     print(f"{game.investigator.name} now has {game.investigator.health} Health.")
 
+def gain_item(num: int, game: 'Game', item_type: str) -> None:
+    if num > 0:
+        for _ in range(num):
+            game.draw_item(item_type)
+
 def draw_unique(num:int, game:'Game') -> None:
     for _ in range(num):
         game.draw_item('Unique')
@@ -336,9 +352,18 @@ def draw_common(num:int, game:'Game') -> None:
     #game.investigator.list_items()
 
 def gain_clue(num:int, game:'Game') -> None:
-    for _ in range(num):
-        clue = Item("Clue", "Clue", "Reroll all dice")
-        game.investigator.items.append(clue)
+    if num > 0:
+        for _ in range(num):
+            game.draw_item('Clue')
+            print(f"You got the {game.investigator.items[-1].name}")
+    else:
+        # while loop is unnecessary since there is only a -1 clue penalty
+        # while num < 0:
+        for item in game.investigator.items:
+            if item.item_type == "Clue":
+                game.investigator.items.remove(item)
+                # num += 1
+                # break
     
 def gain_spell(num:int, game:'Game') -> None:
     for _ in range(num):
