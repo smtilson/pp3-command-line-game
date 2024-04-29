@@ -284,6 +284,6 @@ def main_gameplay_loop(game) -> None:
 
 # current_progress
 
-introduction()
-game = start_game()
-main_gameplay_loop(game)
+# introduction()
+# game = start_game()
+# main_gameplay_loop(game)

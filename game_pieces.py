@@ -579,7 +579,9 @@ class DicePool:
         # something other than : and , should be used, things blend in
         self.dice.sort()
         dice_strs = [f"{index+1} = {str(die)}" for index, die in enumerate(self.dice)]
-        return 'Your roll: '+'; '.join(dice_strs)
+        first_half = dice_strs[:3]
+        second_half = dice_strs[3:]
+        return 'Your roll: ' + '; '.join(first_half) + '\n' + 11*' ' + '; '.join(second_half) 
 
     def __repr__(self) -> str:
         self.dice.sort()
