@@ -157,7 +157,7 @@ def attempt_task(game, task):
     empty, or task is complete.
     '''
     task.suffer_penalty(game.investigator)
-    game, task = assign_dice_to_task(game, task)
+    # game, task = assign_dice_to_task(game, task)
     while not task.complete and game.num_dice > 0:
         game, task = assign_dice_to_task(game, task)
     if task.complete:
@@ -190,6 +190,9 @@ def attempt_adventure(game:'Game',adventure:'Adventure') -> str:
             game, task = attempt_task(game, task)
             # should I pop the task here if it is complete?
             # selecting the same task gives a free reroll.
+        elif task.complete:
+            print('This task is already complete.')
+            continue
         else:
             print("Your roll doesn't have any symbols for that task.")
             continue

@@ -482,7 +482,8 @@ class Adventure:
 
     def __str__(self):
         string = f"{self.name}\n\n"
-        string += self.flavor_text + "\n\n"
+        string += fit_to_screen("Flavor Text: " + self.flavor_text)
+        string += "\n\n"
         for index, task in enumerate(self.tasks):
             string += f"Task {index + 1}: {str(task)}\n"
         string += f"Reward:  {print_dict(9, 3, self.reward)}\n"
@@ -495,6 +496,7 @@ class Adventure:
     def __getitem__(self, index) -> 'Task':
         return self.tasks[index]
 
+    # is this used anywhere?
     def valid(self, dice_pool) -> bool:
         for task in self:
             if task.valid(dice_pool):
