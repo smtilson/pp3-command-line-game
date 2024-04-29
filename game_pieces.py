@@ -247,15 +247,15 @@ class Game:
     
     def starting_items(self) -> None:
         starting_list = [term for term in self.investigator.items]
-        print(starting_list)
-        input()
+        #print(starting_list)
+        #input()
         self.investigator.items = []
         for term in starting_list:
             num, item_type = term.split()
             for _ in range(int(num)):
                 self.draw_item(item_type)
                 #print(self.investigator.items[-1].name)
-        self.draw_item("clue")
+        #self.draw_item("clue")
         print(f"{self.investigator.name} starts with:")
         item_list = [item.name for item in self.investigator.items]
         string = ', '.join(item_list)
