@@ -148,7 +148,7 @@ class Game:
 
     def end_turn(self) -> str:
         self.clock.advance()
-        if self.clock.time == 12:
+        if self.clock.time == 24:
             self.apply_doom(1)
         self.investigator.reset()
         self.refill_adventures()
@@ -163,8 +163,8 @@ class Game:
     @property
     def great_old_one_summoned(self) -> bool:
         if self.current_doom >= self.doom_max:
-            print(f"The terrifying {self.great_old_one.name} has been "\
-                  "summoned and devours the world.")
+            #print(f"The terrifying {self.great_old_one.name} has been "\
+            #      "summoned and devours the world.")
             return True
         else:
             #print(f"Only {self.doom_max-self.current_doom} more Doom is needed to "\
@@ -176,8 +176,8 @@ class Game:
     @property
     def great_old_one_banished(self) -> bool:
         if self.current_elder_signs >= self.elder_sign_max:
-            print(f"The terrifying {self.great_old_one.name} has been "\
-                  "banished. The world is forever in your debt.")
+            #print(f"The terrifying {self.great_old_one.name} has been "\
+            #      "banished. The world is forever in your debt.")
             return True
         else:
             #print(f"Only {self.elder_sign_max-self.current_elder_signs} more Elder "\
@@ -246,15 +246,11 @@ class Clock:
     def advance(self) -> None:
         self.time += self.increment
         if self.time == 24:
-            print("It is midnight!")
+            #print("It is midnight!")
             self.time = 0
             self.day += 1
-        print(f'The time is now {self.time}.')
+        #print(f'The time is now {self.time}.')
             
-    def check_clock(self) -> None:
-        print(f"It is currently {self.time} o'clock.")
-        print(f"You have {(12-self.time)//3} turns until doom advances.")
-
 def add_yellow(investigator:'Investigator') -> None:
     investigator.add_die('yellow')
 
