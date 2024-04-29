@@ -69,7 +69,7 @@ class Investigator:
     def selection(self):
         white_space = (18-len(self.name)-len(str(self.index)))*' '
         line = str(self.index)+'. '+str(self).replace(': ',': '+white_space)
-        #self.items.append('Clue')
+        self.items.append('1 clue')
         line += ';     Items: ' + ', '.join(self.items).title()
         print(line)
     
@@ -223,28 +223,39 @@ class Game:
         shuffle(self.item_deck)
     
     def draw_item(self, item_type) -> None:
-        if item_type == "Clue":
-            clue = Item("Clue", "Reroll all dice", "Clue")
+        item_type = norm(item_type)
+        if "clue" in item_type:
+            clue = Item.clue()
             self.investigator.items.append(clue)
             return
-        elif item_type == "Spell":
-            spell = Item("Spell", "Gain a wild die", "Spell")
+        elif "spell" in item_type:
+            spell = Item.spell()
             self.investigator.items.append(spell)
             return
-        for item in self.item_deck:
-            if item.item_type == item_type:
-                break
-        self.item_deck.remove(item)
-        self.investigator.items.append(item)
+        elif item_type in {"common", "unique"}:
+            shuffle(self.item_deck)
+            for index, item in enumerate(self.item_deck):
+                if item.item_type.lower() == item_type.lower():
+                    self.item_deck.remove(item)
+                    self.investigator.items.append(item)
+                    return
+        else:
+            print("in else block of draw_item")
+            print(self.investigator.name)
+            print(item_type)
+            input()
     
     def starting_items(self) -> None:
         starting_list = [term for term in self.investigator.items]
+        print(starting_list)
+        input()
         self.investigator.items = []
         for term in starting_list:
             num, item_type = term.split()
             for _ in range(int(num)):
                 self.draw_item(item_type)
-        self.draw_item("Clue")
+                #print(self.investigator.items[-1].name)
+        self.draw_item("clue")
         print(f"{self.investigator.name} starts with:")
         item_list = [item.name for item in self.investigator.items]
         string = ', '.join(item_list)
@@ -307,10 +318,10 @@ def restore(investigator:'Investigator') -> None:
 #maybe same with spell, but make it assign a wild die.
 # I guess when I write the gain_clue reward function I will just make an item in that function and add it to the inventory.
 class Item:
-    ITEM_EFFECT = {'Add a yellow die':add_yellow, 'Add a red die':add_red, 'Gain 1 Health':gain_health,
-                    'Gain 1 Sanity':gain_sanity,#'Change 1 die to Skulls':change_to_skull, 
-                    'Add a yellow and a red die':add_yellow_n_red, 'Gain a spell':add_spell_die, 
-                    "Reroll all dice":reroll_dice, "Restore Health and Sanity":restore}
+    ITEM_EFFECT = {'Add a yellow die': add_yellow, 'Add a red die': add_red, 'Gain 1 Health': gain_health,
+                   'Gain 1 Sanity': gain_sanity,#'Change 1 die to Skulls':change_to_skull, 
+                   'Add a yellow and a red die': add_yellow_n_red, 'Gain a wild die': add_spell_die, 
+                   'Reroll all dice":reroll_dice, "Restore Health and Sanity': restore}
 
     def __init__(self, name:str, effect:str, item_type:str) -> None:
         self.name = name
@@ -333,6 +344,14 @@ class Item:
     def use(self, investigator):
         self.ITEM_EFFECT[self.effect](investigator)
         investigator.items.remove(self)
+    
+    @classmethod
+    def clue(cls) -> 'Item':
+        return Item("Clue", "Reroll all dice", "clue")
+
+    @classmethod
+    def spell(cls) -> 'Item':
+        return Item("Spell", "Gain a wild die", "spell")
 
 def gain_elder_sign(num:int, game:'Game') -> None:
     game.current_elder_signs += num
@@ -356,13 +375,13 @@ def gain_item(num: int, game: 'Game', item_type: str) -> None:
 
 def draw_unique(num:int, game:'Game') -> None:
     for _ in range(num):
-        game.draw_item('Unique')
+        game.draw_item('unique')
         print(f"You got the {game.investigator.items[-1].name}")
     #game.investigator.list_items()
 
 def draw_common(num:int, game:'Game') -> None:
     for _ in range(num):
-        game.draw_item('Common')
+        game.draw_item('common')
         print(f"You got the {game.investigator.items[-1].name}")
     #game.investigator.list_items()
 
@@ -380,7 +399,7 @@ def gain_clue(num:int, game:'Game') -> None:
     
 def gain_spell(num:int, game:'Game') -> None:
     for _ in range(num):
-            game.draw_item('Spell')
+            game.draw_item('spell')
             print(f"You got a Spell.")
 
 OUTCOMES = {"Elder Sign": gain_elder_sign,
@@ -395,6 +414,8 @@ OUTCOMES = {"Elder Sign": gain_elder_sign,
             "Spells": gain_spell}
 
 class Task:
+    # clean up this translation dictionary
+    # to do this look at where I am using this and what for.
     TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 
                    'Lore':'Lore', 'Peril':'Skulls', 'Terror': 'Tentacles',
                    'Unique':'Unique Item', 'Common': 'Common Item', 
@@ -664,3 +685,4 @@ class DicePool:
     
     # adding red dice
     # this requires figuring out wild first.
+print("ziggurat")

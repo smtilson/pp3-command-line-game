@@ -61,14 +61,15 @@ def fetch_investigators() -> List[dict]:
 
 def inv_dict_to_inv(inv:dict) -> 'Investigator':
     index = inv['index']
-    name = inv['Name']
+    name = ending_the_fix(inv['Name'])
     profession = inv['Profession']
     sanity = int(inv['Sanity'])
     health = int(inv['Stamina'])
     ability = inv['Ability']
     # items are added at the start of the game.
     items = inv['Starting Items'].replace(' item','').split(', ')
-    return Investigator(index, name, profession, sanity, health, ability,items)
+    return Investigator(index, name, profession, sanity, health, ability, 
+                        items)
 
 # Item section
 def fetch_items() -> List[dict]:
@@ -82,9 +83,9 @@ def fetch_items() -> List[dict]:
     return [item_dict_to_item(item_dict) for item_dict in item_dicts if item_dict['Name'] not in exclusions]
 
 def item_dict_to_item(item:dict) -> 'Item':
-    name = item['Name']
+    name = ending_the_fix(item['Name'])
     effect = item['Text/Effect']
-    item_type = item['Rarity']
+    item_type = norm(item['Rarity'])
     return Item(name, effect, item_type)
 
 

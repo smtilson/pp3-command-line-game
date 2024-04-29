@@ -49,11 +49,14 @@ def introduction() -> None:
     losing_dice = "When you lose a die by passing, you will lose the earliest"\
     "die in your pool\naccording to the ordering:\n       Green < Yellow < "\
     "Red < Spell"
-    difficulty = "Difficulty can be adjusted through the setting of two "\
-    "different parameters. Increment sets how much the clock advances after "\
-    "each of your turns. The standard setting is 6 hours, so Doom "\
-    "accumulates every 4 turns. The second is the starting dice pool. "\
-    "Standard (which is quite a challenge) is 6 Green dice."
+    difficulty = "For an easier time, we suggest fighting the Baby Dragon with Superman."
+    # Difficulty can be adjusted through the setting of two "\
+    # "different parameters. Increment sets how much the clock advances after "\
+    #"each of your turns. 
+    "Every turn the clock advance 6 hours and every 6 hours the clock strikes"\
+    " midnight, so Doom accumulates every 4 turns. "\
+    #"The second is the starting dice pool. 
+    "The starting dice pool has 6 Green dice."
     items = "Each Investigator begins the game with different starting Items."\
     " Items come in 4 varieties: Common, Unique, Clue, and Spell. Common "\
     "Items will usually give you a yellow die, Unique Items will usually "\
@@ -254,10 +257,10 @@ def start_game(start_time=0):
 def select_adventure(game):
     return game.current_adventures.pop(0)
 
-def test_game():
+def test_game(goo_index:int = 0,inv_index: int=0):
     game_data = GameSelection()
-    great_old_one = game_data.great_old_ones[0]
-    investigator = game_data.investigators[0]
+    great_old_one = game_data.great_old_ones[goo_index]
+    investigator = game_data.investigators[inv_index]
     start_time = 0
     game = Game('asd',investigator,great_old_one,game_data.adventure_deck,
                 game_data.item_deck)

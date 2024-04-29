@@ -74,7 +74,7 @@ def generate_line(words: List[str], separator: str= ' ') -> Tuple[str,List[str]]
     while len(line) < 80 and len(words) > 0:
         line += separator + words.pop(0)
     if len(words) == 0:
-        return line.strip(), words
+        return line[len(separator):], words
     return remove_last_word(line.strip(), words, separator)
 
 def remove_last_word(line:str, words: List[str], separator: str= ' ') -> Tuple[str,List[str]]:
@@ -82,3 +82,8 @@ def remove_last_word(line:str, words: List[str], separator: str= ' ') -> Tuple[s
     last_word = line_words.pop()
     words.insert(0,last_word)
     return separator.join(line_words), words
+
+def norm(string: str) -> str:
+    if string.endswith('s'):
+        string = string[:-1]
+    return string.lower()
