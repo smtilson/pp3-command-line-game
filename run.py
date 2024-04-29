@@ -53,8 +53,8 @@ def introduction() -> None:
     # Difficulty can be adjusted through the setting of two "\
     # "different parameters. Increment sets how much the clock advances after "\
     #"each of your turns. 
-    "Every turn the clock advance 6 hours and every 6 hours the clock strikes"\
-    " midnight, so Doom accumulates every 4 turns. "\
+    "Every turn the clock advance 8 hours and every 24 hours the clock strikes"\
+    " midnight, so Doom accumulates every 3 turns. "\
     #"The second is the starting dice pool. 
     "The starting dice pool has 6 Green dice."
     items = "Each Investigator begins the game with different starting Items."\

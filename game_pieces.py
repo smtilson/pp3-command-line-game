@@ -129,7 +129,7 @@ class Investigator:
 class Game:
     def __init__(self, player:str, investigator:'Investigator', 
                  great_old_one:'GreatOldOne', adventure_deck:List['Adventure'], 
-                 item_deck:List['Item'], increment:int=6) -> None:
+                 item_deck:List['Item'], increment:int=8) -> None:
         self.player = player
         self.investigator = investigator
         self.great_old_one = great_old_one
