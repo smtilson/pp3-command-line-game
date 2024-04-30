@@ -1,5 +1,73 @@
 ## Introduction
-"Chtulu Schmtulu" is a yazhee style game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around completing task cards by rolling dice. Completing a card gives you a reward. Failing to complete a card gives you a penalty. The goal is to collect enough Elder Signs, through rewards on cards, to banish the Great Old One before they have been summoned. A Great Old One is summoned when they have accumulated a certain amount of doom. Doom acculumates through card effects and by the clock reaching 12 midnight.
+"Chtulu Schmtulu" is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on adventure cards. Completing a card gives you a reward. Failing to complete a card gives you a penalty. The goal is to collect enough Elder Signs, through rewards on cards, to banish the Great Old One before they have been summoned. After every 3 turns, the Great Old one accumulates Doom (Doom can also increase as a result of failing an adventure card). When they have enough Doom, they will be summoned, ending the game in a loss for the player.
+
+### Instructions
+Each game begins with a player entering their name, choosing a Great Old One to battle against, and choosing an Investigator to play as. After that the game begins. Each turn sees a player attempting to complete an Adventure. After the turn ends, in a success or failure, the player will be rewarded or penalized, their dice will be reset, and the clock will advance. If it is midnight, the Great Old One will accrue Doom. Then the game checks to see if any loss conditions or the win condition are satisfied. IF not, the game continues with the player going on another adventure.
+
+#### Winning and Losing
+The only way to win is to collect the required amount of Elder Signs in order to banish the chosen Great Old One. This can only be done by completing adventures that have Elder Signs as Rewards. A player will lose if their Health or Sanity is 0 at the end of a turn. A player will also lose if the Great Old One gains enough Doom to be summoned. Doom is gained every 3 turns (at the turns end), when the clock strikes midnight.
+
+A player should decide in advance which Adventures they can afford to fail and which they can not. It is not wise to use all of your items to complete an Adventure unless it will result in winning the game.
+
+#### Turn Structure
+A turn begins with a player going on an Adventure (drawing an Adventure "card") and rolling their dice. Each adventure card has a name, flavor text, tasks, rewards, and penalties. An adventure is completed by completing each task of the Adventure (in any order). If an Adventure is completed, then the player receives the listed award. If the player runs out of dice before completing the adventure then they fail and suffer the penalty. In either case, the turn ends, the game resets for the next round, and the next turn begins.
+
+##### Completing a task
+A task on an adventure consists of keywords (which represent symbols) and associated numbers. These keywords occur as faces on the dice. The player has, by default, 6 Green dice. A Green die has the following 6 faces:
+1 Investigate, 2 Investigate, 3 Investigate, 1 Lore, 1 Skulls, 1 Tentacles
+
+A player will assign rolled dice from their dice pool to the task in order to fulfill the requirements. For example, suppose the player rolled:
+Roll: 1 --> 2 Investigate;   2 --> 1 Skulls;      3 --> 1 Lore
+      4 --> 1 Lore;          5 --> 1 Tentacles;   6 --> 1 Investigate
+And has the task:
+Remaining: 3 Investigate
+They would then enter 1 to assign their first die to the task. Their dice pool would then look like:
+Roll: 1 --> 1 Skulls;      2 --> 1 Lore           3 --> 1 Lore
+      4 --> 1 Tentacles;   5 --> 1 Investigate
+Remaining: 1 Investigate
+because they assigned there first die to the task. The requirement decreased by 2 since they had 2 Investigate "symbols" on that die face. The die was removed from their pool, and so all die shifted down one. They might then enter 5 to assign their fifth die to the task. This would complete this task and they would have 4 remaining dice to attempt the rest of the tasks for the current Adventure.
+
+Some tasks require a player to lose health or sanity. These effects take place once the task is chosen. The game only checks if the player is alive at the end of the turn, so a player can use an item to recover even if their health or sanity reachs 0 during the turn.
+
+Note: if a player rolls a wild face, then they choose which part of the task to assign it to.
+
+
+##### Passing
+If none of their dice matched the requirements, the player can enter pass. This rerolls all of their dice at the cost of forfeiting one of them. Thus their dice pool decreases. If a player has only one remaining die, and it does not match then they must pass. They will then fail the Adventure as they have no more dice. For example, a player may be in the following situation:
+Roll: 1 --> 2 Investigate;   2 --> 1 Skulls;   3 --> 1 Tentacles
+      4 --> 1 Investigate
+Remaining: 1 Lore
+They have no matching symbols and decide to pass. They might then see:
+Roll: 1 --> 1 Lore;   2 --> 3 Investigate;   3 --> 1 Investigate
+      
+Remaining: 1 Lore
+Now they can assign their first die and complete the task.
+
+A player can also pass before choosing a task to attempt. The effect is the same, and this may be necessary if they have no matching dice.
+
+##### Items
+A player may use an item before choosing a task or assigning a die. There are various items with various effects. Entering item will bring up the item menu. It lists the name and effect of each item. The different possible effects are:
+
+Add a yellow die, Add a red die, Gain 1 Health, Gain 1 Sanity, 
+Add a yellow and a red die, Gain a wild die, Reroll all dice, 
+Restore Health and Sanity
+
+A yellow die has the following 6 faces:
+1 Investigate, 2 Investigate, 3 Investigate, 4 Investigate, 1 Lore, 1 Skulls
+
+A red die has the following 6 faces:
+1 Wild, 2 Investigate, 3 Investigate, 4 Investigate, 1 Lore, 1 Skulls
+
+A wild die has all 6 faces 1 Wild.
+
+Each Investigator begins with different collection of starting items that are drawn from the item deck at the start of the game. After an item is used, it is sent to the item_discard. Players gain items by completing adventures. Clues and Spells are considered items but are not in the item_deck. They are unlimited in supply and are not sent to the item_discard.
+
+##### Rewards and Penalties
+
+Completing a task
+Rewards
+Penalties
+They will use their dice to complete tasks and hopefully completing the card. While attempting an Adventure, a player may use items to improve their chances. At the end of the turn, a player
 
 <a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">game</a>
 

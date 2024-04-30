@@ -154,10 +154,10 @@ class Game:
 
     @property
     def end_condition(self) -> str:
-        if self.great_old_one_summoned:
-            return "Summoned"
-        elif self.great_old_one_banished:
+        if self.great_old_one_banished:
             return "Banished"
+        elif self.great_old_one_summoned:
+            return "Summoned"
         elif not self.investigator.alive:
             return "Died"
         else:
@@ -180,6 +180,10 @@ class Game:
 
     def draw_item(self, item_type) -> None:
         item_type = norm(item_type)
+        if len(self.item_deck) == 0:
+            self.item_deck = [item for item in self.item_discard]
+            self.item_discard = []
+            shuffle(self.item_deck)
         if "clue" in item_type:
             clue = Item.clue()
             self.investigator.items.append(clue)
@@ -306,7 +310,8 @@ class Item:
     def use(self, game):
         self.ITEM_EFFECT[self.effect](game)
         game.investigator.items.remove(self)
-        game.item_discard.append(self)
+        if self.item_type not in {'clue','spell'}
+            game.item_discard.append(self)
         
         #This is how it will be after the refactor
         #self.ITEM_EFFECT[self.effect](game.investigator)
@@ -529,7 +534,8 @@ class Adventure:
         for task in self:
             task.reset()
         
-# add color for this and then change the repn methodto show color and die face
+# add color for this and then change the repn method to show color and die face
+# should I change the validation for dice since players aren't creating them and then just change the wild die?
 class Die:
     SYMBOLS = {'1 Investigate','2 Investigate','3 Investigate','4 Investigate',
                '1 Lore','Lore 2', '1 Skulls', '1 Tentacles', '1 Wild'}
@@ -544,6 +550,7 @@ class Die:
         # this should be put into a validate color method
         self.color = color 
         # this should be put into a validate faces method
+        # I guess this should be removed.
         for face in faces:
             if face in Die.SYMBOLS:
                 continue
