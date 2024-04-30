@@ -258,7 +258,7 @@ def add_yellow_n_red(game:'Game') -> None:
     game.dice_pool.add_die('red')
 
 def gain_health(game:'Game') -> None:
-    game.health += 1
+    game.investigator.health += 1
 
 def gain_sanity(game:'Game') -> None:
     game.investigator.sanity += 1
