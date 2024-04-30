@@ -1,6 +1,6 @@
 # This file contains the game pieces that need to be loaded to play the game
 from random import choice, shuffle
-from typing import Optional, Union
+from typing import Optional, Union, Iterator
 import datetime
 from utilities import print_dict, fit_to_screen, norm
 
@@ -475,7 +475,7 @@ class Adventure:
         return string
 
     #is the right type hint just iter?
-    def __iter__(self):
+    def __iter__(self) -> Iterator['Task']:
         return iter(self.tasks)
 
     def __getitem__(self, index: int) -> 'Task':
@@ -576,7 +576,7 @@ class DicePool:
             for _ in range(defn[color]):
                 self.dice.append(Die.create_die(color))
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator['Die']:
         return iter(self.dice)
 
     def __getitem__(self, index: int) -> 'Die':
