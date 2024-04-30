@@ -10,60 +10,55 @@ OTHER_MOVES = {'pass': 'Pass to lose a die and reroll the rest.', 'item': 'Go'
 
 def introduction() -> None:
     basic_idea1 = 'Welcome to "Chtulu Schmtulu." Try to collect Elder Signs '\
-        "the Great Old One is Summoned or you perish."
+        "before the Great Old One is Summoned or you perish."
     tldr = "TL;DR: Go on Adventures, match dice to complete tasks. Use items "\
-        "to aid in the completion of tasks. Collect Elder Signs before the "\
-        "Great Old One gains too much Doom."
-    basic_idea2 = "Every 3 turns, the Great Old One gains Doom, enough Doom "\
-        "and you lose. When your Health or Sanity are 0, then you lose. When "\
-        "you have enough Elder Signs (from completing Adventures) you win."
-    adventures1 = "Each turn, you go on an Adventure with various tasks. A "\
-        "task is completed by assigning dice with the right symbols. If none "\
-        "of your dice have the right symbols for the task, you can Pass to "\
-        "reroll (but you do lose a die). You can also use an Item to gain a "\
-        "die or get a free reroll (the Item menu has more details about each "\
-        "item). If you run out of dice, you fail and suffer a Penalty (more "\
-        "Doom or losing "\
-    "Health for example). Completing an Adventure gets you a Reward (an item "\
-    "or an Elder Sign for example)."
-    dice ="Here are the dice that are in the game:"\
-    "\nGreen =  1 Investigate, 2 Investigate, 3 Investigate, "\
-    "\n         1 Lore, 1 Skulls, 1 Tentacles"\
-    "\nYellow = 1 Investigate, 2 Investigate, 3 Investigate, 4 Investigate,"\
-    "\n         1 Lore, 1 Skulls"\
-    "\nRed =    2 Investigate, 3 Investigate, 4 Investigate,"\
-    "\n         1 Lore, 1 Skulls, 1 Wild"\
-    "\nSpell =  All 1 Wild\n"\
-    "When you lose a die, you first lose Greens, then Yellows, then Reds, and"\
-    " then \nSpells. At the end of each turn, your dice pool is reset to 6 "\
-    "Green dice."
+        "to aid in the completion of tasks. Collect enough Elder Signs before"\
+        " the Great Old One gains too much Doom."
+    adventures = "Complete Adventures by completing all of their tasks. "\
+        "Complete a task by matching your dice with the symbols the task "\
+        "requires (for example, 5 Investigate requires dice showing "\
+        "Investigate whose numbers sum to 5). Pass to lose a die and reroll "\
+        "the rest of your dice. Use an Item to gain a die or get a free "\
+        "reroll. If you run out of dice, you fail the adventure and suffer a "\
+        "Penalty. Get a Reward for completing an the Adventure. Every 3 "\
+        "turns, Doom increases. Too much Doom, you lose. 0 Health or 0 "\
+        "Sanity, then you lose. Enough Elder Signs (from completing "\
+        "Adventures) and you win."
+    dice = "Here are the dice that are in the game:"\
+        "\nGreen =  1 Investigate, 2 Investigate, 3 Investigate, "\
+        "\n         1 Lore, 1 Skulls, 1 Tentacles"\
+        "\nYellow = 1 Investigate, 2 Investigate, 3 Investigate, 4 "\
+        "Investigate,"\
+        "\n         1 Lore, 1 Skulls"\
+        "\nRed =    2 Investigate, 3 Investigate, 4 Investigate,"\
+        "\n         1 Lore, 1 Skulls, 1 Wild"\
+        "\nSpell =  All 1 Wild\n"
+    dice += fit_to_screen("When you lose a die, you first lose Greens, then "
+                          "Yellows, then Reds, and then Spells. At the end of "
+                          "each turn, your dice pool is reset to 6 Green "
+                          "dice.")
     more_help = "If you have further questions, please see the ReadMe for "\
-    "this project at, it contains examples of game play. It may also be "\
-    'beneficial to view game play or a "how to play" video for Elder Sign on'\
-    " YouTube."
-    more_details1 = [adventures1, basic_idea2]
-    dice_details = [dice]
-    more_details2 = [more_help]
+        "this project at https://github.com/smtilson/pp3-command-line-game/, "\
+        "it contains more details and examples."
+    more_details = [adventures, more_help]
     print(fit_to_screen(basic_idea1))
     print()
     print(fit_to_screen(tldr))
     yes_no = {'Y': "I would like to hear more details about the game.", 
               'N': "Let's go already!"}
     more_info = get_selection(0, '', yes_no)
-    #more_info = input("Would you like more details about the game? Y/n\n")
     if more_info == 'y':
         print()
-        for msg in more_details1:
+        for msg in more_details:
             print(fit_to_screen(msg))
             pause()
-        for msg in dice_details:
-            print(msg)
-        for msg in more_details2:
-            print(fit_to_screen(msg))
-            pause()
-    else:
-        print("Alright! Let's get started. That Great Old One isn't going to "\
-              "banish itself.")
+        yes_no = {'Y': "I would like to hear about the dice in the game.", 
+                  'N': "Let's go already!"}
+        dice_info = get_selection(0, '', yes_no)
+        if dice_info:
+            print(dice)
+    print("Alright! Let's get started. That Great Old One isn't going to "\
+          "banish itself.")
 
 
 def report_options(game: 'Game', adventure):
