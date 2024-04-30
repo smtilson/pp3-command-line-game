@@ -179,8 +179,8 @@ def attempt_adventure(game:'Game',adventure:'Adventure') -> str:
     #I feel like I don't really need these conditions here
     while not adventure.complete and game.num_dice > 0:
         report_options(game, adventure)
-        index = get_selection(len(adventure.tasks),"a task to attempt",OTHER_MOVES)
-        # Is this technically in the spirit of the game?
+        index = get_selection(len(adventure.tasks), "a task to attempt", 
+                              OTHER_MOVES)
         if index == 'pass':
             game.pass_move()
             continue

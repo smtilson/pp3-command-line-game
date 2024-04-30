@@ -432,6 +432,8 @@ class Task:
     def assign_wild(self) -> str:
         selection = {str(index+1):key for index, key in enumerate(self.remaining.keys())}
         for index, key in selection.items():
+            if len(selection.items()) == 1:
+                return selection[index]
             print(f'{index} = {key}')
         index = input("Please select a symbol to turn your Wild die into.\n")
         while index not in selection.keys():
