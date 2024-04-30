@@ -2,11 +2,13 @@ from typing import List, Optional, Tuple, Union
 # the below import statement should eventually be changed
 from game_pieces import *
 from db_utilities import GameSelection, record
-from utilities import get_selection
+from utilities import *
 
 def pause() -> None:
     input("\n                     Hit enter to continue.\n")
 
+OTHER_MOVES = {'pass': 'Pass to lose a die and reroll the rest.', 'item': 'Go'\
+               ' to Item selection menu.'}
 
 def introduction() -> None:
     basic_idea1 = 'Welcome to "Chtulu Schmtulu," a dice rolling game '\
@@ -100,7 +102,8 @@ def use_item_procedure(game: 'Game') -> 'Game':
     for index, item in enumerate(items):
         white_space = item.white_space+(3-len(str(index+1)))*' '
         print(f"{index+1}. {item.name}: {white_space}{item.effect}")
-    index = get_selection(len(items), 'an item to use.', {'none'})
+    index = get_selection(len(items), 'an item to use.', {'none': "Do not use"\
+                          " an Item"})
     if index == 'none':
         return game
     item = items[index]
@@ -123,7 +126,7 @@ def assign_die_to_task(game, task): #'DicePool','Task':
     # would a get die function be better?, I guess decoupling the dice pool and
     # the task would mean that you wouldn't see what the task is anymore...
     index = get_selection(game.num_dice,"a die to assign to this task", 
-                          {'pass','item'})
+                          OTHER_MOVES)
     if index == "pass":
         game.pass_move()
         return game, task
@@ -176,7 +179,7 @@ def attempt_adventure(game:'Game',adventure:'Adventure') -> str:
     #I feel like I don't really need these conditions here
     while not adventure.complete and game.num_dice > 0:
         report_options(game, adventure)
-        index = get_selection(len(adventure.tasks),"a task to attempt",{'pass','item'})
+        index = get_selection(len(adventure.tasks),"a task to attempt",OTHER_MOVES)
         # Is this technically in the spirit of the game?
         if index == 'pass':
             game.pass_move()

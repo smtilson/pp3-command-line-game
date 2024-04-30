@@ -1,35 +1,47 @@
 # This file is for utility functions used in multiple other files.
 # It prevents circular dependencies.
 
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Dict
 
 # call needs to be paired with some other message to explain the extra options.
 # extra_options maybe will be changed to a list to make it easier
 
 
 def get_selection(num_choices: int, type_of_choice: str,
-                  extra_options: set = set()) -> Union[int, str]:
-    msg = f"Please select an option from 1-{num_choices} to choose "
-    msg += f"{type_of_choice}.\n"
-    if extra_options:
-        msg += f"You may also select an option from {extra_options} "
-        msg += ",\n"
+                  extra_options: dict={}) -> Union[int, str]:
+    """
+    Gets choice from user. Continues to ask until valid input is given. 
+    extra_options is a dict of key, value pairs where the key is the name of 
+    the option and the value is the description of the option.
+    """
+    msg = ''
+    optional = ''
+    if num_choices:
+        msg += f"Please select an option from 1-{num_choices} to "\
+               f"choose a {type_of_choice}.\n\n"
+        optional = ' also'
+    if extra_options.keys():
+        msg += f"You may{optional} select an option from: \n"\
+               f"{str(list_options(extra_options))}"
     index = input(msg)
-    # explain(extra_options)
-    extra_options = {word.lower() for word in extra_options}
     valid_input = {str(num) for num in range(1, num_choices+1)}
-    valid_input = valid_input.union(extra_options)
+    options = {key.lower() for key in extra_options.keys()}
+    valid_input = valid_input.union(options)
     while index not in valid_input:
         print(f"{index} is not a valid choice.")
-        index = input(f"Please select an option from 1-{num_choices} to "
-                      f"choose a {type_of_choice}.\n"
-                      f"You may also select an option from "
-                      f"{extra_options}.\n")
+        index = input(msg)
         index = index.lower()
-    if index in extra_options:
+    if index in options:
         return index
     else:
         return int(index)-1
+
+def list_options(options:dict) -> str:
+    length = max({len(key) for key in options.keys()})
+    string = ''
+    for key, value in options.items():
+        string += fit_to_screen(f"{key.capitalize()}:   {value}")+'\n'
+    return string
 
 
 def ending_the_fix(string: str) -> str:
@@ -39,6 +51,11 @@ def ending_the_fix(string: str) -> str:
 
 
 def print_dict(length: int, num: int, sample_dict: dict) -> str:
+    """
+    Prints simple dictionaries with key value pairs on separate lines. length 
+    is how much white space to indent by. num is how many terms to print 
+    before a new line.
+    """
     string = ''
     count = 0
     for key, value in sample_dict.items():
@@ -87,3 +104,7 @@ def norm(string: str) -> str:
     if string.endswith('s'):
         string = string[:-1]
     return string.lower()
+
+
+def pause() -> None:
+    input("\n                     Hit enter to continue.\n")

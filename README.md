@@ -1,5 +1,9 @@
+
+
 ## Introduction
 "Chtulu Schmtulu" is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on adventure cards. Completing a card gives you a reward. Failing to complete a card gives you a penalty. The goal is to collect enough Elder Signs, through rewards on cards, to banish the Great Old One before they have been summoned. After every 3 turns, the Great Old one accumulates Doom (Doom can also increase as a result of failing an adventure card). When they have enough Doom, they will be summoned, ending the game in a loss for the player.
+
+This game is heavily based on Elder Sign. Almost all of the game data is taken from Elder Sign and directly imported. However, the game is not a full implementation of Elder Sign. This would be a goal for the future.
 
 ### Instructions
 Each game begins with a player entering their name, choosing a Great Old One to battle against, and choosing an Investigator to play as. After that the game begins. Each turn sees a player attempting to complete an Adventure. After the turn ends, in a success or failure, the player will be rewarded or penalized, their dice will be reset, and the clock will advance. If it is midnight, the Great Old One will accrue Doom. Then the game checks to see if any loss conditions or the win condition are satisfied. IF not, the game continues with the player going on another adventure.
@@ -8,6 +12,8 @@ Each game begins with a player entering their name, choosing a Great Old One to 
 The only way to win is to collect the required amount of Elder Signs in order to banish the chosen Great Old One. This can only be done by completing adventures that have Elder Signs as Rewards. A player will lose if their Health or Sanity is 0 at the end of a turn. A player will also lose if the Great Old One gains enough Doom to be summoned. Doom is gained every 3 turns (at the turns end), when the clock strikes midnight.
 
 A player should decide in advance which Adventures they can afford to fail and which they can not. It is not wise to use all of your items to complete an Adventure unless it will result in winning the game.
+
+Note: The win and loss conditions are only checked at the end of the turn. If a player achieves both, then the win condition takes precedence.
 
 #### Turn Structure
 A turn begins with a player going on an Adventure (drawing an Adventure "card") and rolling their dice. Each adventure card has a name, flavor text, tasks, rewards, and penalties. An adventure is completed by completing each task of the Adventure (in any order). If an Adventure is completed, then the player receives the listed award. If the player runs out of dice before completing the adventure then they fail and suffer the penalty. In either case, the turn ends, the game resets for the next round, and the next turn begins.
@@ -27,10 +33,9 @@ Roll: 1 --> 1 Skulls;      2 --> 1 Lore           3 --> 1 Lore
 Remaining: 1 Investigate
 because they assigned there first die to the task. The requirement decreased by 2 since they had 2 Investigate "symbols" on that die face. The die was removed from their pool, and so all die shifted down one. They might then enter 5 to assign their fifth die to the task. This would complete this task and they would have 4 remaining dice to attempt the rest of the tasks for the current Adventure.
 
-Some tasks require a player to lose health or sanity. These effects take place once the task is chosen. The game only checks if the player is alive at the end of the turn, so a player can use an item to recover even if their health or sanity reachs 0 during the turn.
+Some tasks require a player to lose health or sanity. These effects take place once the task is chosen. The game only checks if the player is alive at the end of the turn, so a player can use an item to recover even if their health or sanity reaches 0 during the turn.
 
 Note: if a player rolls a wild face, then they choose which part of the task to assign it to.
-
 
 ##### Passing
 If none of their dice matched the requirements, the player can enter pass. This rerolls all of their dice at the cost of forfeiting one of them. Thus their dice pool decreases. If a player has only one remaining die, and it does not match then they must pass. They will then fail the Adventure as they have no more dice. For example, a player may be in the following situation:
@@ -63,11 +68,11 @@ A wild die has all 6 faces 1 Wild.
 Each Investigator begins with different collection of starting items that are drawn from the item deck at the start of the game. After an item is used, it is sent to the item_discard. Players gain items by completing adventures. Clues and Spells are considered items but are not in the item_deck. They are unlimited in supply and are not sent to the item_discard.
 
 ##### Rewards and Penalties
+When an Adventure has all of its tasks completed, the Adventure is complete and the player receives an Award. This can be various items (drawn from the item deck), more Health or Sanity, or an Elder Sign (maybe more than one). These are added to the players inventory. When a player fails an Adventure, by running out of dice, they will suffer the penalty. This can be losing a Clue, the Great Old One gaining more doom, or losing Health or Sanity.
+These outcomes are automatically applied and then the turn ends. 
 
-Completing a task
-Rewards
-Penalties
-They will use their dice to complete tasks and hopefully completing the card. While attempting an Adventure, a player may use items to improve their chances. At the end of the turn, a player
+##### End of a Game
+Once a game has ended, a record is made of the result. This includes the name the player entered, the start time of the game, the end time of the game, and the result of the game, such as "Vincent Lee perished and Hastur devoured the world."
 
 <a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">game</a>
 

@@ -71,19 +71,14 @@ class Investigator:
         else:
             return True
     
-    # is this used?
-    def list_items(self) -> None:
-        for index,item in enumerate(self.items):
-            print(index+1, item.name, item.effect)
-
-    # this is broken now because item.use needs to accept a game.
-    # moving the item effect dictionary would help that, I think.
-    
 
 class Game:
     def __init__(self, player:str, investigator:'Investigator', 
                  great_old_one:'GreatOldOne', adventure_deck:List['Adventure'], 
                  item_deck:List['Item'], increment:int=8) -> None:
+        """
+        Creates the game object. Manages win/loss conditions and game state.
+        """
         self.player = player
         self.investigator = investigator
         self.great_old_one = great_old_one
@@ -111,9 +106,10 @@ class Game:
     # should this be __str__?
     def status(self) -> str:
         if not self.great_old_one_summoned:
-            print(f"{self.great_old_one.name} only needs {-self.current_doom + self.doom_max} more Doom to awaken.")
+            print(f"{self.great_old_one.name} has {self.current_doom}/{self.doom_max} Doom.")
         if not self.great_old_one_banished:
-            print(f"You only need {-self.current_elder_signs + self.elder_sign_max} more Elder Signs.")
+            print(f"{self.investigator.name} has {self.current_elder_signs}/{self.elder_sign_max} Elder Signs.")
+        print(self.clock)
         print(self.investigator)
 
     def end_turn(self) -> str:
@@ -233,6 +229,9 @@ class Game:
         
 class Clock:
     def __init__(self, increment:int):
+        """
+        Creates the in game clock.
+        """
         self.time = 0
         self. day = 0
         self.increment = increment
@@ -244,14 +243,12 @@ class Clock:
             time = str(self.time)+" o'clock"
         return f"It is {time} on Day {self.day}."
     
-    #how many hours are in the day
+
     def advance(self) -> None:
         self.time += self.increment
         if self.time == 24:
-            #print("It is midnight!")
             self.time = 0
             self.day += 1
-        #print(f'The time is now {self.time}.')
             
 def add_yellow(game: 'Game') -> None:
     game.dice_pool.add_die('yellow')
@@ -310,7 +307,7 @@ class Item:
     def use(self, game):
         self.ITEM_EFFECT[self.effect](game)
         game.investigator.items.remove(self)
-        if self.item_type not in {'clue','spell'}
+        if self.item_type not in {'clue','spell'}:
             game.item_discard.append(self)
         
         #This is how it will be after the refactor
@@ -476,7 +473,7 @@ class Adventure:
     # reward/penalty are currently strings, but should be changed to something else.
     def __init__(self, name: str, flavor_text:str, tasks: List['Task'], reward: str, penalty: str) -> None:
         self.name = name
-        self.flavor_text = fit_to_screen(flavor_text)
+        self.flavor_text = flavor_text
         self.tasks = tasks
         self.reward = reward
         self.penalty = penalty
