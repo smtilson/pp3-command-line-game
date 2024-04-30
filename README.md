@@ -134,7 +134,41 @@ Note: Make sure that the python buildpack is before the nodejs buildpack. If not
 10. Go to the "Deploy" tab. Scroll down to "Deployment method" and select "GitHub". Search for your repository that you copied/cloned in step 1 above.  Click "Connect" once you have found it.
 11. Scroll down to "Manual deploy" and click "Deploy Branch". Once the build is complete, click "View" to be taken to your deployed app.
 
+## References
+
+### Technologies Used
+The project was coded in python. 
+I used: 
+- git and GitHub for version control,
+- the python packages gspread, google-auth-oauthli, and ipython, 
+- the Code Institute Template for PP3 for the interface of the deployed project,
+- Heroku to host the project,
+- <a href="http://www.draw.io">Draw.io</a> for flow charts.
+
+### Technology adjacent references
+- <a href="https://www.youtube.com/shorts/cTE0ec3IurE?app=desktop">Ruler in VScode editor</a>
+- <a href="https://superuser.com/questions/1468225/is-it-possible-to-detach-the-terminal-window-from-vscode">Open terminal in separate window in VScode</a>
+- <a href="https://www.atlassian.com/git/tutorials/syncing/git-pull">git pull and rebase</a>
+
+### StackOverflow and Technical references
+- <a href="https://stackoverflow.com/questions/1874592/how-to-write-very-long-string-that-conforms-with-pep8-and-prevent-e501">SO: Long strings that conform to PEP8</a>
+- <a href="https://stackoverflow.com/questions/11469025/how-to-implement-a-subscriptable-class-in-python-subscriptable-class-not-subsc">SO: implimenting __getitem__</a>
+- <a href="https://stackoverflow.com/questions/44664040/type-hints-with-user-defined-classes">SO: Type hints for user defined classes</a>
+- <a href="https://stackoverflow.com/questions/727761/how-to-make-print-call-the-str-method-of-python-objects-inside-a-list">SO: __str__ and __repr__ with Python lists</a>
+- <a href="https://stackoverflow.com/questions/38727520/how-do-i-add-default-parameters-to-functions-when-using-type-hinting">SO: Type hinting with default parameters</a>
+- <a href="https://stackoverflow.com/questions/4841782/python-constructor-and-default-value">SO: default empty list parameter</a>
+- <a href="https://stackoverflow.com/questions/9205081/is-there-a-way-to-store-a-function-in-a-list-or-dictionary-so-that-when-the-inde">SO: storing functions as values in a dict</a>
+- <a href="https://stackoverflow.com/questions/24988162/define-functions-with-too-many-arguments-to-abide-by-pep8-standard">SO: too many function arguments and PEP8 compliance</a>
+- <a href="https://stackoverflow.com/questions/71427735/how-to-annotate-a-custom-types-iter-to-correctly-indicate-non-uniform-return">SO: type hinting iterators</a>
+- <a href="https://www.tutorialspoint.com/How-to-randomly-select-an-item-from-a-tuple-in-Python">Select random element from a tuple</a>
+
+### Non-technical references
+- <a href="https://boardgamegeek.com/filepage/120191/elder-sign-all-cards-all-expansions">Spreadsheet of Elder Signs game data</a>
+- My version of the above spreadsheet is available in read only form <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSunyo05f2touIHhqFCUojd-Vq7kQPU-U3iqm4Ti9jvQK8iv-MYz09v5xBIEk94_S_7soxrhHpCQB3a/pubhtml">here</a>. In contains a subset of the data from the above. It has also been edited in very minor ways
+- <a href="https://images-cdn.fantasyflightgames.com/ffg_content/Elder%20Sign/support/Eldersign-rules-of-play.pdf">Elder Signs Official Rulebook</a>
+- <a href="https://www.youtube.com/watch?v=Jh4nSpV2n4k">Elder Sign play through from Geek and Sundry</a>
+
 
 spreadsheet link:
-https://docs.google.com/spreadsheets/d/e/2PACX-1vSunyo05f2touIHhqFCUojd-Vq7kQPU-U3iqm4Ti9jvQK8iv-MYz09v5xBIEk94_S_7soxrhHpCQB3a/pubhtml
+
 [return to Table of Contents](#toc)
