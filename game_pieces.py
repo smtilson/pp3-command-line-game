@@ -1,22 +1,19 @@
 # This file contains the game pieces that need to be loaded to play the game
 from random import choice, shuffle
-from typing import List, Optional, Tuple
+from typing import Optional, Union
 import datetime
 from utilities import print_dict, fit_to_screen, norm
 
 
-# add some validation to this class
 class GreatOldOne:
     """
     Creates Great Old One enemy.
     """
-    def __init__(self, index:str, name:str, elder_signs:int, doom:int,
-                 ability:str) -> None:
+    def __init__(self, index:str, name:str, elder_signs:int, doom:int) -> None:
         self.index = index
         self.name = name
         self.doom = doom
         self.elder_signs = elder_signs
-        self.ability = ability # should this be removed?
 
     #should this be a display mehtod instead?
     def __str__(self):
@@ -42,11 +39,10 @@ class GreatOldOne:
     
 class Investigator:
     def __init__(self, index:str, name:str, profession: str, sanity: int, 
-                 health: int, ability: str, items: list) -> None:
+                 health: int, items: list) -> None:
         self.index = index
         self.name = name
         self.profession = profession
-        self.ability = ability
         self.starting_sanity = sanity
         self.sanity = sanity
         self.starting_health = health
@@ -74,8 +70,8 @@ class Investigator:
 
 class Game:
     def __init__(self, player:str, investigator:'Investigator', 
-                 great_old_one:'GreatOldOne', adventure_deck:List['Adventure'], 
-                 item_deck:List['Item'], increment:int=8) -> None:
+                 great_old_one:'GreatOldOne', adventure_deck:list['Adventure'], 
+                 item_deck:list['Item'], increment:int=8) -> None:
         """
         Creates the game object. Manages win/loss conditions and game state.
         """
@@ -469,7 +465,7 @@ class Adventure:
     Create Adventure "card". Contains text for flavor, tasks to complete,
     rewards and penalties. Displays information and controls game progression.
     """
-    def __init__(self, name: str, flavor_text: str, tasks: List['Task'],
+    def __init__(self, name: str, flavor_text: str, tasks: list['Task'],
                  reward: dict, penalty: dict) -> None:
         self.name = name
         self.flavor_text = flavor_text

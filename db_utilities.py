@@ -46,8 +46,7 @@ def goo_dict_to_goo(goo: dict[str, str]) -> 'GreatOldOne':
     name = goo['Name']
     elder_signs = int(goo['Elder Signs Needed'])
     doom = int(goo['Doom to Awake'])
-    ability = goo['Special Ability']
-    return GreatOldOne(index, name, elder_signs, doom, ability)
+    return GreatOldOne(index, name, elder_signs, doom)
 
 
 # Investigator section
@@ -79,10 +78,8 @@ def inv_dict_to_inv(inv: dict[str, str]) -> 'Investigator':
     profession = inv['Profession']
     sanity = int(inv['Sanity'])
     health = int(inv['Stamina'])
-    ability = inv['Ability']
     items = inv['Starting Items'].replace(' item','').split(', ')
-    return Investigator(index, name, profession, sanity, health, ability, 
-                        items)
+    return Investigator(index, name, profession, sanity, health, items)
 
 
 # Item section
