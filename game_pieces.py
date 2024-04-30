@@ -206,8 +206,11 @@ class Game:
         """
         print("Losing a die.")
         self.dice_pool.pop()
-        print("Rerolling dice.")
-        self.dice_pool.roll()
+        if len(self.dice_pool) > 0:
+            print("Rerolling dice.")
+            self.dice_pool.roll()
+        else:
+            print("You are out of dice.")
         
         
 class Clock:

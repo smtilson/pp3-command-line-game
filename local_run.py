@@ -92,7 +92,7 @@ def test_game(goo_index: int = 0, inv_index: int=0):
 
 #run.introduction()
 
-game = test_game()
+game = run.start_game()
 run.main_gameplay_loop(game)
 
 
