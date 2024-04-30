@@ -40,7 +40,6 @@ def introduction() -> None:
     more_help = "If you have further questions, please see the ReadMe for "\
         "this project at https://github.com/smtilson/pp3-command-line-game/, "\
         "it contains more details and examples."
-    more_details = [adventures, more_help]
     print(fit_to_screen(basic_idea1))
     print()
     print(fit_to_screen(tldr))
@@ -49,13 +48,12 @@ def introduction() -> None:
     more_info = get_selection(0, '', yes_no)
     if more_info == 'y':
         print()
-        for msg in more_details:
+        for msg in [adventures, more_help]:
             print(fit_to_screen(msg))
-            pause()
         yes_no = {'Y': "I would like to hear about the dice in the game.", 
                   'N': "Let's go already!"}
         dice_info = get_selection(0, '', yes_no)
-        if dice_info:
+        if dice_info == 'y':
             print(dice)
     print("Alright! Let's get started. That Great Old One isn't going to "\
           "banish itself.")
