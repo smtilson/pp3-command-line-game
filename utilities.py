@@ -1,7 +1,7 @@
 # This file is for utility functions used in multiple other files.
 # It prevents circular dependencies.
 
-from typing import Union, List, Tuple, Dict
+from typing import Union
 
 # call needs to be paired with some other message to explain the extra options.
 # extra_options maybe will be changed to a list to make it easier
@@ -77,7 +77,7 @@ def print_dict(length: int, num: int, sample_dict: dict[str, str]) -> str:
 
 def fit_to_screen(string: str, separator: str = ' ') -> str:
     """
-    Returns a string with new lines added so that no line is longer than 79 
+    Returns a string with new lines added so that no line is longer than 79
     characters the screen.
     """
     words = string.split(separator)
@@ -88,8 +88,8 @@ def fit_to_screen(string: str, separator: str = ' ') -> str:
     return '\n'.join(lines)
 
 
-def generate_line(words: List[str],
-                  separator: str = ' ') -> Tuple[str, List[str]]:
+def generate_line(words: list[str],
+                  separator: str = ' ') -> tuple[str, list[str]]:
     """
     Generates a line of less than 80 characters. Returns line and remaining
     terms.
@@ -102,8 +102,8 @@ def generate_line(words: List[str],
     return remove_last_word(line.strip(), words, separator)
 
 
-def remove_last_word(line: str, words: List[str],
-                     separator: str = ' ') -> Tuple[str, List[str]]:
+def remove_last_word(line: str, words: list[str],
+                     separator: str = ' ') -> tuple[str, list[str]]:
     """
     Removes last word of line and adds it back to the beginning of the words
     list. Used in the above.
