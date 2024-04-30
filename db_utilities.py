@@ -20,6 +20,16 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("pp3-command-line-game")
 
+# Dictionary to translate from the board game to my game and back.
+TRANSLATION = {'Inv.': 'Investigate', 'Investigation':'Investigate', 
+               'Lore':'Lore', 'Peril':'Skulls', 'Terror': 'Tentacles',
+               'Unique':'Unique Item', 'Common': 'Common Item', 
+               'Elder':'Elder Sign', 'Clues':'Clues','Clue':'Clue', 
+               'Sanity':'Sanity','Stamina':'Health', 'Doom':'Doom', 
+               'unique item': 'Unique', 'common item': 'Common', 
+               'spell':'Spell', 'Spells':'Spells', 'Spell':'Spell'}
+    
+
 
 # Great Old One section
 def fetch_great_old_ones() -> list['GreatOldOne']:
@@ -168,7 +178,7 @@ def translate_term(term: str) -> str:
     Translates between terms in the board game and my terminology.
     """
     term = term.title()
-    return Task.TRANSLATION[term] 
+    return TRANSLATION[term] 
 
 
 def create_task(task_raw: str) -> 'Task':
