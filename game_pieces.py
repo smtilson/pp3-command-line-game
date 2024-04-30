@@ -125,6 +125,7 @@ class Game:
                   f"{self.elder_sign_max} Elder Signs.\n"
         string += str(self.clock) + '\n'
         string += str(self.investigator) + '\n'
+        return string
 
     def end_turn(self) -> str:
         """
@@ -344,7 +345,7 @@ def gain_clue(num: int, game: 'Game') -> None:
         for _ in range(num):
             clue = game.draw_item('Clue')
             game.investigator.items.append(clue)
-            print(f"You got a Clue.")
+            print("You got a Clue.")
     else:
         for item in game.investigator.items:
             if item.item_type == "Clue":
@@ -356,7 +357,7 @@ def gain_spell(num: int, game: 'Game') -> None:
     for _ in range(num):
         spell = game.draw_item('spell')
         game.investigator.items.append(spell)
-        print(f"You got a Spell.")
+        print("You got a Spell.")
 
 # Dictionary for storing Reward and Penalty functions
 OUTCOMES = {"Elder Sign": gain_elder_sign, "Sanity": change_sanity,
@@ -556,7 +557,7 @@ class Die:
         self.face = choice(self.faces)
 
     @classmethod
-    def create_die(cls, color: str) -> Die:
+    def create_die(cls, color: str) -> 'Die':
         die = cls(color.capitalize(), *cls.COLORS[color])
         die.roll()
         return die
@@ -591,7 +592,7 @@ class DicePool:
             string = (2-len(str(index+1))) * ' ' + f"{index+1} -->  {str(die)}"
             string += (die.white_space+1)*" "
             dice_strs.append(string)
-        return disce_strs
+        return dice_strs
         
     def __str__(self) -> str:
         """
@@ -608,8 +609,8 @@ class DicePool:
             current.append(string)
             count += 1
         lines.append(current)
-        string =  'Roll: '
         lines = ['  '.join(line) for line in lines]
+        string = 'Roll: '
         string += '\n      '.join(lines)
         return string
 

@@ -43,19 +43,19 @@ def introduction() -> None:
     print(fit_to_screen(basic_idea1))
     print()
     print(fit_to_screen(tldr))
-    yes_no = {'Y': "I would like to hear more details about the game.", 
+    yes_no = {'Y': "I would like to hear more details about the game.",
               'N': "Let's go already!"}
     more_info = get_selection(0, '', yes_no)
     if more_info == 'y':
         print()
         for msg in [adventures, more_help]:
             print(fit_to_screen(msg))
-        yes_no = {'Y': "I would like to hear about the dice in the game.", 
+        yes_no = {'Y': "I would like to hear about the dice in the game.",
                   'N': "Let's go already!"}
         dice_info = get_selection(0, '', yes_no)
         if dice_info == 'y':
             print(dice)
-    print("Alright! Let's get started. That Great Old One isn't going to "\
+    print("Alright! Let's get started. That Great Old One isn't going to "
           "banish itself.")
 
 
