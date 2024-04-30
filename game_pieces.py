@@ -2,7 +2,7 @@
 from random import choice, shuffle
 from typing import List, Optional, Tuple
 import datetime
-from utilities import *
+from utilities import print_dict, fit_to_screen, norm
 
 
 # add some validation to this class
@@ -88,11 +88,8 @@ class Game:
         self.elder_sign_max = great_old_one.elder_signs
         self.clock = Clock(increment)
         self.game_start_time = str(datetime.datetime.now())
-        # not yet fully implimented
         self.adventure_deck = adventure_deck
         self.adventure_discard = []
-        # self.current_adventures = []
-        # self.refill_adventures()
         self.item_deck = item_deck
         self.item_discard = []
         self.shuffle()
@@ -430,7 +427,8 @@ class Task:
     
     #I can use get selection here now.
     def assign_wild(self) -> str:
-        selection = {str(index+1):key for index, key in enumerate(self.remaining.keys())}
+        selection = {str(index+1):key for index, key in 
+                     enumerate(self.remaining.keys())}
         for index, key in selection.items():
             if len(selection.items()) == 1:
                 return selection[index]
@@ -438,9 +436,10 @@ class Task:
         index = input("Please select a symbol to turn your Wild die into.\n")
         while index not in selection.keys():
             print(f"{index} is not a valid choice.")
-            index = input("Please select a symbol to turn your Wild die into.\n")
+            index = input("Please select a symbol to turn your Wild die into."
+                          "\n")
         return selection[index]
-    
+
     def suffer_penalty(self, investigator) -> 'Investigator':
         if "Health" in self.remaining.keys():
             amount = self.remaining['Health']
@@ -453,36 +452,30 @@ class Task:
             investigator.sanity += amount
             del self.remaining['Sanity']
         return investigator
-       
-    # resets task for next attempt, if at all
-    # eventually this will be removed
-    # why was I going to remove this?
+
     def reset(self) -> None:
         self.remaining = {key:value for key,value in self.pattern.items()} 
-    
+
     @property
     def complete(self):
         for val in self.remaining.values():
             if val > 0:
                 return False
         return True
-    
+
 
 class Adventure:
     """
-    Create task object. The pattern is what is necessary to succeed at a task. The reward is what happens when you succeed, the penalty is what happens when you fail.
+    Create Adventure "card". Contains text for flavor, tasks to complete,
+    rewards and penalties. Displays information and controls game progression.
     """
-    # reward/penalty are currently strings, but should be changed to something else.
-    def __init__(self, name: str, flavor_text:str, tasks: List['Task'], reward: str, penalty: str) -> None:
+    def __init__(self, name: str, flavor_text: str, tasks: List['Task'],
+                 reward: dict, penalty: dict) -> None:
         self.name = name
         self.flavor_text = flavor_text
         self.tasks = tasks
         self.reward = reward
         self.penalty = penalty
-
-    #this should only be called after selecting a task.
-    def display(self):
-        pass
 
     def __str__(self):
         string = f"{self.name}\n\n"
@@ -500,13 +493,6 @@ class Adventure:
     def __getitem__(self, index) -> 'Task':
         return self.tasks[index]
 
-    # is this used anywhere?
-    def valid(self, dice_pool) -> bool:
-        for task in self:
-            if task.valid(dice_pool):
-                return True
-        return False
-
     @property
     def complete(self) -> bool:
         for task in self.tasks:
@@ -518,7 +504,6 @@ class Adventure:
     def remaining(self) -> list:
         return [task for task in self if not task.complete]
 
-    
     @property
     def status(self):
         if self.complete:
@@ -532,55 +517,48 @@ class Adventure:
     def reset(self) -> None:
         for task in self:
             task.reset()
-        
-# add color for this and then change the repn method to show color and die face
-# should I change the validation for dice since players aren't creating them and then just change the wild die?
+
+
 class Die:
-    SYMBOLS = {'1 Investigate','2 Investigate','3 Investigate','4 Investigate',
-               '1 Lore','Lore 2', '1 Skulls', '1 Tentacles', '1 Wild'}
-    COLORS = {'green': ['1 Investigate','2 Investigate','3 Investigate',
-                       '1 Lore', '1 Skulls', '1 Tentacles'], 
-              'yellow': ['1 Investigate','2 Investigate','3 Investigate',
-                         '4 Investigate','1 Lore', '1 Skulls'],
-              'red': ['1 Wild','2 Investigate','3 Investigate','4 Investigate',
-                      '1 Lore', '1 Skulls'],
+    SYMBOLS = {'1 Investigate', '2 Investigate', '3 Investigate',
+               '4 Investigate', '1 Lore', 'Lore 2', '1 Skulls', '1 Tentacles',
+               '1 Wild'}
+    COLORS = {'green': ['1 Investigate', '2 Investigate', '3 Investigate',
+                        '1 Lore', '1 Skulls', '1 Tentacles'],
+              'yellow': ['1 Investigate', '2 Investigate', '3 Investigate',
+                         '4 Investigate', '1 Lore', '1 Skulls'],
+              'red': ['1 Wild', '2 Investigate', '3 Investigate',
+                      '4 Investigate', '1 Lore', '1 Skulls'],
               'spell': ['1 Wild' for _ in range(6)]}
-    def __init__(self, color, *faces:str)-> None:
-        # this should be put into a validate color method
-        self.color = color 
-        # this should be put into a validate faces method
-        # I guess this should be removed.
-        for face in faces:
-            if face in Die.SYMBOLS:
-                continue
-            else:
-                raise ValueError(f"{face} is not a valid symbol. We can not create this die.")
-        if len(faces) != 6: # maybe this should also be relaxed
-            raise ValueError(f"{faces} does not have the correct number of sides to be a die (in this game).")
-        self.faces = faces # tuple of elements of Die.SYMBOLS
-        # Current face showing of die
+
+    def __init__(self, color, *faces: str) -> None:
+        self.color = color
+        self.faces = faces
         self.face = ''
-    
+
     def __str__(self) -> str:
         return self.face
-    
-    def __repr__(self) -> str:
-        return self.color+': '+self.face
 
-    def __lt__(self, other) -> bool:
-        order = {'Green':0, 'Yellow':1, 'Red':2, 'Spell': 3}
+    def __repr__(self) -> str:
+        return self.color + ': ' + self.face
+
+    def __lt__(self, other: 'Die') -> bool:
+        order = {'Green': 0, 'Yellow': 1, 'Red': 2, 'Spell': 3}
         return order[self.color] < order[other.color]
-    
-    def __eq__(self, other) -> bool:
+
+    def __eq__(self, other: 'Die') -> bool:
         return self.color == other.color
+
+    @property
+    def white_space(self):
+        return len('3 Investigate')-len(str(self))
+        
 
     def parse(self):
         """
-        Parses the face of the die. Returns number of symbols as int and symbol as string.
+        Parses the face of the die. Returns number of symbols as int and
+        symbol as string.
         """
-        # should this automatically roll the die if it hasn't been rolled yet?
-        if not self.face:
-            raise ValueError("This die has not yet been rolled.")
         number, symbol = self.face.split(' ')
         number = int(number)
         return number, symbol
@@ -588,42 +566,61 @@ class Die:
     def roll(self) -> None:
         # having a weird error where
         self.face = choice(self.faces)
-    
+
     @classmethod
-    def create_die(cls,color:str):
-        if color not in cls.COLORS.keys():
-            raise ValueError(f"{color} is not a valid color of die")
-        die = cls(color.capitalize(),*cls.COLORS[color])
+    def create_die(cls, color: str):
+        die = cls(color.capitalize(), *cls.COLORS[color])
         die.roll()
         return die
-# maybe add sorting function and ordering as well as color 
-#to order the dice and then only pop from the front will be more appropriate
+
+
 class DicePool:
-    #{'green':5,'yellow':2,'red':2, 'spell':1}
-    def __init__(self, defn:dict={'green':6}) -> None:
+    """
+    Objects contains dice and relevant methods for rolling, removing,
+    displaying, and resetting dice at end of turn.
+    """
+    def __init__(self, defn: dict[str:int] = {'green': 6}) -> None:
         self.defn = defn
         self.dice = []
         for color in defn.keys():
             for _ in range(defn[color]):
                 self.dice.append(Die.create_die(color))
-    
-    # is this the correct thing? Anthony said it was fine
-    def __iter__(self) -> 'iterator':
+
+    # Iterator type hint?
+    def __iter__(self):
         return iter(self.dice)
 
-    def __getitem__(self,index) -> 'Die':
+    def __getitem__(self, index: int) -> 'Die':
         return self.dice[index]
-    
+
     def __str__(self) -> str:
         # something other than : and , should be used, things blend in
         self.dice.sort()
-        # I could write a method for a die called display which addressed this. a bit.
-        dice_strs = [f"{index+1} --> {str(die)}" for index, die in 
-                     enumerate(self.dice)]
-        first_half = dice_strs[:3]
-        second_half = dice_strs[3:]
-        string =  'Roll: ' + ';   '.join(first_half) + '\n'\
-                  ' ' + 5*' ' + ';   '.join(second_half)
+        # I could write a method for a die called display which addressed
+        # this. a bit.
+        dice_strs = []
+        for index, die in enumerate(self.dice):
+            string = (2-len(str(index+1))) * ' ' + f"{index+1} -->  {str(die)}"
+            string += (die.white_space+1)*" "
+            dice_strs.append(string)
+        lines = []
+        count = 0
+        current = []
+        #print(dice_strs)
+        for string in dice_strs:
+            if count == 3:
+                count = 0
+                lines.append([part for part in current])
+                current = []
+            current.append(string)
+            count += 1
+        lines.append(current)
+        string =  'Roll: '
+        lines = ['  '.join(line) for line in lines]
+        string += '\n      '.join(lines)
+        #for line in lines:
+         #   string += '  '.join(line)
+          #  string += '\n      '
         return string
 
     def __repr__(self) -> str:
@@ -631,28 +628,26 @@ class DicePool:
         dice_reprs = [die.__repr__() for die in self.dice]
         print(dice_reprs)
         return ', '.join(dice_reprs)
-    
+
     def __len__(self) -> int:
         return len(self.dice)
 
-    def add_die(self, color:str) -> None:
+    def add_die(self, color: str) -> None:
         die = Die.create_die(color)
         self.dice.append(die)
 
     def roll(self) -> None:
         for die in self.dice:
             die.roll()
-    
-    def pop(self, index:int=None) -> 'Die':
-        # defaults to removing first die
+
+    def pop(self, index: int = None) -> 'Die':
+        # Defaults to removing first die
         if index is None:
             self.dice.sort()
             index = 0
         return self.dice.pop(index)
-    
 
     def reset(self) -> None:
-        #print("Dice pool is being reset.")
         self.dice = []
         for color in self.defn.keys():
             for _ in range(self.defn[color]):

@@ -8,10 +8,10 @@ from typing import Union, List, Tuple, Dict
 
 
 def get_selection(num_choices: int, type_of_choice: str,
-                  extra_options: dict={}) -> Union[int, str]:
+                  extra_options: dict = {}) -> Union[int, str]:
     """
-    Gets choice from user. Continues to ask until valid input is given. 
-    extra_options is a dict of key, value pairs where the key is the name of 
+    Gets choice from user. Continues to ask until valid input is given.
+    extra_options is a dict of key, value pairs where the key is the name of
     the option and the value is the description of the option.
     """
     msg = ''
@@ -36,8 +36,8 @@ def get_selection(num_choices: int, type_of_choice: str,
     else:
         return int(index)-1
 
-def list_options(options:dict) -> str:
-    length = max({len(key) for key in options.keys()})
+
+def list_options(options: dict) -> str:
     string = ''
     for key, value in options.items():
         string += fit_to_screen(f"{key.capitalize()}:   {value}")+'\n'
@@ -50,10 +50,10 @@ def ending_the_fix(string: str) -> str:
     return string
 
 
-def print_dict(length: int, num: int, sample_dict: dict) -> str:
+def print_dict(length: int, num: int, sample_dict: dict[str, str]) -> str:
     """
-    Prints simple dictionaries with key value pairs on separate lines. length 
-    is how much white space to indent by. num is how many terms to print 
+    Prints simple dictionaries with key value pairs on separate lines. length
+    is how much white space to indent by. num is how many terms to print
     before a new line.
     """
     string = ''
@@ -69,11 +69,10 @@ def print_dict(length: int, num: int, sample_dict: dict) -> str:
     return string[:-2]
 
 
-def fit_to_screen(string:str, separator: str=' ') -> str:
+def fit_to_screen(string: str, separator: str = ' ') -> str:
     """
     This returns a string with new lines added so that it fills the screen.
     """
-    new_string = ''
     words = string.split(separator)
     lines = []
     while len(words) > 0:
@@ -82,9 +81,10 @@ def fit_to_screen(string:str, separator: str=' ') -> str:
     return '\n'.join(lines)
 
 
-def generate_line(words: List[str], separator: str= ' ') -> Tuple[str,List[str]]:
+def generate_line(words: List[str],
+                  separator: str = ' ') -> Tuple[str, List[str]]:
     """
-    Generates a line of less than 80 characters and returns line and remaining 
+    Generates a line of less than 80 characters and returns line and remaining
     terms.
     """
     line = ''
@@ -94,11 +94,14 @@ def generate_line(words: List[str], separator: str= ' ') -> Tuple[str,List[str]]
         return line[len(separator):], words
     return remove_last_word(line.strip(), words, separator)
 
-def remove_last_word(line:str, words: List[str], separator: str= ' ') -> Tuple[str,List[str]]:
+
+def remove_last_word(line: str, words: List[str],
+                     separator: str = ' ') -> Tuple[str, List[str]]:
     line_words = line.split(separator)
     last_word = line_words.pop()
-    words.insert(0,last_word)
+    words.insert(0, last_word)
     return separator.join(line_words), words
+
 
 def norm(string: str) -> str:
     if string.endswith('s'):

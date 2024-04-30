@@ -8,7 +8,7 @@ import datetime
 from typing import List, Tuple, Dict, Union
 # I guess I should change this to not load everything
 from game_pieces import *
-from utilities import get_selection, ending_the_fix
+from utilities import get_selection, ending_the_fix, norm
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",

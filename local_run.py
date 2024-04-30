@@ -79,9 +79,20 @@ def introduction() -> None:
     dice_text = [dice]
     return more_details, dice_text
 
+
+def test_game(goo_index: int = 0, inv_index: int=0):
+    game_data = db.GameSelection()
+    great_old_one = game_data.great_old_ones[goo_index]
+    investigator = game_data.investigators[inv_index]
+    start_time = 0
+    game = gp.Game('asd',investigator,great_old_one,game_data.adventure_deck,
+                game_data.item_deck)
+    return game
+    # main_gameplay_loop(game)
+
 #run.introduction()
 
-game = run.test_game()
+game = test_game()
 run.main_gameplay_loop(game)
 
 
