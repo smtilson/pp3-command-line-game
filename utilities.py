@@ -8,7 +8,7 @@ from typing import Union, List, Tuple, Dict
 
 
 def get_selection(num_choices: int, type_of_choice: str,
-                  extra_options: dict = {}) -> Union[int, str]:
+                  extra_options: dict[str, str] = {}) -> Union[int, str]:
     """
     Gets choice from user. Continues to ask until valid input is given.
     extra_options is a dict of key, value pairs where the key is the name of
@@ -38,6 +38,9 @@ def get_selection(num_choices: int, type_of_choice: str,
 
 
 def list_options(options: dict) -> str:
+    """
+    Displays options for get_selection.
+    """
     string = ''
     for key, value in options.items():
         string += fit_to_screen(f"{key.capitalize()}:   {value}")+'\n'
@@ -45,6 +48,9 @@ def list_options(options: dict) -> str:
 
 
 def ending_the_fix(string: str) -> str:
+    """
+    Moves 'The' from end of string to beginning and removes comma.
+    """
     if string.endswith(', The'):
         return 'The ' + string[:-5]
     return string
@@ -52,7 +58,7 @@ def ending_the_fix(string: str) -> str:
 
 def print_dict(length: int, num: int, sample_dict: dict[str, str]) -> str:
     """
-    Prints simple dictionaries with key value pairs on separate lines. length
+    Displays dictionaries with key value pairs on separate lines. length
     is how much white space to indent by. num is how many terms to print
     before a new line.
     """
@@ -71,7 +77,8 @@ def print_dict(length: int, num: int, sample_dict: dict[str, str]) -> str:
 
 def fit_to_screen(string: str, separator: str = ' ') -> str:
     """
-    This returns a string with new lines added so that it fills the screen.
+    Returns a string with new lines added so that no line is longer than 79 
+    characters the screen.
     """
     words = string.split(separator)
     lines = []
@@ -84,7 +91,7 @@ def fit_to_screen(string: str, separator: str = ' ') -> str:
 def generate_line(words: List[str],
                   separator: str = ' ') -> Tuple[str, List[str]]:
     """
-    Generates a line of less than 80 characters and returns line and remaining
+    Generates a line of less than 80 characters. Returns line and remaining
     terms.
     """
     line = ''
@@ -97,6 +104,10 @@ def generate_line(words: List[str],
 
 def remove_last_word(line: str, words: List[str],
                      separator: str = ' ') -> Tuple[str, List[str]]:
+    """
+    Removes last word of line and adds it back to the beginning of the words
+    list. Used in the above.
+    """
     line_words = line.split(separator)
     last_word = line_words.pop()
     words.insert(0, last_word)
@@ -104,10 +115,16 @@ def remove_last_word(line: str, words: List[str],
 
 
 def norm(string: str) -> str:
+    """
+    Normalizes strings to make them lowercase and get rid of plurals."
+    """
     if string.endswith('s'):
         string = string[:-1]
     return string.lower()
 
 
 def pause() -> None:
+    """
+    Pause function to break up game flow.
+    """
     input("\n                     Hit enter to continue.\n")
