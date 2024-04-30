@@ -474,6 +474,7 @@ class Adventure:
         string += f"Penalty: {print_dict(9, 3, self.penalty)}\n"
         return string
 
+    #is the right type hint just iter?
     def __iter__(self):
         return iter(self.tasks)
 

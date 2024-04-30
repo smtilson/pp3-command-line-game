@@ -134,4 +134,7 @@ Note: Make sure that the python buildpack is before the nodejs buildpack. If not
 10. Go to the "Deploy" tab. Scroll down to "Deployment method" and select "GitHub". Search for your repository that you copied/cloned in step 1 above.  Click "Connect" once you have found it.
 11. Scroll down to "Manual deploy" and click "Deploy Branch". Once the build is complete, click "View" to be taken to your deployed app.
 
+
+spreadsheet link:
+https://docs.google.com/spreadsheets/d/e/2PACX-1vSunyo05f2touIHhqFCUojd-Vq7kQPU-U3iqm4Ti9jvQK8iv-MYz09v5xBIEk94_S_7soxrhHpCQB3a/pubhtml
 [return to Table of Contents](#toc)
