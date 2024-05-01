@@ -8,9 +8,9 @@ from game_pieces import Game, GreatOldOne, Investigator, Item, Task, Adventure
 from utilities import get_selection, ending_the_fix, norm
 
 SCOPE = [
-    "https: //www.googleapis.com/auth/spreadsheets",
-    "https: //www.googleapis.com/auth/drive.file",
-    "https: //www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive",
 ]
 
 CREDS = Credentials.from_service_account_file("creds.json")

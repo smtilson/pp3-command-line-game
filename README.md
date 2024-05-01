@@ -6,6 +6,7 @@
 This game is heavily based on Elder Sign. Almost all of the game data is taken from Elder Sign and directly imported. However, the game is not a full implementation of Elder Sign. This is a future goal.
 
 ### Development
+I began development by thinking about a single player game I could implement. After some consideration, I settled on Elder Sign. I read the rules thoroughly, watched how to play videos, and then some game play. I then decided what parts of the game I would not implement. I started building the turn structure from a small amount and then gradually increased the complexity of turns. I used draw.io to make flow charts. These helped greatly in the writing of core functions. They also helped streamline functions.
 
 ### Instructions
 Each game begins with a player entering their name, choosing a Great Old One to battle against, and choosing an Investigator to play as. After that the game begins. Each turn sees a player attempting to complete an Adventure. After the turn ends, in a success or failure, the player will be rewarded or penalized, their dice will be reset, and the clock will advance. If it is midnight, the Great Old One will accrue Doom. Then the game checks to see if any loss conditions or the win condition are satisfied. IF not, the game continues with the player going on another adventure.
@@ -80,11 +81,11 @@ Once a game has ended, a record is made of the result. This includes the name th
 
 
 ## Testing
+
 ### Manual Testing
 I manually tested the Python code through use of print statements. Other students, my mentor, my brother, and a friend also used tested the game.
 
 ### Validation
-
 I used Flake8 to validate my code.
 I got the following types of notifications:
 - trailing whitespace
@@ -95,7 +96,93 @@ I got the following types of notifications:
 I fixed all of these issues. The remaining issues that Flake8 flags are contained in the files from Code Institute that are part of the template and I am explicitly not supposed to edit.
 
 ### Bugs
+I encountered the following bugs:
+- There was an error loading the db_utilities file. The gspread package was throwing an exception.
 
+Fix: I had replaced all ':' with ': ', and then ':  ' with ': '. This made 'https://' into 'http: //' inside the SCOPE variable. I found this issue using DiffChecker. I removed the space.
+
+- Using a clue was throwing an error.
+
+Fix: This was because the relevant function still had investigator.reroll() when I had moved the method to the Game object. I changed investigator.reroll() to game.reroll()
+
+- The fit_to_screen function was not working properly for flavor text. 
+
+Fix: This was because I was calling it once in the construction of the Adventure object and then again when I printed the flavor text. I now only call fit_to_screen when printing the flavor text.
+
+- The draw item function was not drawing certain item types.
+
+Fix: This was due to some things being capitalized, and others not being capitalized. This the '==' checks were failing. I fixed this by calling lower() when doing the '==' check.
+
+- An exception was being thrown when attempting to parse the Die objects.
+
+Fix: This was do to a refactor introducing a bank space at the end of some die faces. I fixed this by removing the blank space.
+
+- The penalty for removing clues was not working.
+
+Fix: This was because the order of effect and item_type were incorrect in the construction of clues (as well as spells.) I fixed this by correcting the order.
+
+- KeyError being thrown when passign terms to the TRANSLATION dictionary object.
+
+Fix: This was do to data in the spreadsheet not being normalized. There were typos as well as plural cases I was not accounting for. I fixed this by adding extra key, value pairs to the dictionary, adding redundancy.
+
+- Resetting tasks was not working. 
+
+Fix: This was because when I defined remaining attr of the Task object it pointed to task.pattern. This meant that when I modified the values of task.remaining it modified those of the task.pattern. I fixed this by copying the pattern dict using a dictionary comprehension.
+
+- I was getting a KeyError in the TRANSLATION dictionary for Elders.
+
+Fix: It was showing up as a key because I was replacing " Sign" with "" instead of replacing " Signs". I fixed this by first replacing " Signs" with "" and then replacing " Sign" with "".
+
+- Some input completely passed through the attempt_task function.
+
+Fix: It  was because the validation step at the very beginning of attempt_task needed to be moved. This validation step has since been removed.
+
+- The translate_term function was being passed ' ' and that was throwing a key error.
+
+Fix: I wasn't applying split to part inside the for loop iterating through parts. I applied the split method to part variable inside the relevant for loop.
+
+- Selecting an already complete task rerolls dice for free.
+
+Fix: I fixed this by changing where the reroll happens as well as checking if a task is complete before allowing the player to attempt it.
+
+- 'Terror)' was being passed as a key. This was a typo in the spreadsheet.
+
+Fix: I edited the spreadsheet to remove the typo.
+
+- The whiskey item had the wrong effect.
+
+Fix: I edited the key for the associated function in ITEM_EFFECT dictionary.
+
+- The draw_item method draws the same item repeatedly.I had not yet started removing the item I was drawing from the item_deck.
+
+Fix: I started removing the items from the item_deck inside the draw_item method
+
+- Some statements were being reported too often. It looked like:
+
+	  Only 7 more Doom is needed to summon Hastur to this plane of existence.  
+	  Only 10 more Elder Signs is needed to banish Hastur and save the world.  
+	  Oh no! Vincent Lee has been defeated. Now nothing stands in the way of Hastur.  
+	  Only 7 more Doom is needed to summon Hastur to this plane of existence.  
+	  Only 10 more Elder Signs is needed to banish Hastur and save the world.  
+	  Only 7 more Doom is needed to summon Hastur to this plane of existence.  
+	  Only 10 more Elder Signs is needed to banish Hastur and save the world.  
+	  Only 7 more Doom is needed to summon Hastur to this plane of existence.  
+	  Only 10 more Elder Signs is needed to banish Hastur and save the world.  
+
+
+Fix: This was because I had print statements inside a property that was being called. It meant that every time I checked a condition the print statement was executing. I fixed this by removing print statements from these properties that are used for checking conditions.
+
+- Entering 'n' still resulted in the printing of the dice instructions. 
+
+Fix: This was because the condition was not correct. I fixed this by fixing the condition that was being checked.
+
+- An error was being thrown because I was trying to access game.health.
+
+Fix: I fixed this to game.investigator.health
+
+- A typo was preventing the application from running.
+
+Fix: There was an unterminated string that was causing this. I terminated the string.
 ## Deployment
 
 ### Setting up APIs
@@ -164,6 +251,7 @@ I used:
 - <a href="https://www.youtube.com/shorts/cTE0ec3IurE?app=desktop">Ruler in VScode editor</a>
 - <a href="https://superuser.com/questions/1468225/is-it-possible-to-detach-the-terminal-window-from-vscode">Open terminal in separate window in VScode</a>
 - <a href="https://www.atlassian.com/git/tutorials/syncing/git-pull">git pull and rebase</a>
+- <a href="https://www.diffchecker.com/text-compare/">Diff Checker</a>
 
 ### StackOverflow and Technical references
 - <a href="https://stackoverflow.com/questions/1874592/how-to-write-very-long-string-that-conforms-with-pep8-and-prevent-e501">SO: Long strings that conform to PEP8</a>
