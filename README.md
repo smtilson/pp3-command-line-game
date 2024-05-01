@@ -1,14 +1,40 @@
+# Chtulu Schmutulu <a name="title"></a>
+### A Dice rolling adventure game
+<a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">"Chtulu Schmtulu"</a> is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on adventure cards. The game is played by entering numbers or commands into the terminal. The goal is to collect the requisite number of Elder Signs before the chosen Great Old One is gains enough Doom to be summoned.
+
+## Table of Contents <a name="toc"></a>
+- [Title" src="#title]
+- [Introduction" src="#intro]
+- [Features" src="#features]
+- [Testing" src="#testing]
+- [Deployment" src="#deployment]
+- [Credits and Outside Sources" src="#credits]
 
 
-## Introduction
-<a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">"Chtulu Schmtulu"</a> is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on adventure cards. Completing a card gives you a reward. Failing to complete a card gives you a penalty. The goal is to collect enough Elder Signs, through rewards on cards, to banish the Great Old One before they have been summoned. After every 3 turns, the Great Old one accumulates Doom (Doom can also increase as a result of failing an adventure card). When they have enough Doom, they will be summoned, ending the game in a loss for the player.
+## Introduction <a name ="intro"></a>
+"Chtulu Schmtulu" is based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on adventure cards. Completing a card gives you a reward. Failing to complete a card gives you a penalty. The goal is to collect enough Elder Signs, through rewards on cards, to banish the Great Old One before they have been summoned. After every 3 turns, the Great Old one accumulates Doom (Doom can also increase as a result of failing an adventure card). When they have enough Doom, they will be summoned, ending the game in a loss for the player.
 
-This game is heavily based on Elder Sign. Almost all of the game data is taken from Elder Sign and directly imported. However, the game is not a full implementation of Elder Sign. This is a future goal.
+### Project description
+This is a terminal based text only implementation of a board game. It uses data directly from the board game to create various game objects. It is not a complete implementation in that many aspects of the game have not yet been implemented, which is something we would like to do in the future.
 
-### Development
-I began development by thinking about a single player game I could implement. After some consideration, I settled on Elder Sign. I read the rules thoroughly, watched how to play videos, and then some game play. I then decided what parts of the game I would not implement. I started building the turn structure from a small amount and then gradually increased the complexity of turns. I used draw.io to make flow charts. These helped greatly in the writing of core functions. They also helped streamline functions.
+### User Demographics
+The expected user is anyone interested in playing a text based terminal game. It helps to understand how dice work. Being familiar with the Chtulu mythos is not necessary, but it will mean that the player is not as deterred by failure.
 
-### Instructions
+### Flow Charts
+I used draw.io to make flow charts during the development of this project. They were helpful in the planning of the project, structuring of the code, and streamlining the main game play functions. As development progressed, my functions did begin to deviate from these flow charts.
+
+Main game play function:
+
+<img alt="Main game play flow chart screenshot" src="./assets/flow-chart-screenshots/main-game-play-flow-chart.png">
+
+
+Apply outcome function:
+
+<img alt="Apply outcome flow chart screenshot" src="./assets/flow-chart-screenshots/apply-outcome-flow-chart.png" height="300px" width="350px">
+
+I found the flow charts very helpful for conceptualizing the main game play loop.
+
+## Instructions
 Each game begins with a player entering their name, choosing a Great Old One to battle against, and choosing an Investigator to play as. After that the game begins. Each turn sees a player attempting to complete an Adventure. After the turn ends, in a success or failure, the player will be rewarded or penalized, their dice will be reset, and the clock will advance. If it is midnight, the Great Old One will accrue Doom. Then the game checks to see if any loss conditions or the win condition are satisfied. IF not, the game continues with the player going on another adventure.
 
 #### Winning and Losing
@@ -78,12 +104,66 @@ These outcomes are automatically applied and then the turn ends.
 Once a game has ended, a record is made of the result. This includes the name the player entered, the start time of the game, the end time of the game, and the result of the game, such as "Vincent Lee perished and Hastur devoured the world."
 
 
+## Features
+The main feature is the game play itself.
+
+### Introduction
+The game features an introduction screen with the option to get basic instructions for the game.
+
+### Game selection
+The player is able to enter their name, select the Great Old One, and select their Investigator. This is done through a menu that presents the relevant statistics for the individual choices. This data is recorded in a spreadsheet at the games conclusion
+
+
+### Display of data
+The turn begins with the player going on an adventure. They are shown what the tasks are for completing the adventure, as well as what rewards and penalties are associated with the adventure.
+
+<img alt="Adventure screenshot" src="./assets/screenshots/adventure-screenshot.png">
+
+When the turn ends, the player is informed of the current game state.
+
+<img alt="End of turn screenshot" src="./assets/screenshots/end-of-turn-screenshot.png" height="110px" width="270px">
+
+When the game ends, the player is told of the results.
+
+<img alt="End of game screenshot" src="./assets/screenshots/end-of-game-screenshot.png">
+
+### Moves
+There are various moves the player can execute. There is the pass move which rerolls dice at the cost of losing a die. 
+
+<img alt="Pass move screenshot" src="./assets/screenshots/pass-screenshot.png">
+
+There is the possibility to use items (players are brought to an item selection screen). 
+
+<img alt="Item selection screenshot" src="./assets/screenshots/item-selection-screenshot.png">
+
+
+
+The primary move is to assign dice to a task.
+
+<img alt="Dice assignment screenshot" src="./assets/screenshots/dice-assignment-screenshot.png">
+
+### Recording
+The results of a completed game are recorded on this <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSunyo05f2touIHhqFCUojd-Vq7kQPU-U3iqm4Ti9jvQK8iv-MYz09v5xBIEk94_S_7soxrhHpCQB3a/pubhtml">google spreadsheet</a> on the "Records" page.
+
+<img alt="Records screenshot" src="./assets/screenshots/records-screenshot.png">
+
+### Future
+
+There are many directions that this application can go in the future:
+- Different aspects of the original game: monsters, focusing, mythos cards, abilities, multiple players, etc.
+- Save ability with distinct users.
+- Help menu that can be called at various times.
+- More game data, coming from expansions to the original game.
+- Replacing the keywords on dice and tasks with actual unicode symbols.
 
 
 ## Testing
 
 ### Manual Testing
 I manually tested the Python code through use of print statements. Other students, my mentor, my brother, and a friend also used tested the game.
+
+#### Browser Testing
+As this project involved an interface that was provided via the Code Institute and we were not to edit it, I did not test the project in different browsers. I have been told that the template does work in Safari.
 
 ### Validation
 I used Flake8 to validate my code.
@@ -99,63 +179,63 @@ I fixed all of these issues. The remaining issues that Flake8 flags are containe
 I encountered the following bugs:
 - There was an error loading the db_utilities file. The gspread package was throwing an exception.
 
-Fix: I had replaced all ':' with ': ', and then ':  ' with ': '. This made 'https://' into 'http: //' inside the SCOPE variable. I found this issue using DiffChecker. I removed the space.
+	Fix: I had replaced all ':' with ': ', and then ':  ' with ': '. This made 'https://' into 'http: //' inside the SCOPE variable. I found this issue using DiffChecker. I removed the space.
 
 - Using a clue was throwing an error.
 
-Fix: This was because the relevant function still had investigator.reroll() when I had moved the method to the Game object. I changed investigator.reroll() to game.reroll()
+	Fix: This was because the relevant function still had investigator.reroll() when I had moved the method to the Game object. I changed investigator.reroll() to game.reroll()
 
 - The fit_to_screen function was not working properly for flavor text. 
 
-Fix: This was because I was calling it once in the construction of the Adventure object and then again when I printed the flavor text. I now only call fit_to_screen when printing the flavor text.
+	Fix: This was because I was calling it once in the construction of the Adventure object and then again when I printed the flavor text. I now only call fit_to_screen when printing the flavor text.
 
 - The draw item function was not drawing certain item types.
 
-Fix: This was due to some things being capitalized, and others not being capitalized. This the '==' checks were failing. I fixed this by calling lower() when doing the '==' check.
+	Fix: This was due to some things being capitalized, and others not being capitalized. This the '==' checks were failing. I fixed this by calling lower() when doing the '==' check.
 
 - An exception was being thrown when attempting to parse the Die objects.
 
-Fix: This was do to a refactor introducing a bank space at the end of some die faces. I fixed this by removing the blank space.
+	Fix: This was do to a refactor introducing a bank space at the end of some die faces. I fixed this by removing the blank space.
 
 - The penalty for removing clues was not working.
 
-Fix: This was because the order of effect and item_type were incorrect in the construction of clues (as well as spells.) I fixed this by correcting the order.
+	Fix: This was because the order of effect and item_type were incorrect in the construction of clues (as well as spells.) I fixed this by correcting the order.
 
-- KeyError being thrown when passign terms to the TRANSLATION dictionary object.
+- KeyError being thrown when assigning terms to the TRANSLATION dictionary object.
 
-Fix: This was do to data in the spreadsheet not being normalized. There were typos as well as plural cases I was not accounting for. I fixed this by adding extra key, value pairs to the dictionary, adding redundancy.
+	Fix: This was do to data in the spreadsheet not being normalized. There were typos as well as plural cases I was not accounting for. I fixed this by adding extra key, value pairs to the dictionary, adding redundancy.
 
 - Resetting tasks was not working. 
 
-Fix: This was because when I defined remaining attr of the Task object it pointed to task.pattern. This meant that when I modified the values of task.remaining it modified those of the task.pattern. I fixed this by copying the pattern dict using a dictionary comprehension.
+	Fix: This was because when I defined remaining attr of the Task object it pointed to task.pattern. This meant that when I modified the values of task.remaining it modified those of the task.pattern. I fixed this by copying the pattern dict using a dictionary comprehension.
 
 - I was getting a KeyError in the TRANSLATION dictionary for Elders.
 
-Fix: It was showing up as a key because I was replacing " Sign" with "" instead of replacing " Signs". I fixed this by first replacing " Signs" with "" and then replacing " Sign" with "".
+	Fix: It was showing up as a key because I was replacing " Sign" with "" instead of replacing " Signs". I fixed this by first replacing " Signs" with "" and then replacing " Sign" with "".
 
 - Some input completely passed through the attempt_task function.
 
-Fix: It  was because the validation step at the very beginning of attempt_task needed to be moved. This validation step has since been removed.
+	Fix: It  was because the validation step at the very beginning of attempt_task needed to be moved. This validation step has since been removed.
 
 - The translate_term function was being passed ' ' and that was throwing a key error.
 
-Fix: I wasn't applying split to part inside the for loop iterating through parts. I applied the split method to part variable inside the relevant for loop.
+	Fix: I wasn't applying split to part inside the for loop iterating through parts. I applied the split method to part variable inside the relevant for loop.
 
 - Selecting an already complete task rerolls dice for free.
 
-Fix: I fixed this by changing where the reroll happens as well as checking if a task is complete before allowing the player to attempt it.
+	Fix: I fixed this by changing where the reroll happens as well as checking if a task is complete before allowing the player to attempt it.
 
 - 'Terror)' was being passed as a key. This was a typo in the spreadsheet.
 
-Fix: I edited the spreadsheet to remove the typo.
+	Fix: I edited the spreadsheet to remove the typo.
 
 - The whiskey item had the wrong effect.
 
-Fix: I edited the key for the associated function in ITEM_EFFECT dictionary.
+	Fix: I edited the key for the associated function in ITEM_EFFECT dictionary.
 
 - The draw_item method draws the same item repeatedly.I had not yet started removing the item I was drawing from the item_deck.
 
-Fix: I started removing the items from the item_deck inside the draw_item method
+	Fix: I started removing the items from the item_deck inside the draw_item method
 
 - Some statements were being reported too often. It looked like:
 
@@ -169,20 +249,22 @@ Fix: I started removing the items from the item_deck inside the draw_item method
 	  Only 7 more Doom is needed to summon Hastur to this plane of existence.  
 	  Only 10 more Elder Signs is needed to banish Hastur and save the world.  
 
-
-Fix: This was because I had print statements inside a property that was being called. It meant that every time I checked a condition the print statement was executing. I fixed this by removing print statements from these properties that are used for checking conditions.
+	
+	Fix: This was because I had print statements inside a property that was being called. It meant that every time I checked a condition the print statement was executing. I fixed this by removing print statements from these properties that are used for checking conditions.
 
 - Entering 'n' still resulted in the printing of the dice instructions. 
 
-Fix: This was because the condition was not correct. I fixed this by fixing the condition that was being checked.
+	Fix: This was because the condition was not correct. I fixed this by fixing the condition that was being checked.
 
 - An error was being thrown because I was trying to access game.health.
 
-Fix: I fixed this to game.investigator.health
+	Fix: I fixed this to game.investigator.health
 
 - A typo was preventing the application from running.
 
-Fix: There was an unterminated string that was causing this. I terminated the string.
+	Fix: There was an unterminated string that was causing this. I terminated the string.
+
+
 ## Deployment
 
 ### Setting up APIs
@@ -236,6 +318,16 @@ Note: Make sure that the python buildpack is before the nodejs buildpack. If not
 
 ## References
 
+### Inspiration
+The Love Sandwiches walkthrough project was very helpful. The explanation of how to deploy the project, and connect APIs was directly taken from that. I also used what I learned in that project to interact with google spreadsheets with gspread.
+
+During the initial stages of development I looked at lists of single player games. I found Elder Sign on the following <a href="https://www.thegamer.com/best-single-player-solo-board-games/">list</a>.
+
+### Mentor and other people
+I got great suggestions from my mentor about important aspects of the project, like implementing an analogue of a "GET" and "POST" method. He also supplied me with examples of readmes from previous projects.
+
+Multiple other people played the game during development. My brother Anderson had helpful suggestions, as did my friend Mike. My fellow students Tarek, Alexander, Hollinda, and Anders had very helpful insights and were very supportive. They found bugs and tested the game.
+
 ### Technologies Used
 The project was coded in python. 
 I used: 
@@ -274,4 +366,4 @@ I used:
 
 spreadsheet link:
 
-[return to Table of Contents](#toc)
+return to TOC
