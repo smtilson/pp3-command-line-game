@@ -75,8 +75,6 @@ class Investigator:
         """
         replacement = ': ' + self.white_space * ' '
         line = str(self.index) + '. ' + str(self).replace(': ', replacement)
-        self.items.append('1 clue')
-        # do I want to change this?
         line += ';     Items: ' + ', '.join(self.items).title()
         print(line)
     
@@ -189,12 +187,14 @@ class Game:
     
     def starting_items(self) -> None:
         starting_list = [term for term in self.investigator.items]
+        starting_list.append('clue')
         self.investigator.items = []
         for term in starting_list:
             num, item_type = term.split()
             for _ in range(int(num)):
                 item = self.draw_item(item_type)
                 self.investigator.items.append(item)
+        print("Each Investigator starts with an extra Clue.")
         print(f"{self.investigator.name} starts with:")
         item_list = [item.name for item in self.investigator.items]
         string = fit_to_screen(', '.join(item_list))
@@ -295,16 +295,16 @@ class Item:
     @property
     def white_space(self) -> str:
         return (19-len(self.name)+3)*' '
-          
+
     def use(self, game) -> None:
         """
         Uses item and then discards it.
         """
         self.ITEM_EFFECT[self.effect](game)
         game.investigator.items.remove(self)
-        if self.item_type not in {'clue','spell'}:
+        if self.item_type not in {'clue', 'spell'}:
             game.item_discard.append(self)
-    
+
     @classmethod
     def clue(cls) -> 'Item':
         return Item("Clue", "Reroll all dice", "clue")
@@ -317,31 +317,40 @@ class Item:
 # Outcome functions for Adventure Rewards and Penalties
 def gain_elder_sign(num: int, game: 'Game') -> None:
     game.current_elder_signs += num
-    print(f"{game.investigator.name} now has {game.current_elder_signs} Elder Signs.")
+    print(f"{game.investigator.name} now has {game.current_elder_signs} Elder "
+          "Signs.")
+
 
 def increase_doom(num: int, game: 'Game') -> None:
     game.current_doom += num
     print(f"There is {game.current_doom}/{game.doom_max} Doom.")
-    
+
+
 def change_sanity(num: int, game: 'Game') -> None:
     game.investigator.sanity += num
-    print(f"{game.investigator.name} now has {game.investigator.sanity} Sanity .")
+    print(f"{game.investigator.name} now has {game.investigator.sanity} "
+          "Sanity.")
+
 
 def change_health(num: int, game: 'Game') -> None:
     game.investigator.health += num
-    print(f"{game.investigator.name} now has {game.investigator.health} Health.")
-            
+    print(f"{game.investigator.name} now has {game.investigator.health} "
+          "Health.")
+
+
 def draw_unique(num: int, game: 'Game') -> None:
     for _ in range(num):
         item = game.draw_item('unique')
         game.investigator.items.append(item)
         print(f"You got the {game.investigator.items[-1].name}")
 
+
 def draw_common(num: int, game: 'Game') -> None:
     for _ in range(num):
         item = game.draw_item('common')
         game.investigator.items.append(item)
         print(f"You got the {game.investigator.items[-1].name}")
+
 
 def gain_clue(num: int, game: 'Game') -> None:
     if num > 0:
@@ -355,12 +364,14 @@ def gain_clue(num: int, game: 'Game') -> None:
                 game.investigator.items.remove(item)
                 print("You lost a Clue.")
                 break
-    
+
+
 def gain_spell(num: int, game: 'Game') -> None:
     for _ in range(num):
         spell = game.draw_item('spell')
         game.investigator.items.append(spell)
         print("You got a Spell.")
+
 
 # Dictionary for storing Reward and Penalty functions
 OUTCOMES = {"Elder Sign": gain_elder_sign, "Sanity": change_sanity,
@@ -369,6 +380,7 @@ OUTCOMES = {"Elder Sign": gain_elder_sign, "Sanity": change_sanity,
             "Common Item": draw_common, "Common Items": draw_common,
             "Clue": gain_clue, "Spell": gain_spell, "Clues": gain_clue,
             "Spells": gain_spell}
+
 
 class Task:
     def __init__(self, pattern: dict[str, int]) -> None:
@@ -409,13 +421,13 @@ class Task:
         self.remaining[symbol] -= number
         if self.remaining[symbol] <= 0:
             del self.remaining[symbol]
-    
+
     def assign_wild(self) -> str:
         """
         Picks symbol for wild die.
         """
-        selection = {str(index+1): key for index, key in 
-                     enumerate(self.remaining.keys())}             
+        selection = {str(index+1): key for index, key in
+                     enumerate(self.remaining.keys())}
         for index, key in selection.items():
             if len(selection.items()) == 1:
                 return selection[index]
@@ -444,7 +456,7 @@ class Task:
         """
         Resets task to initial state.
         """
-        self.remaining = {key:value for key,value in self.pattern.items()} 
+        self.remaining = {key: value for key, value in self.pattern.items()}
 
     @property
     def complete(self):
@@ -477,7 +489,6 @@ class Adventure:
         string += f"Penalty: {print_dict(9, 3, self.penalty)}\n"
         return string
 
-    #is the right type hint just iter?
     def __iter__(self) -> Iterator['Task']:
         return iter(self.tasks)
 
@@ -487,7 +498,7 @@ class Adventure:
     @property
     def remaining(self) -> list:
         return [task for task in self if not task.complete]
-    
+
     @property
     def complete(self) -> bool:
         if len(self.remaining) == 0:
@@ -546,7 +557,7 @@ class Die:
         Used for spacing on selection screen.
         """
         return len('3 Investigate')-len(str(self))
-        
+
     def parse(self) -> tuple[int, str]:
         """
         Parses the face of the die. Returns number of symbols as int and
@@ -597,7 +608,7 @@ class DicePool:
             string += (die.white_space+1)*" "
             dice_strs.append(string)
         return dice_strs
-        
+
     def __str__(self) -> str:
         """
         Creates well spaced display of dice pool.

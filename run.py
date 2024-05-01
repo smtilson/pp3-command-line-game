@@ -1,13 +1,10 @@
-from typing import List, Optional, Tuple, Union
-# the below import statement should eventually be changed
+# Main file. Contains functions that run the actual game.
 from game_pieces import Game, Task, Adventure, OUTCOMES
 from db_utilities import GameSelection, record
 from utilities import pause, get_selection, print_dict, fit_to_screen
 
 OTHER_MOVES = {'pass': 'Pass to lose a die and reroll the rest.', 'item': 'Go'
                ' to Item selection menu.'}
-
-
 
 
 def report_options(game: 'Game', adventure: 'Adventure') -> None:
@@ -24,7 +21,7 @@ def report_dice_n_task(game: 'Game', task: 'Task') -> None:
 def use_item_procedure(game: 'Game') -> 'Game':
     items = game.investigator.items
     if len(items) == 0:
-        print("You have no more items to use.\n") 
+        print("You have no more items to use.\n")
         return game
     for index, item in enumerate(items):
         white_space = item.white_space+(3-len(str(index+1)))*' '
@@ -118,7 +115,10 @@ def attempt_adventure(game: 'Game',
     return outcome, adventure
 
 
-def apply_outcomes(outcomes, game: 'Game'):
+def apply_outcomes(outcomes, game: 'Game') -> None:
+    """
+    Applies Reward or Penalty to game state.
+    """
     for key, value in outcomes.items():
         OUTCOMES[key](value, game)
 
@@ -176,11 +176,11 @@ def introduction() -> None:
     print("Alright! Let's get started. That Great Old One isn't going to "
           "banish itself.")
 
-def start_game(start_time=0):
+
+def start_game(start_time: int = 0) -> 'Game':
     """
-    Initializes game state by loading data.
-    Selects game state by getting input from user.
-    Begins game by dealing task cards and initializing main gameplay loop.
+    Initializes game state by loading data. User selects aspects of game state.
+    Constructs game object. Returns game state.
     """
     name = input('Please enter your name.\n')
     while name.strip() == '':
@@ -191,9 +191,11 @@ def start_game(start_time=0):
     print(fit_to_screen(f"Good luck getting {great_old_one.elder_signs} Elder"
                         f" Signs before they collect {great_old_one.doom} "
                         "Doom!" + "\n"))
+    pause()
     investigator = game_data.select_investigator()
     print('\n' + fit_to_screen(f"You have selected {investigator.name}, "
-                        f"{investigator.profession}."))
+                               f"{investigator.profession}."))
+    pause()
     game = Game(name, investigator, great_old_one, game_data.adventure_deck,
                 game_data.item_deck)
     print(great_old_one)
@@ -204,11 +206,11 @@ def start_game(start_time=0):
 
 def main_gameplay_loop(game) -> None:
     """
-    Main gameplay loop which runs the game.
+    Main game play loop: attempts adventure cards, applies results, ends turn,
+    checks end_condition. Repeats if end condition hasn't been met. Prints
+    results when end condition is met and records results to spreadsheet.
     """
-    # this is all meta code essentially
-    end_condition = False
-    while not end_condition:
+    while not game.end_condition:
         adventure = game.adventure_deck.pop(0)
         # print("card selected")
         print(adventure)
@@ -218,20 +220,22 @@ def main_gameplay_loop(game) -> None:
         apply_outcomes(outcomes, game)
         pause()
         print("End of turn.")
-        end_condition = game.end_turn()
+        game.end_turn()
     # these messages could be refactored into a dict maybe?
     # or a method of the game object, like a property?
-    if end_condition == "Banished":
-        print(fit_to_screen(f"Congratulations! {game.investigator.name} has defeated "
-              f"{game.great_old_one.name} and successfully banished them to "
-              f"the dimension from which they came."))
-    elif end_condition == "Died":
-        print(fit_to_screen(f"Oh no! {game.investigator.name} has been defeated. Now nothing"
-              f" stands in the way of {game.great_old_one.name}."))
-    elif end_condition == "Summoned":
-        print(fit_to_screen(f"{game.investigator.name} was unable to prevent the inevitable."
-              f" {game.great_old_one.name} has been summoned. The end of "
-              f"humanity is at hand."))
+    if game.end_condition == "Banished":
+        print(fit_to_screen(f"Congratulations! {game.investigator.name} has "
+                            f"defeated {game.great_old_one.name} and "
+                            "successfully banished them to the dimension from "
+                            "which they came."))
+    elif game.end_condition == "Died":
+        print(fit_to_screen(f"Oh no! {game.investigator.name} has been "
+                            "defeated. Now nothing stands in the way of "
+                            f"{game.great_old_one.name}."))
+    elif game.end_condition == "Summoned":
+        print(fit_to_screen(f"{game.investigator.name} was unable to prevent "
+                            f"the inevitable. {game.great_old_one.name} has "
+                            "been summoned. The end of humanity is at hand."))
     record(game)
 
 
