@@ -23,6 +23,9 @@ def report_dice_n_task(game: 'Game', task: 'Task') -> None:
 
 def use_item_procedure(game: 'Game') -> 'Game':
     items = game.investigator.items
+    if len(items) == 0:
+        print("You have no more items to use.\n") 
+        return game
     for index, item in enumerate(items):
         white_space = item.white_space+(3-len(str(index+1)))*' '
         print(f"{index+1}. {item.name}: {white_space}{item.effect}")
@@ -184,11 +187,13 @@ def start_game(start_time=0):
         name = input('Please enter something other than blank space.\n')
     game_data = GameSelection()
     great_old_one = game_data.select_great_old_one()
-    print(f"You have selected {great_old_one.name}.")
-    print(f"Good luck getting {great_old_one.elder_signs} Elder Signs before "
-          f"they collect {great_old_one.doom} Doom!")
+    print('\n' + fit_to_screen(f"You have selected {great_old_one.name}."))
+    print(fit_to_screen(f"Good luck getting {great_old_one.elder_signs} Elder"
+                        f" Signs before they collect {great_old_one.doom} "
+                        "Doom!" + "\n"))
     investigator = game_data.select_investigator()
-    print(f"You have selected {investigator.name} {investigator.profession}.")
+    print('\n' + fit_to_screen(f"You have selected {investigator.name}, "
+                        f"{investigator.profession}."))
     game = Game(name, investigator, great_old_one, game_data.adventure_deck,
                 game_data.item_deck)
     print(great_old_one)

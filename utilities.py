@@ -14,15 +14,18 @@ def get_selection(num_choices: int, type_of_choice: str,
     extra_options is a dict of key, value pairs where the key is the name of
     the option and the value is the description of the option.
     """
-    msg = ''
+    msg1, msg2 = '', ''
     optional = ''
     if num_choices:
-        msg += f"Please select an option from 1-{num_choices} to "\
-               f"choose a {type_of_choice}.\n\n"
+        msg1 = f"Please select an option from 1-{num_choices} to "\
+               f"choose a {type_of_choice}."
+        msg1 = fit_to_screen(msg1)
         optional = ' also'
     if extra_options.keys():
-        msg += f"You may{optional} select an option from: \n"\
+        msg2 = f"You may{optional} select an option from: \n"\
                f"{str(list_options(extra_options))}"
+    breaker = '\n' if msg2 else ''
+    msg = '\n' + msg1 + breaker + msg2 + '\n'
     index = input(msg)
     valid_input = {str(num) for num in range(1, num_choices+1)}
     options = {key.lower() for key in extra_options.keys()}
