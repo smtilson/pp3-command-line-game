@@ -1,6 +1,6 @@
 # This file contains the game pieces that need to be loaded to play the game
 from random import choice, shuffle
-from typing import Optional, Union, Iterator
+from typing import Iterator
 import datetime
 from utilities import print_dict, fit_to_screen, norm
 
@@ -9,7 +9,8 @@ class GreatOldOne:
     """
     Creates Great Old One enemy. Contains end condition thresholds.
     """
-    def __init__(self, index:str, name:str, elder_signs:int, doom:int) -> None:
+    def __init__(self, index: str, name: str, elder_signs: int,
+                 doom: int) -> None:
         self.index = index
         self.name = name
         self.doom = doom
@@ -17,10 +18,10 @@ class GreatOldOne:
 
     def __str__(self) -> str:
         msg = f"{self.name}:   {self.doom} Doom to Awaken\n"
-        msg += self.white_space * ' ' + f'{self.elder_signs} Elder Signs to '\
-               'Banish'
+        msg += self.white_space * ' ' + f'{self.elder_signs} Elder Signs to '
+        msg += 'Banish'
         return msg
-    
+
     @property
     def white_space(self) -> int:
         """
@@ -29,7 +30,7 @@ class GreatOldOne:
         return (len(self.name) + 4 + self.extra[1]-self.extra[0])
 
     @property
-    def extra(self) -> tuple[int,int]:
+    def extra(self) -> tuple[int, int]:
         """
         Used in spacing for menus.
         """
@@ -43,15 +44,17 @@ class GreatOldOne:
         """
         lines = str(self).split('\n')
         factor = len(self.name)-self.extra[0]+(len(str(self.index))-1)
-        white_space = (14 - factor)*' '
-        print(str(self.index)+'. '+lines[0].replace(': ',': '+white_space))
+        white_space = (14 - factor) * ' '
+        print(str(self.index) + '. ' + lines[0].replace(': ',
+                                                        ': '+white_space))
         print((21+self.extra[1])*' '+lines[1].strip())
-    
+
+
 class Investigator:
     """
     Creates Investigator that player plays as. Contains starting values.
     """
-    def __init__(self, index:str, name:str, profession: str, sanity: int, 
+    def __init__(self, index: str, name: str, profession: str, sanity: int,
                  health: int, items: list) -> None:
         self.index = index
         self.name = name
@@ -64,7 +67,7 @@ class Investigator:
 
     def __str__(self) -> str:
         return f"{self.name}: {self.sanity} Sanity, {self.health} Health"
-    
+
     @property
     def white_space(self) -> int:
         return 18-len(self.name)-len(str(self.index))
@@ -77,22 +80,22 @@ class Investigator:
         line = str(self.index) + '. ' + str(self).replace(': ', replacement)
         line += ';     Items: ' + ', '.join(self.items).title()
         print(line)
-    
+
     # Loss condition
     @property
     def alive(self) -> bool:
         if self.sanity <= 0 or self.health <= 0:
             return False
         return True
-    
+
 
 class Game:
     """
     Creates the game object. Manages win/loss conditions and game state.
     """
-    def __init__(self, player: str, investigator:'Investigator', 
-                 great_old_one: 'GreatOldOne', 
-                 adventure_deck: list['Adventure'], 
+    def __init__(self, player: str, investigator: 'Investigator',
+                 great_old_one: 'GreatOldOne',
+                 adventure_deck: list['Adventure'],
                  item_deck: list['Item'], increment: int = 8) -> None:
         self.player = player
         self.investigator = investigator
@@ -111,7 +114,7 @@ class Game:
         shuffle(self.item_discard)
         self.starting_items()
         self.dice_pool = DicePool()
-    
+
     @property
     def num_dice(self) -> int:
         return len(self.dice_pool)
@@ -128,7 +131,7 @@ class Game:
     def end_turn(self) -> str:
         """
         End of turn clean up. Advances clock, applies doom, displays status,
-        resets dice and returns end_condition. (should also handle the 
+        resets dice and returns end_condition. (should also handle the
         adventure card stuff)
         """
         self.clock.advance()
@@ -148,7 +151,7 @@ class Game:
         elif not self.investigator.alive:
             return "Died"
         return ""
-    
+
     def draw_adventure(self) -> 'Adventure':
         """
         Draws adventure card. Shuffles discard into deck if it is empty.
@@ -184,10 +187,10 @@ class Game:
             if item.item_type.lower() == item_type.lower():
                 self.item_deck.remove(item)
                 return item
-    
+
     def starting_items(self) -> None:
         starting_list = [term for term in self.investigator.items]
-        starting_list.append('clue')
+        starting_list.append('1 Clue')
         self.investigator.items = []
         for term in starting_list:
             num, item_type = term.split()
@@ -211,8 +214,8 @@ class Game:
             self.dice_pool.roll()
         else:
             print("You are out of dice.")
-        
-        
+
+
 class Clock:
     def __init__(self, increment: int) -> None:
         """
@@ -221,43 +224,51 @@ class Clock:
         self.time = 0
         self. day = 0
         self.increment = increment
-    
+
     def __str__(self) -> str:
         if self.time == 0:
             time = "midnight"
         else:
             time = str(self.time)+" o'clock"
         return f"It is {time} on Day {self.day}."
-    
+
     def advance(self) -> None:
         self.time += self.increment
         if self.time == 24:
             self.time = 0
             self.day += 1
 
+
 # ITEM_EFFECT functions, called when an Item is used
 def add_yellow(game: 'Game') -> None:
     game.dice_pool.add_die('yellow')
 
+
 def add_red(game: 'Game') -> None:
     game.dice_pool.add_die('red')
 
-def add_yellow_n_red(game:'Game') -> None:
+
+def add_yellow_n_red(game: 'Game') -> None:
     game.dice_pool.add_die('yellow')
     game.dice_pool.add_die('red')
 
-def gain_health(game:'Game') -> None:
+
+def gain_health(game: 'Game') -> None:
     game.investigator.health += 1
 
-def gain_sanity(game:'Game') -> None:
+
+def gain_sanity(game: 'Game') -> None:
     game.investigator.sanity += 1
 
-def add_spell_die(game:'Game') -> None:
+
+def add_spell_die(game: 'Game') -> None:
     game.dice_pool.add_die('spell')
 
-def reroll_dice(game:'game') -> None:
+
+def reroll_dice(game: 'Game') -> None:
     print("Using a Clue to reroll dice.")
     game.dice_pool.roll()
+
 
 def restore(game: 'Game') -> None:
     game.investigator.health = game.investigator.starting_health
@@ -268,29 +279,20 @@ def restore(game: 'Game') -> None:
 
 class Item:
     # Dictionary for storing item functions.
-    ITEM_EFFECT = {'Add a yellow die': add_yellow, 'Add a red die': add_red, 
-                   'Gain 1 Health': gain_health, 'Gain 1 Sanity': gain_sanity, 
-                   'Add a yellow and a red die': add_yellow_n_red, 
-                   'Gain a wild die': add_spell_die, 
-                   "Reroll all dice": reroll_dice, 
+    ITEM_EFFECT = {'Add a yellow die': add_yellow, 'Add a red die': add_red,
+                   'Gain 1 Health': gain_health, 'Gain 1 Sanity': gain_sanity,
+                   'Add a yellow and a red die': add_yellow_n_red,
+                   'Gain a wild die': add_spell_die,
+                   "Reroll all dice": reroll_dice,
                    "Restore Health and Sanity": restore}
 
-    def __init__(self, name:str, effect:str, item_type:str) -> None:
+    def __init__(self, name: str, effect: str, item_type: str) -> None:
         """
         Creates Item object.
         """
         self.name = name
         self.effect = effect
         self.item_type = item_type
-    
-    # I think the following two are not used
-    # def __str__(self) -> str:
-     #   description = f"The {self.name} is a {self.item_type} item."\
-      #                f"\nEffect: {self.effect}"
-       # return description
-    
-    # def __repr__(self):
-     #   return self.name + ': ' + self.item_type + ' item' + '\n' + self.effect
 
     @property
     def white_space(self) -> str:

@@ -97,6 +97,7 @@ def attempt_adventure(game: 'Game',
             game = use_item_procedure(game)
         else:
             task = adventure[index]
+            pause()
             if task.valid(game.dice_pool):
                 game, task = attempt_task(game, task)
             elif task.complete:

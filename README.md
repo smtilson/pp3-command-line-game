@@ -1,9 +1,11 @@
 
 
 ## Introduction
-"Chtulu Schmtulu" is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on adventure cards. Completing a card gives you a reward. Failing to complete a card gives you a penalty. The goal is to collect enough Elder Signs, through rewards on cards, to banish the Great Old One before they have been summoned. After every 3 turns, the Great Old one accumulates Doom (Doom can also increase as a result of failing an adventure card). When they have enough Doom, they will be summoned, ending the game in a loss for the player.
+<a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">"Chtulu Schmtulu"</a> is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on adventure cards. Completing a card gives you a reward. Failing to complete a card gives you a penalty. The goal is to collect enough Elder Signs, through rewards on cards, to banish the Great Old One before they have been summoned. After every 3 turns, the Great Old one accumulates Doom (Doom can also increase as a result of failing an adventure card). When they have enough Doom, they will be summoned, ending the game in a loss for the player.
 
-This game is heavily based on Elder Sign. Almost all of the game data is taken from Elder Sign and directly imported. However, the game is not a full implementation of Elder Sign. This would be a goal for the future.
+This game is heavily based on Elder Sign. Almost all of the game data is taken from Elder Sign and directly imported. However, the game is not a full implementation of Elder Sign. This is a future goal.
+
+### Development
 
 ### Instructions
 Each game begins with a player entering their name, choosing a Great Old One to battle against, and choosing an Investigator to play as. After that the game begins. Each turn sees a player attempting to complete an Adventure. After the turn ends, in a success or failure, the player will be rewarded or penalized, their dice will be reset, and the clock will advance. If it is midnight, the Great Old One will accrue Doom. Then the game checks to see if any loss conditions or the win condition are satisfied. IF not, the game continues with the player going on another adventure.
@@ -74,14 +76,25 @@ These outcomes are automatically applied and then the turn ends.
 ##### End of a Game
 Once a game has ended, a record is made of the result. This includes the name the player entered, the start time of the game, the end time of the game, and the result of the game, such as "Vincent Lee perished and Hastur devoured the world."
 
-<a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">game</a>
 
-### Instructions
-The core of the game is completing task cards by completing each task on the given card. An individual task is completed by meeting all of the requirements. Most of these are symbols which are on the dice that you roll. You meet these requirements by assigning dice to the task whose symbol matches it. If no symbols match, we may pass. This results in us losing a die from our pool and rerolling our remaining dice. If we run out of dice before completing all of the tasks on a card we suffer the listed penalty.
 
-Example:
 
-As the game begins, 3 task cards will be dealt. Choose one to attempt by entering the corresponding number. Once a card is selected you will roll your dice pool. Then based on this roll, pick a task on the card to attempt by entering the appropriate number.
+## Testing
+### Manual Testing
+I manually tested the Python code through use of print statements. Other students, my mentor, my brother, and a friend also used tested the game.
+
+### Validation
+
+I used Flake8 to validate my code.
+I got the following types of notifications:
+- trailing whitespace
+- blank line contains whitespace
+- missing space after ':', ',' and around operators
+- import not used or variable not used
+
+I fixed all of these issues. The remaining issues that Flake8 flags are contained in the files from Code Institute that are part of the template and I am explicitly not supposed to edit.
+
+### Bugs
 
 ## Deployment
 
@@ -140,10 +153,12 @@ Note: Make sure that the python buildpack is before the nodejs buildpack. If not
 The project was coded in python. 
 I used: 
 - git and GitHub for version control,
-- the python packages gspread, google-auth-oauthli, and ipython, 
+- the python packages gspread, and google-auth-oauthli 
 - the Code Institute Template for PP3 for the interface of the deployed project,
 - Heroku to host the project,
 - <a href="http://www.draw.io">Draw.io</a> for flow charts.
+- Flake8 for validation
+- IPython for a console/repl
 
 ### Technology adjacent references
 - <a href="https://www.youtube.com/shorts/cTE0ec3IurE?app=desktop">Ruler in VScode editor</a>
