@@ -214,6 +214,7 @@ class Game:
             self.dice_pool.roll()
         else:
             print("You are out of dice.")
+        print()
 
 
 class Clock:
