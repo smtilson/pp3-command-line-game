@@ -128,8 +128,9 @@ def introduction() -> None:
     """
     Displays instructions. Either short summary or more details.
     """
-    basic_idea1 = 'Welcome to "Chtulu Schmtulu." Try to collect Elder Signs '\
-        "before the Great Old One is Summoned or you perish."
+    basic_idea1 = 'Welcome to "Chtulu Schmtulu." As you explore a museum, try'\
+        " to collect Elder Signs before the Great Old One is Summoned or you "\
+        "perish."
     tldr = "TL;DR: Go on Adventures, match dice to complete tasks. Use items "\
         "to aid in the completion of tasks. Collect enough Elder Signs before"\
         " the Great Old One gains too much Doom."
@@ -183,6 +184,7 @@ def start_game(start_time: int = 0) -> 'Game':
     Initializes game state by loading data. User selects aspects of game state.
     Constructs game object. Returns game state.
     """
+    print()
     name = input('Please enter your name.\n')
     while name.strip() == '':
         name = input('Please enter something other than blank space.\n')
