@@ -1,4 +1,4 @@
-# Chtulu Schmutulu <a name="title"></a>
+# Chtulu Schmtulu <a name="title"></a>
 
 ### A Dice rolling Adventure game
 <a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">"Chtulu Schmtulu"</a> is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on Adventure cards. The game is played by entering numbers or commands into the terminal. The goal is to collect the requisite number of Elder Signs before the chosen Great Old One is gains enough Doom to be summoned.
