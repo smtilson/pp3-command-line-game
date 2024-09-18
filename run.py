@@ -244,9 +244,21 @@ def main_gameplay_loop(game) -> None:
 
 def main():
     introduction()
-    game = start_game()
-    main_gameplay_loop(game)
+    response = 'Y'
+    while response == 'Y':
+        game = start_game()
+        main_gameplay_loop(game)
+        response = play_again()
 
+
+def play_again():
+    response = input("Would you like to play again? (Y/N)\n").upper()
+    while response not in {'Y', 'N'}:
+        response = input("Please enter 'Y' or 'N'.\n").upper()
+    if response == 'N':
+        print("Thanks for playing. Please send any feedback to "
+              "seantilson@gmail.com")
+    return response
 
 if __name__ == "__main__":
     main()

@@ -7,3 +7,5 @@ __pycache__/
 node_modules/
 .github/
 creds.json
+google_drive_creds.json
+venv/

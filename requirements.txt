@@ -8,3 +8,4 @@ pyasn1_modules==0.4.0
 requests-oauthlib==2.0.0
 rsa==4.9
 StrEnum==0.4.15
+ipython==7.31.1
