@@ -1,7 +1,7 @@
-# Chtulu Schmtulu <a name="title"></a>
+# Cthulu Schmtulu <a name="title"></a>
 
 ### A Dice rolling Adventure game
-<a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">"Chtulu Schmtulu"</a> is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on Adventure cards. The game is played by entering numbers or commands into the terminal. The goal is to collect the requisite number of Elder Signs before the chosen Great Old One is gains enough Doom to be summoned.
+<a href="https://smtilson-pp3-command-line-game-df86354a3a66.herokuapp.com/">"Cthulu Schmtulu"</a> is a dice rolling game based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on Adventure cards. The game is played by entering numbers or commands into the terminal. The goal is to collect the requisite number of Elder Signs before the chosen Great Old One is gains enough Doom to be summoned.
 
 ## Table of Contents <a name="toc"></a>
 - [Title](#title)
@@ -14,13 +14,13 @@
 
 
 ## Introduction <a name ="intro"></a>
-"Chtulu Schmtulu" is based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on Adventure cards. The goal is to collect enough Elder Signs, through Rewards on  Adventure cards, to banish the Great Old One before they have been summoned. The Great Old one accumulates Doom as the game progresses. When they have enough Doom, they will be summoned, eand the player loses. Players will also lose if they have 0 Sanity or Health at the end of a turn.
+"Cthulu Schmtulu" is based on the board game Elder Sign from Fantasy Flight Games. The game revolves around rolling dice to match symbols on Adventure cards. The goal is to collect enough Elder Signs, through Rewards on  Adventure cards, to banish the Great Old One before they have been summoned. The Great Old one accumulates Doom as the game progresses. When they have enough Doom, they will be summoned, eand the player loses. Players will also lose if they have 0 Sanity or Health at the end of a turn.
 
 ### Project description
 This is a terminal based text only implementation of a board game. It uses data directly from the board game to create various game objects. It is not a complete implementation in that many aspects of the game have not yet been implemented, which is something we would like to do in the future.
 
 ### User Demographics
-The expected user is anyone interested in playing a text based terminal game. It helps to understand how dice work. Being familiar with the Chtulu mythos is not necessary, but it will mean that the player is not as deterred by failure.
+The expected user is anyone interested in playing a text based terminal game. It helps to understand how dice work. Being familiar with the Cthulu mythos is not necessary, but it will mean that the player is not as deterred by failure.
 
 ### Flow Charts
 I used draw.io to make flow charts during the development of this project. They were helpful in the planning of the project, structuring of the code, and streamlining the main game play functions. As development progressed, my functions did begin to deviate from these flow charts.

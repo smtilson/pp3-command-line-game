@@ -128,7 +128,7 @@ def introduction() -> None:
     """
     Displays instructions. Either short summary or more details.
     """
-    basic_idea1 = 'Welcome to "Chtulu Schmtulu." As you explore a museum, try'\
+    basic_idea1 = 'Welcome to "Cthulu Schmtulu." As you explore a museum, try'\
         " to collect Elder Signs before the Great Old One is Summoned or you "\
         "perish."
     tldr = "TL;DR: Go on Adventures, match dice to complete tasks. Use items "\
