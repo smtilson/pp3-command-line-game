@@ -26,7 +26,7 @@ def get_selection(num_choices: int, type_of_choice: str,
                f"{str(list_options(extra_options))}"
     breaker = '\n' if msg2 else ''
     msg = '\n' + msg1 + breaker + msg2 + '\n'
-    index = input(msg).strip()
+    index = input(msg).strip().lower()
     valid_input = {str(num) for num in range(1, num_choices+1)}
     options = {key.lower() for key in extra_options.keys()}
     valid_input = valid_input.union(options)
