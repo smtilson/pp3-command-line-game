@@ -429,6 +429,7 @@ class Task:
         """
         Picks symbol for wild die.
         """
+        # This needs to be modified to give more than 1 investigate symbol.
         selection = {str(index+1): key for index, key in
                      enumerate(self.remaining.keys())}
         for index, key in selection.items():
